@@ -8,12 +8,49 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* MediCareAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MediCareAppTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-MediCareApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-MediCareApp.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		7699B88040F8A987B510C191 /* libPods-MediCareApp-MediCareAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-MediCareApp-MediCareAppTests.a */; };
+		2BAF7459F39E3CC9D57B97CC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 257E556E8D2CF0F87E7E27C9 /* PrivacyInfo.xcprivacy */; };
+		3A7AD9C095C1C0184DE85903 /* libPods-MediCareApp-MediCareAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D54F983E746F501E92342A70 /* libPods-MediCareApp-MediCareAppTests.a */; };
+		6815CBC29AD7734312434D26 /* libPods-MediCareApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32FCFFCD599CFB49B70CC508 /* libPods-MediCareApp.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		2BCF13CE3FA6440D832A963A /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B1D68B9B80F40D9A8878E17 /* Montserrat-LightItalic.ttf */; };
+		9D649D2C7A34452B91B24352 /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B1D68B9B80F40D9A8878E17 /* Montserrat-LightItalic.ttf */; };
+		30A41FB8ABC44A34A77D4A80 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8B0CEEAEB20345198B64D0A2 /* Montserrat-Medium.ttf */; };
+		CFCC1D34E39E403CB3181B63 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8B0CEEAEB20345198B64D0A2 /* Montserrat-Medium.ttf */; };
+		480A49A10AAC4275B8A50DC5 /* Montserrat-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC4B9CE5311F497EB9F5C964 /* Montserrat-BoldItalic.ttf */; };
+		5BD1D05E7BA346AC9FF6F457 /* Montserrat-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC4B9CE5311F497EB9F5C964 /* Montserrat-BoldItalic.ttf */; };
+		7FF72A7EA9C4443998881469 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76ADFA1DD184E669CE426A5 /* Montserrat-Light.ttf */; };
+		220269C7FDB542CE87D2BB34 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76ADFA1DD184E669CE426A5 /* Montserrat-Light.ttf */; };
+		0DAB4FFE9B1E4A67A4B8ECB3 /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4640910338DB4051AACEC47B /* Montserrat-ThinItalic.ttf */; };
+		2D56E7B443554263B51FAB24 /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4640910338DB4051AACEC47B /* Montserrat-ThinItalic.ttf */; };
+		CFED3D63D1074AB080BC9846 /* Montserrat-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED66F573C68047E1B5546CB9 /* Montserrat-ExtraLight.ttf */; };
+		294CAADBFA1B4E07BC092D5F /* Montserrat-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED66F573C68047E1B5546CB9 /* Montserrat-ExtraLight.ttf */; };
+		7C2AAF00B39540E1982EEEBD /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 297B516B012941E59482FC99 /* Montserrat-Thin.ttf */; };
+		5B274818EC194827A72EB248 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 297B516B012941E59482FC99 /* Montserrat-Thin.ttf */; };
+		7637069E2BF9459F8D1080EC /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 091DF5D9B68E45EF91062AD5 /* Montserrat-Bold.ttf */; };
+		CFD16BC7F5AF4491B4C816A7 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 091DF5D9B68E45EF91062AD5 /* Montserrat-Bold.ttf */; };
+		AE7F9A96FF1B405A8279A260 /* Montserrat-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 491C1F19E3E246A5B843304D /* Montserrat-MediumItalic.ttf */; };
+		492656DF9205416ABA73D534 /* Montserrat-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 491C1F19E3E246A5B843304D /* Montserrat-MediumItalic.ttf */; };
+		DAB9A08914C84C6D975AED61 /* Montserrat-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C05C64EA5F9467495FE30C7 /* Montserrat-BlackItalic.ttf */; };
+		5B8EBBB5308840A1BDFC771B /* Montserrat-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C05C64EA5F9467495FE30C7 /* Montserrat-BlackItalic.ttf */; };
+		2D9D2EAAE0314E82AADB5E00 /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B4801C5653D7474C8F580FE6 /* Montserrat-SemiBold.ttf */; };
+		8DCFC4DE9463417CA05E53DA /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B4801C5653D7474C8F580FE6 /* Montserrat-SemiBold.ttf */; };
+		371CB3F924534E608C41BC02 /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 574D0265942F45CB8BD40CCA /* Montserrat-ExtraLightItalic.ttf */; };
+		BB61B4710D5845BA85DAD33B /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 574D0265942F45CB8BD40CCA /* Montserrat-ExtraLightItalic.ttf */; };
+		74345A571BB6446B905D1F1B /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 874C6D89484645A1BFB67C65 /* Montserrat-ExtraBold.ttf */; };
+		27FB42DFE7FF4FB28CCB64CF /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 874C6D89484645A1BFB67C65 /* Montserrat-ExtraBold.ttf */; };
+		99A42B087BBE4068805DF553 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B91E7B3B644743E583BB8C66 /* Montserrat-Black.ttf */; };
+		0106A26E48184FB5859BE3F5 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B91E7B3B644743E583BB8C66 /* Montserrat-Black.ttf */; };
+		B6B45FDC2823429789C5AF78 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0B32E303CE924C3D8E35FB9D /* Montserrat-Regular.ttf */; };
+		9DDFE8411DF1428CA5CF836A /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0B32E303CE924C3D8E35FB9D /* Montserrat-Regular.ttf */; };
+		86CDBB1137C84AA8801BD8F3 /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399885E2543A49BC8BB95541 /* Montserrat-Italic.ttf */; };
+		F6B86F6201E34B20BA508CAA /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399885E2543A49BC8BB95541 /* Montserrat-Italic.ttf */; };
+		62C6C8BBA5834B2B988C826B /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85FEAE27FBE64D9B90AAAA6E /* Montserrat-SemiBoldItalic.ttf */; };
+		E0431C93F3824E4AB5CA1F54 /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85FEAE27FBE64D9B90AAAA6E /* Montserrat-SemiBoldItalic.ttf */; };
+		DBD573B0AD9E4C57B6C25A19 /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C76261526C68436487FC3E23 /* Montserrat-ExtraBoldItalic.ttf */; };
+		0EDB21D2CF9541DA916D2F35 /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C76261526C68436487FC3E23 /* Montserrat-ExtraBoldItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,21 +67,59 @@
 		00E356EE1AD99517003FC87E /* MediCareAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MediCareAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* MediCareAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediCareAppTests.m; sourceTree = "<group>"; };
+		06FF5EA8882B4B4E980B7DFB /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		0F6809FDBAE9424780CA299F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		0F75FC03E850410E8653A40B /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MediCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MediCareApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = MediCareApp/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MediCareApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MediCareApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MediCareApp/main.m; sourceTree = "<group>"; };
-	    13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = MediCareApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-MediCareApp-MediCareAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediCareApp-MediCareAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B4392A12AC88292D35C810B /* Pods-MediCareApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp.debug.xcconfig"; path = "Target Support Files/Pods-MediCareApp/Pods-MediCareApp.debug.xcconfig"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-MediCareApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp.release.xcconfig"; path = "Target Support Files/Pods-MediCareApp/Pods-MediCareApp.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp-MediCareAppTests.debug.xcconfig"; path = "Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-MediCareApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediCareApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = MediCareApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		257E556E8D2CF0F87E7E27C9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = MediCareApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		322BDA804525428A9972391E /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		32FCFFCD599CFB49B70CC508 /* libPods-MediCareApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediCareApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		36FA4DBC8E064A2BAB3439BE /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		3EB7D07F571D458DAA3D4BD2 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		500B11C6FF304D7480D93129 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
+		562BE35B14CA4BF393F826BC /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		5CBDCDB4C94548D393D5471D /* FontAwesome6_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Regular.ttf"; sourceTree = "<group>"; };
+		672400283170536760EC9161 /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp-MediCareAppTests.release.xcconfig"; path = "Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		69AE7AF1D82421CA55CEE83A /* Pods-MediCareApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp.debug.xcconfig"; path = "Target Support Files/Pods-MediCareApp/Pods-MediCareApp.debug.xcconfig"; sourceTree = "<group>"; };
+		6EF01C898A9B176F18407D74 /* Pods-MediCareApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp.release.xcconfig"; path = "Target Support Files/Pods-MediCareApp/Pods-MediCareApp.release.xcconfig"; sourceTree = "<group>"; };
+		7255BDA46D4747C790E840A6 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		808E517699E14927865F2708 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MediCareApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp-MediCareAppTests.release.xcconfig"; path = "Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		84D892901E3A765AD67C2BF8 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediCareApp-MediCareAppTests.debug.xcconfig"; path = "Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		920DF1B304AC42F58C95DAC5 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		C1FFE3AEEE214F0581CDEAF5 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		D54F983E746F501E92342A70 /* libPods-MediCareApp-MediCareAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediCareApp-MediCareAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAAEA1CC96784C268061D152 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		DE27E768A63540A5AE820052 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		E1FBD71702A348E9AE059373 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		E696154399C04D47A9D73409 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F6CE6BDCD01E47D0AE2CAEDC /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf"; sourceTree = "<group>"; };
+		F9D868B14017466F9090BE1F /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		7B1D68B9B80F40D9A8878E17 /* Montserrat-LightItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-LightItalic.ttf"; path = "../assets/fonts/Montserrat-LightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8B0CEEAEB20345198B64D0A2 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; name = "Montserrat-Medium.ttf"; path = "../assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EC4B9CE5311F497EB9F5C964 /* Montserrat-BoldItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-BoldItalic.ttf"; path = "../assets/fonts/Montserrat-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B76ADFA1DD184E669CE426A5 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4640910338DB4051AACEC47B /* Montserrat-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-ThinItalic.ttf"; path = "../assets/fonts/Montserrat-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		ED66F573C68047E1B5546CB9 /* Montserrat-ExtraLight.ttf */ = {isa = PBXFileReference; name = "Montserrat-ExtraLight.ttf"; path = "../assets/fonts/Montserrat-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		297B516B012941E59482FC99 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; name = "Montserrat-Thin.ttf"; path = "../assets/fonts/Montserrat-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		091DF5D9B68E45EF91062AD5 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; name = "Montserrat-Bold.ttf"; path = "../assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		491C1F19E3E246A5B843304D /* Montserrat-MediumItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-MediumItalic.ttf"; path = "../assets/fonts/Montserrat-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5C05C64EA5F9467495FE30C7 /* Montserrat-BlackItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-BlackItalic.ttf"; path = "../assets/fonts/Montserrat-BlackItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B4801C5653D7474C8F580FE6 /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; name = "Montserrat-SemiBold.ttf"; path = "../assets/fonts/Montserrat-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		574D0265942F45CB8BD40CCA /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-ExtraLightItalic.ttf"; path = "../assets/fonts/Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		874C6D89484645A1BFB67C65 /* Montserrat-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Montserrat-ExtraBold.ttf"; path = "../assets/fonts/Montserrat-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B91E7B3B644743E583BB8C66 /* Montserrat-Black.ttf */ = {isa = PBXFileReference; name = "Montserrat-Black.ttf"; path = "../assets/fonts/Montserrat-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0B32E303CE924C3D8E35FB9D /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; name = "Montserrat-Regular.ttf"; path = "../assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		399885E2543A49BC8BB95541 /* Montserrat-Italic.ttf */ = {isa = PBXFileReference; name = "Montserrat-Italic.ttf"; path = "../assets/fonts/Montserrat-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		85FEAE27FBE64D9B90AAAA6E /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-SemiBoldItalic.ttf"; path = "../assets/fonts/Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C76261526C68436487FC3E23 /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; name = "Montserrat-ExtraBoldItalic.ttf"; path = "../assets/fonts/Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-MediCareApp-MediCareAppTests.a in Frameworks */,
+				3A7AD9C095C1C0184DE85903 /* libPods-MediCareApp-MediCareAppTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,7 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-MediCareApp.a in Frameworks */,
+				6815CBC29AD7734312434D26 /* libPods-MediCareApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +169,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				257E556E8D2CF0F87E7E27C9 /* PrivacyInfo.xcprivacy */,
 			);
 			name = MediCareApp;
 			sourceTree = "<group>";
@@ -102,8 +178,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-MediCareApp.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-MediCareApp-MediCareAppTests.a */,
+				32FCFFCD599CFB49B70CC508 /* libPods-MediCareApp.a */,
+				D54F983E746F501E92342A70 /* libPods-MediCareApp-MediCareAppTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -124,6 +200,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				90E00F1AD60A4A0C9DEBD2F2 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -139,13 +216,57 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		90E00F1AD60A4A0C9DEBD2F2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0F75FC03E850410E8653A40B /* Fontisto.ttf */,
+				322BDA804525428A9972391E /* Octicons.ttf */,
+				06FF5EA8882B4B4E980B7DFB /* Feather.ttf */,
+				5CBDCDB4C94548D393D5471D /* FontAwesome6_Regular.ttf */,
+				F9D868B14017466F9090BE1F /* Entypo.ttf */,
+				DE27E768A63540A5AE820052 /* FontAwesome5_Brands.ttf */,
+				7255BDA46D4747C790E840A6 /* MaterialCommunityIcons.ttf */,
+				C1FFE3AEEE214F0581CDEAF5 /* AntDesign.ttf */,
+				3EB7D07F571D458DAA3D4BD2 /* Foundation.ttf */,
+				920DF1B304AC42F58C95DAC5 /* Ionicons.ttf */,
+				500B11C6FF304D7480D93129 /* FontAwesome5_Solid.ttf */,
+				36FA4DBC8E064A2BAB3439BE /* FontAwesome5_Regular.ttf */,
+				562BE35B14CA4BF393F826BC /* FontAwesome.ttf */,
+				0F6809FDBAE9424780CA299F /* Zocial.ttf */,
+				E1FBD71702A348E9AE059373 /* EvilIcons.ttf */,
+				F6CE6BDCD01E47D0AE2CAEDC /* FontAwesome6_Solid.ttf */,
+				DAAEA1CC96784C268061D152 /* SimpleLineIcons.ttf */,
+				808E517699E14927865F2708 /* FontAwesome6_Brands.ttf */,
+				E696154399C04D47A9D73409 /* MaterialIcons.ttf */,
+				7B1D68B9B80F40D9A8878E17 /* Montserrat-LightItalic.ttf */,
+				8B0CEEAEB20345198B64D0A2 /* Montserrat-Medium.ttf */,
+				EC4B9CE5311F497EB9F5C964 /* Montserrat-BoldItalic.ttf */,
+				B76ADFA1DD184E669CE426A5 /* Montserrat-Light.ttf */,
+				4640910338DB4051AACEC47B /* Montserrat-ThinItalic.ttf */,
+				ED66F573C68047E1B5546CB9 /* Montserrat-ExtraLight.ttf */,
+				297B516B012941E59482FC99 /* Montserrat-Thin.ttf */,
+				091DF5D9B68E45EF91062AD5 /* Montserrat-Bold.ttf */,
+				491C1F19E3E246A5B843304D /* Montserrat-MediumItalic.ttf */,
+				5C05C64EA5F9467495FE30C7 /* Montserrat-BlackItalic.ttf */,
+				B4801C5653D7474C8F580FE6 /* Montserrat-SemiBold.ttf */,
+				574D0265942F45CB8BD40CCA /* Montserrat-ExtraLightItalic.ttf */,
+				874C6D89484645A1BFB67C65 /* Montserrat-ExtraBold.ttf */,
+				B91E7B3B644743E583BB8C66 /* Montserrat-Black.ttf */,
+				0B32E303CE924C3D8E35FB9D /* Montserrat-Regular.ttf */,
+				399885E2543A49BC8BB95541 /* Montserrat-Italic.ttf */,
+				85FEAE27FBE64D9B90AAAA6E /* Montserrat-SemiBoldItalic.ttf */,
+				C76261526C68436487FC3E23 /* Montserrat-ExtraBoldItalic.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-MediCareApp.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-MediCareApp.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */,
+				69AE7AF1D82421CA55CEE83A /* Pods-MediCareApp.debug.xcconfig */,
+				6EF01C898A9B176F18407D74 /* Pods-MediCareApp.release.xcconfig */,
+				84D892901E3A765AD67C2BF8 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */,
+				672400283170536760EC9161 /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -157,12 +278,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "MediCareAppTests" */;
 			buildPhases = (
-				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
+				E31D62FBB4D70D38D6F97946 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
+				BA1B4B2C3C658306CEBD80B3 /* [CP] Embed Pods Frameworks */,
+				650006F7FBE056D2E71DA41F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -178,13 +299,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MediCareApp" */;
 			buildPhases = (
-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				EB94963F578D4CC7A12C36E8 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				DAA3116AA3FDFAB1EC8C94E6 /* [CP] Embed Pods Frameworks */,
+				87DF0B7B3CCA29C163388296 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,6 +357,24 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D649D2C7A34452B91B24352 /* Montserrat-LightItalic.ttf in Resources */,
+				CFCC1D34E39E403CB3181B63 /* Montserrat-Medium.ttf in Resources */,
+				5BD1D05E7BA346AC9FF6F457 /* Montserrat-BoldItalic.ttf in Resources */,
+				220269C7FDB542CE87D2BB34 /* Montserrat-Light.ttf in Resources */,
+				2D56E7B443554263B51FAB24 /* Montserrat-ThinItalic.ttf in Resources */,
+				294CAADBFA1B4E07BC092D5F /* Montserrat-ExtraLight.ttf in Resources */,
+				5B274818EC194827A72EB248 /* Montserrat-Thin.ttf in Resources */,
+				CFD16BC7F5AF4491B4C816A7 /* Montserrat-Bold.ttf in Resources */,
+				492656DF9205416ABA73D534 /* Montserrat-MediumItalic.ttf in Resources */,
+				5B8EBBB5308840A1BDFC771B /* Montserrat-BlackItalic.ttf in Resources */,
+				8DCFC4DE9463417CA05E53DA /* Montserrat-SemiBold.ttf in Resources */,
+				BB61B4710D5845BA85DAD33B /* Montserrat-ExtraLightItalic.ttf in Resources */,
+				27FB42DFE7FF4FB28CCB64CF /* Montserrat-ExtraBold.ttf in Resources */,
+				0106A26E48184FB5859BE3F5 /* Montserrat-Black.ttf in Resources */,
+				9DDFE8411DF1428CA5CF836A /* Montserrat-Regular.ttf in Resources */,
+				F6B86F6201E34B20BA508CAA /* Montserrat-Italic.ttf in Resources */,
+				E0431C93F3824E4AB5CA1F54 /* Montserrat-SemiBoldItalic.ttf in Resources */,
+				0EDB21D2CF9541DA916D2F35 /* Montserrat-ExtraBoldItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +384,25 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				2BAF7459F39E3CC9D57B97CC /* PrivacyInfo.xcprivacy in Resources */,
+				2BCF13CE3FA6440D832A963A /* Montserrat-LightItalic.ttf in Resources */,
+				30A41FB8ABC44A34A77D4A80 /* Montserrat-Medium.ttf in Resources */,
+				480A49A10AAC4275B8A50DC5 /* Montserrat-BoldItalic.ttf in Resources */,
+				7FF72A7EA9C4443998881469 /* Montserrat-Light.ttf in Resources */,
+				0DAB4FFE9B1E4A67A4B8ECB3 /* Montserrat-ThinItalic.ttf in Resources */,
+				CFED3D63D1074AB080BC9846 /* Montserrat-ExtraLight.ttf in Resources */,
+				7C2AAF00B39540E1982EEEBD /* Montserrat-Thin.ttf in Resources */,
+				7637069E2BF9459F8D1080EC /* Montserrat-Bold.ttf in Resources */,
+				AE7F9A96FF1B405A8279A260 /* Montserrat-MediumItalic.ttf in Resources */,
+				DAB9A08914C84C6D975AED61 /* Montserrat-BlackItalic.ttf in Resources */,
+				2D9D2EAAE0314E82AADB5E00 /* Montserrat-SemiBold.ttf in Resources */,
+				371CB3F924534E608C41BC02 /* Montserrat-ExtraLightItalic.ttf in Resources */,
+				74345A571BB6446B905D1F1B /* Montserrat-ExtraBold.ttf in Resources */,
+				99A42B087BBE4068805DF553 /* Montserrat-Black.ttf in Resources */,
+				B6B45FDC2823429789C5AF78 /* Montserrat-Regular.ttf in Resources */,
+				86CDBB1137C84AA8801BD8F3 /* Montserrat-Italic.ttf in Resources */,
+				62C6C8BBA5834B2B988C826B /* Montserrat-SemiBoldItalic.ttf in Resources */,
+				DBD573B0AD9E4C57B6C25A19 /* Montserrat-ExtraBoldItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +425,58 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+		650006F7FBE056D2E71DA41F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		87DF0B7B3CCA29C163388296 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BA1B4B2C3C658306CEBD80B3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DAA3116AA3FDFAB1EC8C94E6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -284,7 +493,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
+		E31D62FBB4D70D38D6F97946 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,7 +515,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+		EB94963F578D4CC7A12C36E8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -326,57 +535,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp/Pods-MediCareApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediCareApp-MediCareAppTests/Pods-MediCareApp-MediCareAppTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -412,7 +570,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */;
+			baseConfigurationReference = 84D892901E3A765AD67C2BF8 /* Pods-MediCareApp-MediCareAppTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -439,7 +597,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */;
+			baseConfigurationReference = 672400283170536760EC9161 /* Pods-MediCareApp-MediCareAppTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -463,11 +621,12 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-MediCareApp.debug.xcconfig */;
+			baseConfigurationReference = 69AE7AF1D82421CA55CEE83A /* Pods-MediCareApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 238LX3NF32;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MediCareApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -490,11 +649,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-MediCareApp.release.xcconfig */;
+			baseConfigurationReference = 6EF01C898A9B176F18407D74 /* Pods-MediCareApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 238LX3NF32;
 				INFOPLIST_FILE = MediCareApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -517,6 +677,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -544,6 +705,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CXX = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -563,6 +725,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -582,7 +746,13 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -590,6 +760,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -617,6 +788,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				CXX = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -629,6 +801,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -647,7 +821,13 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
