@@ -107,7 +107,14 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
 
   const filteredConsultants = useMemo(() => {
     if (!consultants) return [];
-    let result = consultants;
+    // First deduplicate by consl_id to remove duplicate doctors
+    const seen = new Map<string, typeof consultants[0]>();
+    consultants.forEach(c => {
+      if (!seen.has(c.consl_id)) {
+        seen.set(c.consl_id, c);
+      }
+    });
+    let result = Array.from(seen.values());
     if (selectedSpeciality) {
       result = result.filter(c => c.mdept_desc?.trim() === selectedSpeciality);
     }
@@ -285,7 +292,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
 
       <FlatList
         data={!isLoading && !isError ? filteredConsultants : []}
-        keyExtractor={(item) => item.consl_id}
+        keyExtractor={(item, index) => item.consl_id ? `${item.consl_id}-${index}` : index.toString()}
         contentContainerStyle={styles.body}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}

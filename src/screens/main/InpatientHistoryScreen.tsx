@@ -141,7 +141,7 @@ const InpatientHistoryScreen: React.FC<Props> = ({ navigation }) => {
           !isError &&
           selectedMrNo &&
           (reports.length > 0 ? (
-            reports.map((data: InpatientReport) => {
+            reports.map((data: InpatientReport, index: number) => {
               const formattedAdmitDate = new Date(
                 data.adm_date,
               ).toLocaleDateString('en-US', {
@@ -162,7 +162,7 @@ const InpatientHistoryScreen: React.FC<Props> = ({ navigation }) => {
                 : 'Present';
 
               return (
-                <View key={data.test_id} style={styles.card}>
+                <View key={`${data.test_id}-${index}`} style={styles.card}>
                   <View style={styles.admitBanner}>
                     <Icon
                       name="local-hospital"

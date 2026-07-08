@@ -529,6 +529,7 @@ const styles = StyleSheet.create({
     right: moderateScale(20),
     borderRadius: moderateScale(20),
     overflow: 'hidden',
+    backgroundColor: Colors.redPrimary,
     shadowColor: Colors.redPrimary,
     shadowOpacity: 0.3,
     shadowRadius: 12,

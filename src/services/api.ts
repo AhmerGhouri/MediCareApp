@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '../store';
 
 // ─── Base Configuration ────────────────────────────────────────
-const BASE_URL = 'http://172.20.0.250:80';
+const BASE_URL = 'http://api.medicarehospital.pk';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -143,6 +143,41 @@ export interface Consultant {
   consl_mdept_id: string;
   mdept_desc: string;
   consl_img: string; // Base64 encoded image
+}
+
+export interface TimeSlot {
+  time_fr: string;
+  time_to: string;
+  time_slot: string;
+  mr_no?: string;
+  "mr #"?: string;
+}
+
+export interface AppointmentSlotData {
+  time_days: string;
+  time_date: string;
+  time_slot: TimeSlot[];
+}
+
+export interface AppointmentSlotsResponse {
+  consl_id: string;
+  consl_name: string;
+  dept_id: string;
+  Dept: string;
+  appointments: AppointmentSlotData[];
+}
+
+export interface CreateAppointmentRequest {
+  tran_id: number;
+  consl_id: string;
+  appoint_date: string; // "YYYY-MM-DD" or depending on backend (user example is "string")
+  mobile_number: string;
+  from_time: string; // e.g., "10:00"
+  to_time: string;   // e.g., "14:00"
+  appointment_day: string;
+  appoint_time: string; // e.g., "10:00"
+  opat_id: string;
+  patient_name: string;
 }
 
 export interface UpcomingFollowUp {
@@ -359,7 +394,7 @@ export const fetchConsultantsApi = async (): Promise<Consultant[]> => {
     const response = await api.get<Consultant[]>(`patients/consultants`);
 
     if (Array.isArray(response.data)) {
-      console.log("Consultants Data:", response.data);
+      // console.log("Consultants Data:", response.data);
       return response.data;
 
     }
@@ -371,6 +406,42 @@ export const fetchConsultantsApi = async (): Promise<Consultant[]> => {
   } catch (error) {
     console.error('Error fetching consultants data:', error);
     throw error;
+  }
+};
+
+export const fetchAppointmentSlotsApi = async (
+  opat_id: string,
+  consl_id: string,
+  date: string,
+): Promise<AppointmentSlotsResponse> => {
+  try {
+    const response = await api.get<AppointmentSlotsResponse>(
+      `/patients/${opat_id}/${consl_id}/${date}/appointments`
+    );
+    console.log("data", response)
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.detail || 'Unable to fetch appointment slots. Please try again.'
+    );
+  }
+};
+
+export const createAppointmentApi = async (
+  opat_id: string,
+  consl_id: string,
+  data: CreateAppointmentRequest
+): Promise<any> => {
+  try {
+    const response = await api.post(
+      `/patients/${opat_id}/${consl_id}/createappointment`,
+      data
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.detail || 'Unable to book appointment. Please try again.'
+    );
   }
 };
 

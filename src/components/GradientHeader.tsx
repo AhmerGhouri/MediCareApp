@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderBottomLeftRadius: 30, // Sleek curve at the bottom
     borderBottomRightRadius: 30,
+    backgroundColor: Colors.redDeep,
     shadowColor: Colors.redDeep,
     shadowOffset: {width: 0, height: 10},
     shadowOpacity: 0.15,

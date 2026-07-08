@@ -637,6 +637,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: moderateScale(2.5),
+    backgroundColor: Colors.redPrimary,
     shadowColor: Colors.redPrimary,
     shadowOpacity: 0.15,
     shadowRadius: 8,

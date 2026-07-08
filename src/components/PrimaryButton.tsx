@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(16),
     marginVertical: verticalScale(16),
     borderRadius: moderateScale(16),
+    backgroundColor: Colors.redPrimary,
     shadowColor: Colors.redDeep,
     shadowOpacity: 0.25,
     shadowRadius: 10,

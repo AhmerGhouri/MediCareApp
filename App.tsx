@@ -11,9 +11,9 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes — data stays fresh, no re-fetch on re-mount
       gcTime: 10 * 60 * 1000, // 10 minutes — keep cache alive in memory
-      refetchOnWindowFocus: false, // Mobile app — no window focus events
-      refetchOnReconnect: false, // Avoid automatic refetch on network reconnect
-      retry: 1, // Only retry once on failure (default is 3, causing extra requests)
+      refetchOnWindowFocus: true, // Mobile app — no window focus events
+      refetchOnReconnect: true, // Avoid automatic refetch on network reconnect
+      retry: 3, // Only retry once on failure (default is 3, causing extra requests)
     }
   },
 });

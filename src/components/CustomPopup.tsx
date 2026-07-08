@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: verticalScale(16),
+    backgroundColor: Colors.redPrimary,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
