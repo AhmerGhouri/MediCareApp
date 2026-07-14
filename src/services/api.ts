@@ -66,7 +66,8 @@ export const getLabReportDownloadUrl = (
   testd_id: string,
 ): string => {
   const idParam = `${testm_id}-${testd_id}`;
-  return `${REPORT_BASE_URL}?report=LAB_APPROVAL_REP.rep&cmdkey=orarep&ID=AND%20(ltestd_ltestm_id%20%7C%7C%20%27-%27%20%7C%7C%20to_char(ltestd_ltest_id))%20IN%20(%27${idParam}%27)%20&ID1=AND%20(LCULRESD_LCULRESM_LTESTM_ID%20%7C%7C%20%27-%27%20%7C%7C%20(LCULRESD_LCULRESM_LTEST_ID))%20%20IN%20(%27${idParam}%27)`;
+  const url = `${REPORT_BASE_URL}?report=LAB_APPROVAL_REP.rep&cmdkey=orarep&ID=AND%20(ltestd_ltestm_id%20%7C%7C%20%27-%27%20%7C%7C%20to_char(ltestd_ltest_id))%20IN%20(%27${idParam}%27)%20&ID1=AND%20(LCULRESD_LCULRESM_LTESTM_ID%20%7C%7C%20%27-%27%20%7C%7C%20(LCULRESD_LCULRESM_LTEST_ID))%20%20IN%20(%27${idParam}%27)`;
+  return url.replace(/ /g, '%20');
 };
 
 // ─── Report Download URL Builder ───────────────────────────────
@@ -75,7 +76,8 @@ export const getLabReportDownloadUrl = (
 
 export const getRadiologyReportDownloadUrl = (test_id: number): string => {
   const idParam = `${test_id}`;
-  return `${REPORT_BASE_URL}?report=RADIOLOGY_REP1.rep&cmdkey=orarep&ID=AND%20REPTM_billm_id%20IN%20(${idParam})`;
+  const url = `${REPORT_BASE_URL}?report=RADIOLOGY_REP1.rep&cmdkey=orarep&ID=AND%20REPTM_billm_id%20IN%20(${idParam})`;
+  return url.replace(/ /g, '%20');
 };
 
 export interface LabReportsResponse {
@@ -227,6 +229,11 @@ export interface TodaysClinicResponse {
   consultations: TodaysClinicConsultation[];
 }
 
+interface Eligibility {
+  authorized: boolean,
+  status?: string | undefined,
+  message?: string | undefined
+}
 // ─── Auth Endpoints ────────────────────────────────────────────
 
 export const loginApi = async (
@@ -250,7 +257,7 @@ export const registerApi = async (
 /** Check if mobile number is allowed to register (exists in hospital DB) */
 export const checkRegistrationEligibilityApi = async (
   mobile_number: string,
-): Promise<{ authorized: boolean }> => {
+): Promise<Eligibility> => {
   try {
     const response = await api.post<{ authorized: boolean }>(
       '/auth/check-eligibility',
@@ -258,8 +265,10 @@ export const checkRegistrationEligibilityApi = async (
         mobile_number,
       },
     );
+    console.log(response.data)
     return response.data;
   } catch (error: any) {
+    console.log("respo", error)
     if (error?.response?.status === 404) {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -497,7 +506,7 @@ export const verifyMobileApi = async (
     const response = await api.post<{
       registered: boolean;
       masked_email: string;
-    }>('/auth/verify-mobile', {
+    }>('/auth/check-eligibility', {
       mobile_number,
     });
     return response.data;
@@ -571,17 +580,17 @@ export const verifyOtpApi = async (data: {
 
 /** Step 4: Reset password with the verified token */
 export const resetPasswordApi = async (data: {
-  reset_token: string;
+  // reset_token: string;
   mobile_number: string;
-  new_password: string;
+  password: string;
 }): Promise<{ success: boolean }> => {
   try {
     const response = await api.post<{ success: boolean }>(
       '/auth/reset-password',
       {
-        reset_token: data.reset_token,
+        // reset_token: data.reset_token,
         mobile_number: data.mobile_number,
-        new_password: data.new_password,
+        password: data.password,
       },
     );
     return response.data;
@@ -589,7 +598,7 @@ export const resetPasswordApi = async (data: {
     if (error?.response?.status === 404) {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          if (data.new_password.length < 6) {
+          if (data.password.length < 6) {
             return reject(new Error('Password must be at least 6 characters.'));
           }
           resolve({ success: true });

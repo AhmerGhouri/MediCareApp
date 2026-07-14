@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,12 +14,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../navigation/AppNavigator';
-import {useQuery} from '@tanstack/react-query';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import {
   fetchRadiologyReportsApi,
   RadiologyReport,
@@ -27,12 +27,12 @@ import {
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import DownloadSuccessModal from '../../components/DownloadSuccessModal';
-import {Colors} from '../../theme/colors';
-import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
+import { Colors } from '../../theme/colors';
+import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 const STATUS_MAP: Record<
   string,
-  {label: string; bg: string; text: string; icon: string}
+  { label: string; bg: string; text: string; icon: string }
 > = {
   Approved: {
     label: 'Approved',
@@ -75,14 +75,14 @@ const RadiologyScreen: React.FC = () => {
     testName: string;
     fileName: string;
     filePath: string;
-  }>({visible: false, testName: '', fileName: '', filePath: ''});
+  }>({ visible: false, testName: '', fileName: '', filePath: '' });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const selectedMrNo = useSelector(
     (state: RootState) => state.auth.selectedMrNo,
   );
 
-  const {data, isLoading, isError, error, refetch} = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['radiology', selectedMrNo],
     queryFn: () => fetchRadiologyReportsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
@@ -134,7 +134,7 @@ const RadiologyScreen: React.FC = () => {
         '_',
       )}_${report.test_id}.pdf`;
 
-      const {dirs} = ReactNativeBlobUtil.fs;
+      const { dirs } = ReactNativeBlobUtil.fs;
       const downloadDir =
         Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
       const filePath = `${downloadDir}/${fileName}`;
@@ -152,11 +152,23 @@ const RadiologyScreen: React.FC = () => {
           },
         }).fetch('GET', url);
 
+        let finalPath = res.path();
+        const cachePath = `${dirs.CacheDir}/${fileName}`;
+        try {
+          if (await ReactNativeBlobUtil.fs.exists(cachePath)) {
+            await ReactNativeBlobUtil.fs.unlink(cachePath);
+          }
+          await ReactNativeBlobUtil.fs.cp(res.path(), cachePath);
+          finalPath = cachePath;
+        } catch (copyErr) {
+          console.log('Error copying downloaded file to cache:', copyErr);
+        }
+
         setDownloadModal({
           visible: true,
           testName: report.test_desc,
           fileName,
-          filePath: res.path(),
+          filePath: finalPath,
         });
       } else {
         const res = await ReactNativeBlobUtil.config({
@@ -195,7 +207,7 @@ const RadiologyScreen: React.FC = () => {
       <ScrollView
         style={styles.body}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: verticalScale(100)}}>
+        contentContainerStyle={{ paddingBottom: verticalScale(100) }}>
         {/* Search bar */}
         <View style={styles.searchBar}>
           <Icon name="search" size={normalize(20)} color={Colors.textLight} />
@@ -211,19 +223,19 @@ const RadiologyScreen: React.FC = () => {
         {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={[styles.statCard]}>
-            <Text style={[styles.statNum, {color: Colors.redPrimary}]}>
+            <Text style={[styles.statNum, { color: Colors.redPrimary }]}>
               {total}
             </Text>
             <Text style={styles.statLabel}>Total</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, {color: Colors.yellowDeep}]}>
+            <Text style={[styles.statNum, { color: Colors.yellowDeep }]}>
               {pending}
             </Text>
             <Text style={styles.statLabel}>Pending</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, {color: Colors.green}]}>{final}</Text>
+            <Text style={[styles.statNum, { color: Colors.green }]}>{final}</Text>
             <Text style={styles.statLabel}>Final</Text>
           </View>
         </View>
@@ -289,14 +301,14 @@ const RadiologyScreen: React.FC = () => {
                   <View
                     style={[
                       styles.cardHeader,
-                      {backgroundColor: statusStyle.bg},
+                      { backgroundColor: statusStyle.bg },
                     ]}>
                     {/* Left: icon + name */}
                     <View style={styles.cardHeaderLeft}>
                       <View
                         style={[
                           styles.cardIconWrap,
-                          {backgroundColor: statusStyle.text + '22'},
+                          { backgroundColor: statusStyle.text + '22' },
                         ]}>
                         <Icon
                           name="biotech"
@@ -364,13 +376,13 @@ const RadiologyScreen: React.FC = () => {
                         <Text style={styles.infoValue} numberOfLines={1}>
                           {report.test_req_date
                             ? new Date(report.test_req_date).toLocaleDateString(
-                                'en-GB',
-                                {
-                                  day: '2-digit',
-                                  month: 'short',
-                                  year: 'numeric',
-                                },
-                              )
+                              'en-GB',
+                              {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                              },
+                            )
                             : '—'}
                         </Text>
                       </View>
@@ -419,7 +431,7 @@ const RadiologyScreen: React.FC = () => {
                     style={[
                       styles.downloadFooterBtn,
                       downloadingId === report.test_id &&
-                        styles.downloadFooterBtnDisabled,
+                      styles.downloadFooterBtnDisabled,
                     ]}
                     onPress={() => handleDownloadReport(report)}
                     activeOpacity={0.8}
@@ -451,17 +463,19 @@ const RadiologyScreen: React.FC = () => {
         visible={downloadModal.visible}
         testName={downloadModal.testName}
         fileName={downloadModal.fileName}
-        onDismiss={() => setDownloadModal(prev => ({...prev, visible: false}))}
+        onDismiss={() => setDownloadModal(prev => ({ ...prev, visible: false }))}
         onOpen={() => {
-          setDownloadModal(prev => ({...prev, visible: false}));
-          if (Platform.OS === 'android') {
-            ReactNativeBlobUtil.android.actionViewIntent(
-              downloadModal.filePath,
-              'application/pdf',
-            );
-          } else {
-            ReactNativeBlobUtil.ios.openDocument(downloadModal.filePath);
-          }
+          setDownloadModal(prev => ({ ...prev, visible: false }));
+          setTimeout(() => {
+            if (Platform.OS === 'android') {
+              ReactNativeBlobUtil.android.actionViewIntent(
+                downloadModal.filePath,
+                'application/pdf',
+              );
+            } else {
+              ReactNativeBlobUtil.ios.openDocument(downloadModal.filePath);
+            }
+          }, 350);
         }}
       />
     </View>
@@ -469,8 +483,8 @@ const RadiologyScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  body: {flex: 1},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  body: { flex: 1 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -506,10 +520,10 @@ const styles = StyleSheet.create({
     shadowColor: Colors.redPrimary,
     shadowOpacity: 0.05,
     shadowRadius: 10,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     elevation: 2,
   },
-  statNum: {fontSize: normalize(20), fontWeight: '800'},
+  statNum: { fontSize: normalize(20), fontWeight: '800' },
   statLabel: {
     fontSize: normalize(9),
     fontWeight: '700',
@@ -547,7 +561,7 @@ const styles = StyleSheet.create({
     color: Colors.redPrimary,
     fontWeight: '700',
   },
-  listWrap: {paddingHorizontal: moderateScale(16)},
+  listWrap: { paddingHorizontal: moderateScale(16) },
 
   // ── Premium Report Card ─────────────────────────────────────
   reportCard: {
@@ -558,7 +572,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 14,
-    shadowOffset: {width: 0, height: 6},
+    shadowOffset: { width: 0, height: 6 },
     elevation: 4,
   },
 
@@ -584,7 +598,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cardTitleWrap: {flex: 1},
+  cardTitleWrap: { flex: 1 },
   reportTitle: {
     fontSize: normalize(13),
     fontWeight: '700',

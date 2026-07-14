@@ -285,7 +285,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const handleLogout = () => {
     setShowLogoutPopup(false);
     dispatch(logout());
-    navigation.replace('Login');
+    const parent = navigation.getParent();
+    if (parent) {
+      parent.replace('Login');
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
+    }
   };
 
   const getCardTheme = (type: string) => {

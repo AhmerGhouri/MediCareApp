@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,39 +8,42 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../navigation/AppNavigator';
-import {useMutation} from '@tanstack/react-query';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useMutation } from '@tanstack/react-query';
 import {
   verifyMobileApi,
   sendOtpApi,
   verifyOtpApi,
   resetPasswordApi,
+  checkRegistrationEligibilityApi,
 } from '../../services/api';
 import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import {Colors} from '../../theme/colors';
-import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
+import { Colors } from '../../theme/colors';
+import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ForgotPassword'>;
 };
 
 const STEP_INFO = [
-  {title: 'Verify Identity', subtitle: 'Enter your registered mobile number'},
-  {title: 'OTP Verification', subtitle: 'Enter the code sent to your email'},
-  {title: 'New Password', subtitle: 'Create a fresh new password'},
+  { title: 'Verify Identity', subtitle: 'Enter your registered mobile number' },
+  { title: 'OTP Verification', subtitle: 'Enter the code sent to your email' },
+  { title: 'New Password', subtitle: 'Create a fresh new password' },
 ];
 
-const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
+const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   // Step: 1 = Enter mobile, 2 = OTP, 3 = New password
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Field states
   const [phone, setPhone] = useState('');
   const [maskedEmail, setMaskedEmail] = useState('');
+  const [email, setEmail] = useState('');
+  const [visible, setVisible] = useState<boolean>(false)
   const [otpInput, setOtpInput] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -54,7 +57,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
     message: string;
     primaryLabel?: string;
     onPrimary?: () => void;
-  }>({visible: false, type: 'info', title: '', message: ''});
+  }>({ visible: false, type: 'info', title: '', message: '' });
 
   const showPopup = (
     type: 'success' | 'error' | 'warning' | 'info',
@@ -63,7 +66,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
     primaryLabel?: string,
     onPrimary?: () => void,
   ) => {
-    setPopup({visible: true, type, title, message, primaryLabel, onPrimary});
+    setPopup({ visible: true, type, title, message, primaryLabel, onPrimary });
   };
 
   // ─── Step 1: Verify Mobile ───────────────────────────────────
@@ -99,8 +102,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
       showPopup(
         'success',
         'OTP Sent',
-        `A verification code has been sent to ${
-          maskedEmail || 'your registered email'
+        `A verification code has been sent to ${maskedEmail || 'your registered email'
         }.`,
       );
     },
@@ -115,7 +117,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
 
   // ─── Step 3: Verify OTP ──────────────────────────────────────
   const verifyOtpMut = useMutation({
-    mutationFn: () => verifyOtpApi({mobile_number: phone, otp: otpInput}),
+    mutationFn: () => verifyOtpApi({ mobile_number: phone, otp: otpInput }),
     onSuccess: data => {
       setResetToken(data.reset_token);
       setStep(3);
@@ -131,9 +133,9 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
   const resetPasswordMut = useMutation({
     mutationFn: () =>
       resetPasswordApi({
-        reset_token: resetToken,
+        // reset_token: resetToken,
         mobile_number: phone,
-        new_password: newPassword,
+        password: newPassword,
       }),
     onSuccess: () => {
       showPopup(
@@ -142,7 +144,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
         'Your password has been reset successfully! Please login with your new password.',
         'Go to Login',
         () => {
-          setPopup(prev => ({...prev, visible: false}));
+          setPopup(prev => ({ ...prev, visible: false }));
           navigation.navigate('Login');
         },
       );
@@ -156,6 +158,37 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
     },
   });
 
+  // ─── Check Registered Number ──────────────────────────────────────────────── 
+
+  const checkEligibilityMutation = useMutation({
+    mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
+    onSuccess: data => {
+      if (!data.authorized) {
+        console.log("error")
+        setVisible(true)
+        if (email !== '') {
+
+          setStep(2);
+        }
+        return;
+      }
+      else {
+        showPopup(
+          'error',
+          data.status || 'Error',
+          data.message || 'You are not authorized to use the app. This mobile number is not registered in the hospital database.',
+        );
+      }
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.detail ||
+        error?.message ||
+        'Authorization check failed. Please try again.';
+      showPopup('error', 'Check Failed', message);
+    },
+  });
+
   // ─── Handlers ────────────────────────────────────────────────
   const handleVerifyMobile = () => {
     if (!phone.trim() || phone.length < 10) {
@@ -166,7 +199,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
       );
       return;
     }
-    verifyMobileMut.mutate();
+    checkEligibilityMutation.mutate(phone);
   };
 
   const handleVerifyOtp = () => {
@@ -240,8 +273,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
                 s < step
                   ? styles.dotDone
                   : s === step
-                  ? styles.dotActive
-                  : styles.dotInactive,
+                    ? styles.dotActive
+                    : styles.dotInactive,
               ]}
             />
           ))}
@@ -272,6 +305,16 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
                 keyboardType="phone-pad"
                 maxLength={11}
               />
+              {visible &&
+                <InputField
+                  label="Email Address"
+                  iconName="mail-outline"
+                  placeholder="john@example.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  // value={email}
+                  onChangeText={setEmail}
+                />}
               <View style={styles.btnWrapper}>
                 <PrimaryButton
                   label={
@@ -301,6 +344,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
                 We sent a verification code to{' '}
                 <Text style={styles.highlight}>{maskedEmail}</Text>.{'\n'}Enter
                 the 4-digit code below.
+                {'\n'}
+                Demo Code : 1234
               </Text>
               <InputField
                 label="4-Digit OTP Code"
@@ -381,7 +426,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
           <ActivityIndicator
             size="small"
             color={Colors.redPrimary}
-            style={{marginTop: verticalScale(16)}}
+            style={{ marginTop: verticalScale(16) }}
           />
         )}
       </ScrollView>
@@ -395,17 +440,17 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
         primaryLabel={popup.primaryLabel}
         onPrimary={
           popup.onPrimary ||
-          (() => setPopup(prev => ({...prev, visible: false})))
+          (() => setPopup(prev => ({ ...prev, visible: false })))
         }
-        onDismiss={() => setPopup(prev => ({...prev, visible: false}))}
+        onDismiss={() => setPopup(prev => ({ ...prev, visible: false }))}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  body: {flex: 1},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  body: { flex: 1 },
   bodyContent: {
     paddingBottom: verticalScale(40),
     paddingTop: verticalScale(10),
@@ -417,10 +462,10 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: verticalScale(18),
   },
-  dot: {height: moderateScale(6), borderRadius: moderateScale(3)},
-  dotActive: {width: moderateScale(20), backgroundColor: Colors.redPrimary},
-  dotDone: {width: moderateScale(20), backgroundColor: '#10B981'},
-  dotInactive: {width: moderateScale(6), backgroundColor: '#E5E7EB'},
+  dot: { height: moderateScale(6), borderRadius: moderateScale(3) },
+  dotActive: { width: moderateScale(20), backgroundColor: Colors.redPrimary },
+  dotDone: { width: moderateScale(20), backgroundColor: '#10B981' },
+  dotInactive: { width: moderateScale(6), backgroundColor: '#E5E7EB' },
 
   card: {
     backgroundColor: Colors.white,
@@ -430,7 +475,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 15,
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     elevation: 4,
   },
   iconRow: {

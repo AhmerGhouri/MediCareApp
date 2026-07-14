@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../navigation/AppNavigator';
-import {useMutation} from '@tanstack/react-query';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useMutation } from '@tanstack/react-query';
 import {
   registerApi,
   RegisterPayload,
@@ -20,8 +20,8 @@ import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import {Colors} from '../../theme/colors';
-import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
+import { Colors } from '../../theme/colors';
+import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Register'>;
@@ -62,7 +62,7 @@ const parseDob = (input: string): string | null => {
   return `${year}-${month}-${day}`;
 };
 
-const RegisterScreen: React.FC<Props> = ({navigation}) => {
+const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -79,7 +79,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
     message: string;
     primaryLabel?: string;
     onPrimary?: () => void;
-  }>({visible: false, type: 'info', title: '', message: ''});
+  }>({ visible: false, type: 'info', title: '', message: '' });
 
   const showPopup = (
     type: 'success' | 'error' | 'warning' | 'info',
@@ -88,7 +88,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
     primaryLabel?: string,
     onPrimary?: () => void,
   ) => {
-    setPopup({visible: true, type, title, message, primaryLabel, onPrimary});
+    setPopup({ visible: true, type, title, message, primaryLabel, onPrimary });
   };
 
   const registerMutation = useMutation({
@@ -100,7 +100,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
         `${data.message}. Please login with your credentials.`,
         'Go to Login',
         () => {
-          setPopup(prev => ({...prev, visible: false}));
+          setPopup(prev => ({ ...prev, visible: false }));
           navigation.navigate('Login');
         },
       );
@@ -111,6 +111,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
         error?.message ||
         'Registration failed. Please try again.';
       showPopup('error', 'Registration Failed', message);
+
     },
   });
 
@@ -118,10 +119,11 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
     mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
     onSuccess: data => {
       if (!data.authorized) {
+        console.log("error")
         showPopup(
           'error',
-          'Not Authorized',
-          'You are not authorized to use the app. This mobile number is not registered in the hospital database.',
+          data.status || 'Error',
+          data.message || 'You are not authorized to use the app. This mobile number is not registered in the hospital database.',
         );
         return;
       }
@@ -207,6 +209,15 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
 
         <View style={styles.card}>
           <InputField
+            label="Phone Number"
+            iconName="phone-iphone"
+            placeholder="03001234567"
+            keyboardType="phone-pad"
+            value={phone}
+            maxLength={11}
+            onChangeText={setPhone}
+          />
+          <InputField
             label="Full Name"
             iconName="person-outline"
             placeholder="John Smith"
@@ -221,15 +232,6 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
-          />
-          <InputField
-            label="Phone Number"
-            iconName="phone-iphone"
-            placeholder="03001234567"
-            keyboardType="phone-pad"
-            value={phone}
-            maxLength={11}
-            onChangeText={setPhone}
           />
           <InputField
             label="Date of Birth"
@@ -299,7 +301,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
           <ActivityIndicator
             size="small"
             color={Colors.redPrimary}
-            style={{marginTop: verticalScale(12)}}
+            style={{ marginTop: verticalScale(12) }}
           />
         )}
 
@@ -307,7 +309,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
           <Text style={styles.footerText}>Already registered? </Text>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={styles.footerLink}>Sign In</Text>
           </TouchableOpacity>
         </View>
@@ -322,28 +324,28 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
         primaryLabel={popup.primaryLabel}
         onPrimary={
           popup.onPrimary ||
-          (() => setPopup(prev => ({...prev, visible: false})))
+          (() => setPopup(prev => ({ ...prev, visible: false })))
         }
-        onDismiss={() => setPopup(prev => ({...prev, visible: false}))}
+        onDismiss={() => setPopup(prev => ({ ...prev, visible: false }))}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  body: {flex: 1},
-  bodyContent: {paddingBottom: verticalScale(40)},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  body: { flex: 1 },
+  bodyContent: { paddingBottom: verticalScale(40) },
   stepRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 6,
     paddingVertical: verticalScale(18),
   },
-  dot: {height: moderateScale(6), borderRadius: moderateScale(3)},
-  dotActive: {width: moderateScale(20), backgroundColor: Colors.redPrimary},
-  dotDone: {width: moderateScale(20), backgroundColor: '#10B981'},
-  dotInactive: {width: moderateScale(6), backgroundColor: '#E5E7EB'},
+  dot: { height: moderateScale(6), borderRadius: moderateScale(3) },
+  dotActive: { width: moderateScale(20), backgroundColor: Colors.redPrimary },
+  dotDone: { width: moderateScale(20), backgroundColor: '#10B981' },
+  dotInactive: { width: moderateScale(6), backgroundColor: '#E5E7EB' },
   card: {
     backgroundColor: Colors.white,
     borderRadius: moderateScale(20),
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 15,
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     elevation: 4,
   },
   genderLabel: {
@@ -363,8 +365,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
-  genderRow: {flexDirection: 'row', gap: moderateScale(8)},
-  genderPillWrap: {flex: 1},
+  genderRow: { flexDirection: 'row', gap: moderateScale(8) },
+  genderPillWrap: { flex: 1 },
   genderPill: {
     paddingVertical: verticalScale(10),
     borderRadius: moderateScale(14),
@@ -375,20 +377,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.redPrimary,
     borderColor: Colors.redPrimary,
   },
-  genderPillInactive: {borderColor: '#EFEFEF', backgroundColor: '#FCFCFD'},
+  genderPillInactive: { borderColor: '#EFEFEF', backgroundColor: '#FCFCFD' },
   genderText: {
     fontSize: normalize(12),
     color: Colors.textMid,
     fontWeight: '600',
   },
-  genderTextActive: {color: Colors.white, fontWeight: '700'},
+  genderTextActive: { color: Colors.white, fontWeight: '700' },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: verticalScale(10),
   },
-  footerText: {fontSize: normalize(13), color: Colors.textMid},
+  footerText: { fontSize: normalize(13), color: Colors.textMid },
   footerLink: {
     fontSize: normalize(13),
     color: Colors.redPrimary,
