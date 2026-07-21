@@ -107,7 +107,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     },
     onError: (error: any) => {
       const message =
-        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
         error?.message ||
         'Registration failed. Please try again.';
       showPopup('error', 'Registration Failed', message);

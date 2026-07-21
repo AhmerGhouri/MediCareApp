@@ -246,7 +246,7 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
                       </Text>
                     </View>
 
-                    <View style={styles.actionRow}>
+                    {/* <View style={styles.actionRow}>
                       <TouchableOpacity
                         style={[styles.btn, styles.rescheduleBtn]}
                         activeOpacity={0.8}>
@@ -257,7 +257,7 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
                         activeOpacity={0.8}>
                         <Text style={styles.cancelText}>Cancel</Text>
                       </TouchableOpacity>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
               );

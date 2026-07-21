@@ -169,6 +169,12 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         if (email !== '') {
 
           setStep(2);
+          showPopup(
+            'success',
+            'OTP Sent',
+            `A verification code has been sent to ${maskedEmail || 'your registered email'
+            }.`,
+          );
         }
         return;
       }

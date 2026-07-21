@@ -199,7 +199,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
         `You already have an upcoming appointment with ${doctorName} on ${formattedAppDate} (${dayName}). You cannot book another one.`,
       );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existingAppointment?.trans_id]);
 
   // Fetch slots
@@ -213,9 +213,6 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
       ),
     enabled: !!selectedMrNo && !!consultantId && !!selectedApiDate,
   });
-
-  console.log("slots data from api", selectedMrNo, consultantId, selectedApiDate);
-
 
   const allSlots = useMemo(() => {
     if (!slotsData?.appointments || slotsData.appointments.length === 0) {

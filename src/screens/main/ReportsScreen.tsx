@@ -66,6 +66,9 @@ const ReportsScreen: React.FC = () => {
     enabled: !!selectedMrNo,
   });
 
+  const customError = error as any;
+
+
   // Defensive check: ensure reports is always an array
   const rawReports = data?.reports;
   const reports = Array.isArray(rawReports) ? rawReports : [];
@@ -218,11 +221,11 @@ const ReportsScreen: React.FC = () => {
         {isError && (
           <View style={styles.centerWrap}>
             <Icon
-              name="cloud-off"
+              name={customError.status == 403 ? "search-off" : "cloud-off"}
               size={normalize(40)}
               color={Colors.textLight}
             />
-            <Text style={styles.errorText}>Something went wrong</Text>
+            <Text style={styles.errorText}>{error.name}</Text>
             <Text
               style={[
                 styles.errorText,
@@ -232,7 +235,7 @@ const ReportsScreen: React.FC = () => {
                   marginTop: 4,
                 },
               ]}>
-              We couldn't load your reports right now. Please check your connection and try again.
+              {error.message}
             </Text>
             <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
               <Text style={styles.retryText}>Retry</Text>

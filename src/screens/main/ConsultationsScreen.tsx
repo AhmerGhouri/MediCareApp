@@ -185,9 +185,9 @@ const ConsultationsScreen: React.FC<Props> = ({ navigation }) => {
                     </Text>
                     <View style={styles.bottomRow}>
                       <Text style={styles.costText}>Fee: {displayFee}</Text>
-                      <TouchableOpacity style={styles.rxBtn}>
+                      {/* <TouchableOpacity style={styles.rxBtn}>
                         <Text style={styles.rxText}>View details</Text>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   </View>
                 </View>

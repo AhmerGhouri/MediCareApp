@@ -88,6 +88,10 @@ const RadiologyScreen: React.FC = () => {
     enabled: !!selectedMrNo,
   });
 
+  // Explicitly cast to 'any' or your custom error type to avoid TypeScript warnings
+  const customError = error as any;
+
+
   const rawReports = data?.reports;
   const reports = Array.isArray(rawReports) ? rawReports : [];
 
@@ -252,11 +256,11 @@ const RadiologyScreen: React.FC = () => {
         {isError && (
           <View style={styles.centerWrap}>
             <Icon
-              name="cloud-off"
+              name={customError.status == 403 ? "search-off" : "cloud-off"}
               size={normalize(40)}
               color={Colors.textLight}
             />
-            <Text style={styles.errorText}>Something went wrong</Text>
+            <Text style={styles.errorText}>{error.name}</Text>
             <Text
               style={[
                 styles.errorText,
@@ -266,7 +270,7 @@ const RadiologyScreen: React.FC = () => {
                   marginTop: 4,
                 },
               ]}>
-              We couldn't load your radiology tests right now. Please check your connection and try again.
+              {error.message}
             </Text>
             <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
               <Text style={styles.retryText}>Retry</Text>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,29 +9,29 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../navigation/AppNavigator';
-import {useDispatch} from 'react-redux';
-import {useMutation} from '@tanstack/react-query';
-import {loginApi} from '../../services/api';
-import {loginSuccess, selectProfile} from '../../store';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useDispatch } from 'react-redux';
+import { useMutation } from '@tanstack/react-query';
+import { loginApi } from '../../services/api';
+import { loginSuccess, selectProfile } from '../../store';
 import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import {Colors} from '../../theme/colors';
+import { Colors } from '../../theme/colors';
 import Logo from '../../../assets/Logo.png';
-import {normalize, verticalScale, moderateScale} from '../../theme/responsive';
+import { normalize, verticalScale, moderateScale } from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
-const StepDot = ({active}: {active?: boolean}) => (
+const StepDot = ({ active }: { active?: boolean }) => (
   <View style={[styles.dot, active ? styles.dotActive : styles.dotInactive]} />
 );
 
-const LoginScreen: React.FC<Props> = ({navigation}) => {
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -42,21 +42,21 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message: string;
-  }>({visible: false, type: 'info', title: '', message: ''});
+  }>({ visible: false, type: 'info', title: '', message: '' });
 
   const showPopup = (
     type: 'success' | 'error' | 'warning' | 'info',
     title: string,
     message: string,
   ) => {
-    setPopup({visible: true, type, title, message});
+    setPopup({ visible: true, type, title, message });
   };
 
   const loginMutation = useMutation({
     mutationFn: () => loginApi(phone, password),
     onSuccess: data => {
       dispatch(
-        loginSuccess({token: data.access_token, mrProfiles: data.mr_numbers}),
+        loginSuccess({ token: data.access_token, mrProfiles: data.mr_numbers }),
       );
 
       if (data.mr_numbers.length === 1) {
@@ -73,9 +73,11 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     },
     onError: (error: any) => {
       const message =
-        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
         error?.message ||
         'Login failed. Please try again.';
+      console.log('message', error.response.data);
+
       showPopup('error', 'Login Failed', message);
     },
   });
@@ -153,7 +155,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           <ActivityIndicator
             size="small"
             color={Colors.redPrimary}
-            style={{marginTop: verticalScale(12)}}
+            style={{ marginTop: verticalScale(12) }}
           />
         )}
 
@@ -167,7 +169,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           <Text style={styles.footerText}>Don't have an account? </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Register')}
-            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={styles.footerLink}>Register</Text>
           </TouchableOpacity>
         </View>
@@ -179,17 +181,17 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         type={popup.type}
         title={popup.title}
         message={popup.message}
-        onPrimary={() => setPopup(prev => ({...prev, visible: false}))}
-        onDismiss={() => setPopup(prev => ({...prev, visible: false}))}
+        onPrimary={() => setPopup(prev => ({ ...prev, visible: false }))}
+        onDismiss={() => setPopup(prev => ({ ...prev, visible: false }))}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  body: {flex: 1},
-  bodyContent: {paddingBottom: verticalScale(32)},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  body: { flex: 1 },
+  bodyContent: { paddingBottom: verticalScale(32) },
 
   headerTextWrap: {
     alignItems: 'center',
@@ -212,9 +214,9 @@ const styles = StyleSheet.create({
     gap: 6,
     marginVertical: verticalScale(18),
   },
-  dot: {height: moderateScale(6), borderRadius: moderateScale(3)},
-  dotActive: {width: moderateScale(20), backgroundColor: Colors.redPrimary},
-  dotInactive: {width: moderateScale(6), backgroundColor: '#E5E7EB'},
+  dot: { height: moderateScale(6), borderRadius: moderateScale(3) },
+  dotActive: { width: moderateScale(20), backgroundColor: Colors.redPrimary },
+  dotInactive: { width: moderateScale(6), backgroundColor: '#E5E7EB' },
 
   card: {
     backgroundColor: Colors.white,
@@ -224,11 +226,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 15,
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     elevation: 4,
   },
-  forgotWrap: {alignSelf: 'flex-end', marginTop: 4, marginBottom: 8},
-  forgotText: {fontSize: normalize(12), color: Colors.blue, fontWeight: '600'},
+  forgotWrap: { alignSelf: 'flex-end', marginTop: 4, marginBottom: 8 },
+  forgotText: { fontSize: normalize(12), color: Colors.blue, fontWeight: '600' },
 
   divider: {
     flexDirection: 'row',
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(20),
     marginVertical: verticalScale(8),
   },
-  divLine: {flex: 1, height: 1, backgroundColor: '#E5E7EB'},
+  divLine: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
   divText: {
     marginHorizontal: 12,
     fontSize: normalize(10),
@@ -251,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: verticalScale(24),
   },
-  footerText: {fontSize: normalize(13), color: Colors.textMid},
+  footerText: { fontSize: normalize(13), color: Colors.textMid },
   footerLink: {
     fontSize: normalize(13),
     color: Colors.redPrimary,

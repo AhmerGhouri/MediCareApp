@@ -305,9 +305,16 @@ export const fetchReportsApi = async (
     // No valid data — return empty reports instead of throwing
     return { opat_id: 0, patient_name: '', mobile: '', reports: [] };
   } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch reports. Please try again.',
-    );
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message || 'Unable to fetch radiology reports. Please try again.';
+
+    // Create a standard error object
+    const customError = new Error(message) as any;
+
+    // Attach the status code directly to the object
+    customError.status = status;
+
+    throw customError;
   }
 };
 
@@ -334,9 +341,16 @@ export const fetchRadiologyReportsApi = async (
 
     return { opat_id: 0, patient_name: '', mobile: '', reports: [] };
   } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch radiology reports. Please try again.',
-    );
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message || 'Unable to fetch radiology reports. Please try again.';
+
+    // Create a standard error object
+    const customError = new Error(message) as any;
+
+    // Attach the status code directly to the object
+    customError.status = status;
+
+    throw customError;
   }
 };
 
