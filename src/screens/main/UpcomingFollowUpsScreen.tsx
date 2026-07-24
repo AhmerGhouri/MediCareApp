@@ -110,9 +110,6 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
     enabled: !!selectedMrNo,
   });
 
-  // console.log("data from upcoming appointments", data);
-  // console.log("selectedMrNo from upcoming appointments", selectedMrNo);
-
   const rawReports = data?.appointments;
   const reports = Array.isArray(rawReports)
     ? [...rawReports].sort(

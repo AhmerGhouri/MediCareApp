@@ -68,7 +68,6 @@ const ReportsScreen: React.FC = () => {
 
   const customError = error as any;
 
-
   // Defensive check: ensure reports is always an array
   const rawReports = data?.reports;
   const reports = Array.isArray(rawReports) ? rawReports : [];
@@ -271,7 +270,7 @@ const ReportsScreen: React.FC = () => {
                 day: 'numeric',
               });
               return (
-                <View key={report.test_id} style={styles.reportCard}>
+                <View key={report.id} style={styles.reportCard}>
                   <View
                     style={[
                       styles.reportBorder,

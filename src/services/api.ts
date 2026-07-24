@@ -49,6 +49,7 @@ export interface RegisterResponse {
 }
 
 export interface LabReport {
+  id: number;
   test_id: string;
   testm_id: number;
   testd_id: string;
@@ -265,10 +266,8 @@ export const checkRegistrationEligibilityApi = async (
         mobile_number,
       },
     );
-    console.log(response.data)
     return response.data;
   } catch (error: any) {
-    console.log("respo", error)
     if (error?.response?.status === 404) {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -417,7 +416,6 @@ export const fetchConsultantsApi = async (): Promise<Consultant[]> => {
     const response = await api.get<Consultant[]>(`patients/consultants`);
 
     if (Array.isArray(response.data)) {
-      // console.log("Consultants Data:", response.data);
       return response.data;
 
     }
@@ -441,7 +439,6 @@ export const fetchAppointmentSlotsApi = async (
     const response = await api.get<AppointmentSlotsResponse>(
       `/patients/${opat_id}/${consl_id}/${date}/appointments`
     );
-    console.log("data", response)
     return response.data;
   } catch (error: any) {
     throw new Error(

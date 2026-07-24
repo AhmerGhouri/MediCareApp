@@ -27,37 +27,45 @@ type Props = {
 };
 
 const formatDoctorName = (name: string): string => {
-  const trimmed = name.trim();
-  const drIdx = trimmed.toUpperCase().indexOf('(DR)');
+
+  if (!name || typeof name !== 'string') {
+    return '';
+  }
+
+  const trimmed = name?.trim();
+  const drIdx = trimmed?.toUpperCase().indexOf('(DR)');
   if (drIdx !== -1) {
-    const rawName = trimmed.slice(0, drIdx).trim();
+    const rawName = trimmed?.slice(0, drIdx).trim();
     const formattedName = rawName
-      .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      ?.toLowerCase()
+      ?.split(' ')
+      ?.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      ?.join(' ');
     return `Dr. ${formattedName}`;
   }
 
   if (
-    trimmed.toUpperCase().startsWith('DR.') ||
-    trimmed.toUpperCase().startsWith('DR ')
+    trimmed?.toUpperCase().startsWith('DR.') ||
+    trimmed?.toUpperCase().startsWith('DR ')
   ) {
-    const rawName = trimmed.slice(trimmed.indexOf('.') + 1 || 3).trim();
+    const rawName = trimmed?.slice(trimmed.indexOf('.') + 1 || 3).trim();
     const formattedName = rawName
-      .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      ?.toLowerCase()
+      ?.split(' ')
+      ?.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      ?.join(' ');
     return `Dr. ${formattedName}`;
   }
 
   return trimmed
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    ?.toLowerCase()
+    ?.split(' ')
+    ?.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    ?.join(' ');
 };
+
+console.log("formatted Doctor", formatDoctorName);
+
 
 const ConsultationsScreen: React.FC<Props> = ({ navigation }) => {
   const selectedMrNo = useSelector(
@@ -84,7 +92,7 @@ const ConsultationsScreen: React.FC<Props> = ({ navigation }) => {
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
 
       <GradientHeader
-        title="Your Consultations"
+        title="Your OPD Consultations"
         subtitle={
           isLoading
             ? 'Loading...'
@@ -159,7 +167,7 @@ const ConsultationsScreen: React.FC<Props> = ({ navigation }) => {
                 },
               );
               const cleanedDoctor = formatDoctorName(c.consultation);
-              const cleanedDept = c.dept_id.trim();
+              const cleanedDept = c.dept_id?.trim();
               const displayFee = c.amount === 0 ? 'Free' : `Rs. ${c.amount}`;
 
               return (

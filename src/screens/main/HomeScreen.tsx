@@ -6,13 +6,16 @@ import {
   StatusBar,
   TouchableOpacity,
   Image,
+  InteractionManager,
+  Animated,
+  Easing,
+  Platform,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../theme/colors';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
-import BannerCarousel from '../../components/BannerCarousel';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -32,6 +35,8 @@ import {
 
 import MaleAvatar from '../../../assets/male_avatar.png';
 import FemaleAvatar from '../../../assets/female_avatar.png';
+
+const isAndroid = Platform.OS === 'android';
 
 const formatDoctorName = (name: string): string => {
   const trimmed = name.trim();
@@ -71,32 +76,32 @@ const QUICK_ACTIONS = [
     icon: 'local-hospital',
     label: "Today's Clinic",
     subtitle: 'View active clinics',
-    color: Colors.redPrimary,
-    bgColor: Colors.redPale,
+    color: '#E53935',
+    gradient: ['#fdf1f1ff', '#fde1e1ff'],
     route: 'TodaysClinic',
   },
   {
     icon: 'calendar-today',
-    label: 'Book Appointment',
+    label: 'Book\nAppointment',
     subtitle: 'Schedule a visit',
-    color: Colors.blue,
-    bgColor: Colors.bluePale,
+    color: '#1565C0',
+    gradient: ['#f1f6fbff', '#deebfdff'],
     route: 'DoctorAppointment',
   },
   {
     icon: 'science',
     label: 'Lab Tests',
     subtitle: 'View lab reports',
-    color: Colors.green,
-    bgColor: Colors.greenPale,
+    color: '#2E7D32',
+    gradient: ['#f5faf4ff', '#e8fbe8ff'],
     route: 'Reports',
   },
   {
     icon: 'medication',
     label: 'Radiology',
     subtitle: 'Scan & imaging',
-    color: Colors.yellowDeep,
-    bgColor: Colors.yellowPale,
+    color: '#E65100',
+    gradient: ['#fdf8efff', '#fff7e1ff'],
     route: 'Radiology',
   },
 ];
@@ -120,6 +125,308 @@ const calculateAge = (dobString: string | null): string => {
   }
   return age + ' yrs';
 };
+
+/* ── Animated Health Hero ─────────────────────────────── */
+const AnimatedHeroBanner: React.FC = () => {
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
+  const heartbeatAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Gentle floating animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -8,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+
+    // Pulse glow animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.08,
+          duration: 1500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+
+    // Shimmer effect
+    Animated.loop(
+      Animated.timing(shimmerAnim, {
+        toValue: 1,
+        duration: 3000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ).start();
+
+    // Heartbeat animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(heartbeatAnim, {
+          toValue: 1.15,
+          duration: 200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(heartbeatAnim, {
+          toValue: 1,
+          duration: 200,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(heartbeatAnim, {
+          toValue: 1.1,
+          duration: 200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(heartbeatAnim, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.delay(1200),
+      ]),
+    ).start();
+  }, [pulseAnim, floatAnim, shimmerAnim, heartbeatAnim]);
+
+  const shimmerTranslate = shimmerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-200, 200],
+  });
+
+  return (
+    <View style={heroStyles.container}>
+      <LinearGradient
+        colors={['#FF6B6B', '#EE5A24', '#F0932B']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={heroStyles.gradient}>
+        {/* Shimmer overlay */}
+        <Animated.View
+          style={[
+            heroStyles.shimmer,
+            { transform: [{ translateX: shimmerTranslate }] },
+          ]}
+        />
+
+        {/* Decorative circles */}
+        <View style={heroStyles.decoCircle1} />
+        <View style={heroStyles.decoCircle2} />
+        <View style={heroStyles.decoCircle3} />
+
+        <View style={heroStyles.content}>
+          <View style={heroStyles.textSide}>
+            <Text style={heroStyles.title}>Your Health,</Text>
+            <Text style={heroStyles.titleBold}>Our Priority</Text>
+            <Text style={heroStyles.subtitle}>
+              Book appointments, view reports{'\n'}& manage your care easily.
+            </Text>
+          </View>
+
+          {/* Animated medical icons cluster */}
+          <View style={heroStyles.iconSide}>
+            <Animated.View
+              style={[
+                heroStyles.floatingIcon,
+                heroStyles.iconHeart,
+                {
+                  transform: [
+                    { translateY: floatAnim },
+                    { scale: heartbeatAnim },
+                  ],
+                },
+              ]}>
+              <Icon name="favorite" size={normalize(28)} color="#FF6B6B" />
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                heroStyles.floatingIcon,
+                heroStyles.iconShield,
+                {
+                  transform: [
+                    { translateY: floatAnim },
+                    { scale: pulseAnim },
+                  ],
+                },
+              ]}>
+              <Icon
+                name="health-and-safety"
+                size={normalize(24)}
+                color="#4CAF50"
+              />
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                heroStyles.floatingIcon,
+                heroStyles.iconPulse,
+                {
+                  transform: [{ translateY: Animated.multiply(floatAnim, -1) }],
+                },
+              ]}>
+              <Icon
+                name="monitor-heart"
+                size={normalize(22)}
+                color="#2196F3"
+              />
+            </Animated.View>
+          </View>
+        </View>
+      </LinearGradient>
+    </View>
+  );
+};
+
+const heroStyles = StyleSheet.create({
+  container: {
+    marginTop: verticalScale(12),
+    borderRadius: moderateScale(20),
+    shadowColor: '#E53935',
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: isAndroid ? 0 : 8,
+    borderWidth: isAndroid ? 1 : 0,
+    borderColor: '#F0E0E0',
+    backgroundColor: Colors.white,
+  },
+  gradient: {
+    borderRadius: moderateScale(20),
+    paddingHorizontal: moderateScale(20),
+    paddingVertical: verticalScale(22),
+    overflow: 'hidden',
+    minHeight: verticalScale(140),
+  },
+  shimmer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 80,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    transform: [{ skewX: '-20deg' }],
+  },
+  decoCircle1: {
+    position: 'absolute',
+    top: -30,
+    right: -20,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  decoCircle2: {
+    position: 'absolute',
+    bottom: -40,
+    left: -30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+  },
+  decoCircle3: {
+    position: 'absolute',
+    top: 20,
+    right: 80,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  textSide: {
+    flex: 1,
+  },
+  title: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: normalize(14),
+    fontWeight: '600',
+  },
+  titleBold: {
+    color: Colors.white,
+    fontSize: normalize(22),
+    fontWeight: '900',
+    marginTop: verticalScale(2),
+  },
+  subtitle: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: normalize(11),
+    marginTop: verticalScale(8),
+    lineHeight: normalize(16),
+    fontWeight: '500',
+  },
+  iconSide: {
+    width: moderateScale(90),
+    height: moderateScale(90),
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  floatingIcon: {
+    position: 'absolute',
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(14),
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: isAndroid ? 2 : 4,
+    borderWidth: isAndroid ? 1 : 0,
+    borderColor: '#EAEAEA',
+  },
+  iconHeart: {
+    width: moderateScale(50),
+    height: moderateScale(50),
+    top: 0,
+    right: 0,
+    borderRadius: moderateScale(15),
+  },
+  iconShield: {
+    width: moderateScale(42),
+    height: moderateScale(42),
+    bottom: 0,
+    right: moderateScale(8),
+    borderRadius: moderateScale(12),
+  },
+  iconPulse: {
+    width: moderateScale(38),
+    height: moderateScale(38),
+    top: moderateScale(15),
+    left: 0,
+    borderRadius: moderateScale(11),
+  },
+});
+
+/* ── Main Component ───────────────────────────────────── */
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -201,19 +508,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       items.push({
         id: '1',
         date: dateStr,
-        type: 'Your Consultations',
+        type: 'Your OPD Consultations',
         doctor: formatDoctorName(recentConsultation.consultation),
         status: 'View',
         route: 'Consultations',
+        badge: 'Most Recent',
       });
     } else {
       items.push({
         id: '1',
         date: 'No visit recorded',
-        type: 'Your Consultations',
+        type: 'Your OPD Consultations',
         doctor: 'N/A',
         status: 'View',
         route: 'Consultations',
+        badge: 'Most Recent',
       });
     }
 
@@ -234,6 +543,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         doctor: formatDoctorName(recentInpatient.consultation),
         status: 'View',
         route: 'InpatientHistory',
+        badge: 'Most Recent',
       });
     } else {
       items.push({
@@ -243,6 +553,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         doctor: 'N/A',
         status: 'View',
         route: 'InpatientHistory',
+        badge: 'Most Recent',
       });
     }
 
@@ -256,15 +567,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           day: 'numeric',
         },
       );
-      const timeStr = nextUpcoming.time_in ? nextUpcoming.time_in.trim() : '';
-      const timePart = timeStr ? ` · ${timeStr}` : '';
       items.push({
         id: '3',
-        date: `${dateStr}${timePart}`,
+        date: dateStr,
         type: 'Upcoming Appointments',
         doctor: formatDoctorName(nextUpcoming.consultant),
         status: 'View',
         route: 'UpcomingFollowUps',
+        badge: 'Most Recent',
       });
     } else {
       items.push({
@@ -274,6 +584,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         doctor: 'N/A',
         status: 'View',
         route: 'UpcomingFollowUps',
+        badge: 'Most Recent',
       });
     }
 
@@ -284,56 +595,63 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogout = () => {
     setShowLogoutPopup(false);
-    dispatch(logout());
-    const parent = navigation.getParent();
-    if (parent) {
-      parent.replace('Login');
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Login'}],
+    setTimeout(() => {
+      InteractionManager.runAfterInteractions(() => {
+        const parent = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+        if (parent) {
+          parent.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
+        } else {
+          (navigation as unknown as NativeStackNavigationProp<RootStackParamList>).reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
+        }
+        dispatch(logout());
       });
-    }
+    }, 400);
   };
 
   const getCardTheme = (type: string) => {
     switch (type) {
-      case 'Your Consultations':
+      case 'Your OPD Consultations':
         return {
-          borderColor: Colors.blue,
           icon: 'medical-services',
-          iconColor: Colors.blue,
-          bgColor: Colors.bluePale,
+          iconColor: '#1565C0',
+          bgColor: '#EAF4FF',
+          badgeColor: '#1565C0',
         };
       case 'Inpatient History':
         return {
-          borderColor: Colors.green,
           icon: 'local-hotel',
-          iconColor: Colors.green,
-          bgColor: Colors.greenPale,
+          iconColor: '#2E7D32',
+          bgColor: '#EAF6EA',
+          badgeColor: '#2E7D32',
         };
       case 'Upcoming Appointments':
         return {
-          borderColor: Colors.yellowDeep,
           icon: 'schedule',
-          iconColor: Colors.yellowDeep,
-          bgColor: Colors.yellowPale,
+          iconColor: '#E65100',
+          bgColor: '#FFF5E5',
+          badgeColor: '#E65100',
         };
       default:
         return {
-          borderColor: Colors.redPrimary,
           icon: 'event-note',
           iconColor: Colors.redPrimary,
           bgColor: Colors.redPale,
+          badgeColor: '#E53935',
         };
     }
   };
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FAFBFC" />
 
-      {/* Header */}
+      {/* ── Header ── */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity
@@ -348,6 +666,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.avatarGradient}>
               <Image source={avatarSource} style={styles.avatar} />
             </LinearGradient>
+            <View style={styles.onlineDot} />
           </TouchableOpacity>
           <View style={styles.nameWrap}>
             <Text style={styles.greeting}>Good Morning,</Text>
@@ -366,33 +685,33 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.headerRight}>
           {mrProfiles.length > 1 && (
             <TouchableOpacity
-              style={styles.bellBtn}
+              style={styles.headerBtn}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('SelectProfile')}>
               <Icon
                 name="swap-horiz"
                 size={normalize(20)}
-                color={Colors.blue}
+                color={Colors.textDark}
               />
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={[styles.bellBtn, { marginLeft: moderateScale(6) }]}
+            style={[styles.headerBtn, { marginLeft: moderateScale(8) }]}
             activeOpacity={0.7}
             onPress={() => navigation.navigate('Notifications')}>
             <Icon
               name="notifications-none"
-              size={normalize(22)}
+              size={normalize(20)}
               color={Colors.textDark}
             />
             <View style={styles.badge} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.bellBtn, { marginLeft: moderateScale(6) }]}
+            style={[styles.headerBtn, { marginLeft: moderateScale(8) }]}
             onPress={() => setShowLogoutPopup(true)}>
             <Icon
               name="logout"
-              size={normalize(20)}
+              size={normalize(18)}
               color={Colors.redPrimary}
             />
           </TouchableOpacity>
@@ -402,71 +721,112 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        {/* Banner Carousel Component */}
-        <BannerCarousel />
 
-        {/* Quick Actions */}
+        {/* ── Animated Hero Banner ── */}
+        <AnimatedHeroBanner />
+
+        {/* ── Quick Actions ── */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.actionsGrid}>
-            {QUICK_ACTIONS.map((action, i) => (
-              <TouchableOpacity
-                key={i}
-                style={styles.actionCard}
-                activeOpacity={0.82}
-                onPress={() =>
-                  action.route && navigation.navigate(action.route as any)
-                }>
-                {/* Top tinted band with icon */}
-                <View
-                  style={[
-                    styles.actionCardTop,
-                    {backgroundColor: action.bgColor},
-                  ]}>
-                  <View
-                    style={[
-                      styles.actionIconBubble,
-                      {backgroundColor: action.color + '22'},
-                    ]}>
-                    <Icon
-                      name={action.icon}
-                      size={normalize(26)}
-                      color={action.color}
-                    />
-                  </View>
-                </View>
 
-                {/* Bottom white content */}
-                <View style={styles.actionCardBottom}>
-                  <View style={styles.actionCardText}>
+          <Text style={styles.sectionTitle}>Quick Action</Text>
+          <View style={styles.actionsGrid}>
+            <View style={styles.actionsCol}>
+              {QUICK_ACTIONS.filter((_, i) => i % 2 === 0).map((action, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.actionCardWrapper}
+                  activeOpacity={0.82}
+                  onPress={() =>
+                    action.route && navigation.navigate(action.route as any)
+                  }>
+                  <LinearGradient
+                    colors={action.gradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.actionCardInner}>
+                    <View
+                      style={[
+                        styles.actionIconBubble,
+                        { backgroundColor: action.color + '18' },
+                      ]}>
+                      <Icon
+                        name={action.icon}
+                        size={normalize(24)}
+                        color={action.color}
+                      />
+                    </View>
                     <Text style={styles.actionLabel}>{action.label}</Text>
                     <Text style={styles.actionSubLabel}>{action.subtitle}</Text>
-                  </View>
-                  <View
-                    style={[
-                      styles.actionArrow,
-                      {backgroundColor: action.color + '18'},
-                    ]}>
-                    <Icon
-                      name="arrow-forward"
-                      size={normalize(13)}
-                      color={action.color}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+                    <View style={styles.actionArrowRow}>
+                      <View
+                        style={[
+                          styles.actionArrow,
+                          { backgroundColor: action.color + '15' },
+                        ]}>
+                        <Icon
+                          name="arrow-forward"
+                          size={normalize(14)}
+                          color={action.color}
+                        />
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.actionsCol}>
+              {QUICK_ACTIONS.filter((_, i) => i % 2 === 1).map((action, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.actionCardWrapper}
+                  activeOpacity={0.82}
+                  onPress={() =>
+                    action.route && navigation.navigate(action.route as any)
+                  }>
+                  <LinearGradient
+                    colors={action.gradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.actionCardInner}>
+                    <View
+                      style={[
+                        styles.actionIconBubble,
+                        { backgroundColor: action.color + '18' },
+                      ]}>
+                      <Icon
+                        name={action.icon}
+                        size={normalize(24)}
+                        color={action.color}
+                      />
+                    </View>
+                    <Text style={styles.actionLabel}>{action.label}</Text>
+                    <Text style={styles.actionSubLabel}>{action.subtitle}</Text>
+                    <View style={styles.actionArrowRow}>
+                      <View
+                        style={[
+                          styles.actionArrow,
+                          { backgroundColor: action.color + '15' },
+                        ]}>
+                        <Icon
+                          name="arrow-forward"
+                          size={normalize(14)}
+                          color={action.color}
+                        />
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
 
-        {/* Recent History */}
+        {/* ── History ── */}
         <View style={styles.section}>
-          <View style={styles.sectionHeaderWrap}>
-            <Text style={styles.sectionTitle}>History</Text>
-          </View>
+          <Text style={styles.sectionTitle}>History</Text>
 
           {recentHistoryItems.map(item => {
-            const cardTheme = getCardTheme(item.type);
+            const theme = getCardTheme(item.type);
             return (
               <TouchableOpacity
                 key={item.id}
@@ -475,70 +835,58 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 onPress={() =>
                   item.route && navigation.navigate(item.route as any)
                 }>
-                {/* ── Card Header ── */}
-                <View
-                  style={[
-                    styles.historyCardHeader,
-                    {backgroundColor: cardTheme.bgColor},
-                  ]}>
-                  <View style={styles.historyCardHeaderLeft}>
-                    <View
-                      style={[
-                        styles.historyIconWrap,
-                        {backgroundColor: cardTheme.iconColor + '22'},
-                      ]}>
-                      <Icon
-                        name={cardTheme.icon}
-                        size={normalize(22)}
-                        color={cardTheme.iconColor}
-                      />
-                    </View>
-                    <View style={styles.historyTitleWrap}>
-                      <Text style={styles.historyType}>{item.type}</Text>
-                      <Text
-                        style={[
-                          styles.historySubtitle,
-                          {color: cardTheme.iconColor},
-                        ]}>
-                        Most Recent
-                      </Text>
-                    </View>
-                  </View>
+
+                {/* ── Card Header (Full Colored Background) ── */}
+                <View style={[styles.historyCardHeader, { backgroundColor: theme.bgColor }]}>
                   <View
                     style={[
-                      styles.historyArrowBadge,
-                      {backgroundColor: cardTheme.iconColor},
+                      styles.historyIconWrap,
+                      { backgroundColor: theme.iconColor + '20' },
                     ]}>
                     <Icon
+                      name={theme.icon}
+                      size={normalize(20)}
+                      color={theme.iconColor}
+                    />
+                  </View>
+                  <View style={styles.historyTitleWrap}>
+                    <Text style={styles.historyType}>{item.type}</Text>
+                    <Text
+                      style={[
+                        styles.historyBadgeText,
+                        { color: theme.badgeColor },
+                      ]}>
+                      {item.badge}
+                    </Text>
+                  </View>
+                  <View style={[styles.historyActionBtn, { backgroundColor: theme.iconColor }]}>
+                    <Icon
                       name="arrow-forward"
-                      size={normalize(14)}
+                      size={normalize(16)}
                       color={Colors.white}
                     />
                   </View>
                 </View>
 
-                {/* ── Divider ── */}
-                <View style={styles.historyDivider} />
-
-                {/* ── Card Body ── */}
+                {/* ── Card Body (White Background) ── */}
                 <View style={styles.historyCardBody}>
                   <View style={styles.historyInfoRow}>
                     <View style={styles.historyInfoItem}>
                       <View style={styles.historyInfoLabelRow}>
                         <Icon
                           name="event"
-                          size={normalize(11)}
-                          color={cardTheme.iconColor}
+                          size={normalize(12)}
+                          color={theme.iconColor}
                         />
                         <Text
                           style={[
                             styles.historyInfoLabel,
-                            {color: cardTheme.iconColor},
+                            { color: theme.iconColor },
                           ]}>
-                          Date
+                          DATE
                         </Text>
                       </View>
-                      <Text style={styles.historyInfoValue} numberOfLines={2}>
+                      <Text style={styles.historyInfoValue} numberOfLines={1}>
                         {item.date}
                       </Text>
                     </View>
@@ -546,47 +894,50 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                       <View style={styles.historyInfoLabelRow}>
                         <Icon
                           name="person"
-                          size={normalize(11)}
-                          color={cardTheme.iconColor}
+                          size={normalize(12)}
+                          color={theme.iconColor}
                         />
                         <Text
                           style={[
                             styles.historyInfoLabel,
-                            {color: cardTheme.iconColor},
+                            { color: theme.iconColor },
                           ]}>
-                          Doctor
+                          DOCTOR
                         </Text>
                       </View>
-                      <Text style={styles.historyInfoValue} numberOfLines={2}>
+                      <Text style={styles.historyInfoValue} numberOfLines={1}>
                         {item.doctor}
                       </Text>
                     </View>
                   </View>
                 </View>
 
-                {/* ── Footer Button ── */}
+                {/* ── Footer Link (Full Colored Background) ── */}
                 <View
                   style={[
-                    styles.historyFooterBtn,
-                    {backgroundColor: cardTheme.iconColor + '14'},
+                    styles.historyFooter,
+                    { backgroundColor: theme.bgColor },
                   ]}>
-                  <Icon
-                    name="visibility"
-                    size={normalize(13)}
-                    color={cardTheme.iconColor}
-                  />
-                  <Text
-                    style={[
-                      styles.historyFooterBtnText,
-                      {color: cardTheme.iconColor},
-                    ]}>
-                    View Full History
-                  </Text>
-                  <Icon
-                    name="chevron-right"
-                    size={normalize(14)}
-                    color={cardTheme.iconColor}
-                  />
+                  <View style={styles.historyFooterLink}>
+                    <Icon
+                      name="visibility"
+                      size={normalize(14)}
+                      color={theme.iconColor}
+                      style={{ marginRight: moderateScale(4) }}
+                    />
+                    <Text
+                      style={[
+                        styles.historyFooterText,
+                        { color: theme.iconColor },
+                      ]}>
+                      View Full History
+                    </Text>
+                    <Icon
+                      name="chevron-right"
+                      size={normalize(16)}
+                      color={theme.iconColor}
+                    />
+                  </View>
                 </View>
               </TouchableOpacity>
             );
@@ -594,7 +945,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </ScrollView>
 
-      {/* Logout Confirmation Popup */}
       <CustomPopup
         visible={showLogoutPopup}
         type="warning"
@@ -610,19 +960,22 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+/* ── Styles ───────────────────────────────────────────── */
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#FAFBFC',
   },
 
+  /* Header */
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: moderateScale(20),
     paddingTop: verticalScale(50),
-    paddingBottom: verticalScale(10),
+    paddingBottom: verticalScale(6),
   },
   headerLeft: {
     flexDirection: 'row',
@@ -639,9 +992,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarGradient: {
-    width: moderateScale(48),
-    height: moderateScale(48),
-    borderRadius: moderateScale(24),
+    width: moderateScale(50),
+    height: moderateScale(50),
+    borderRadius: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     padding: moderateScale(2.5),
@@ -650,23 +1003,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    elevation: isAndroid ? 0 : 3,
   },
   avatar: {
     width: '100%',
     height: '100%',
-    borderRadius: moderateScale(21),
+    borderRadius: moderateScale(22),
     backgroundColor: Colors.white,
+  },
+  onlineDot: {
+    position: 'absolute',
+    bottom: moderateScale(2),
+    left: moderateScale(2),
+    width: moderateScale(12),
+    height: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: '#4CAF50',
+    borderWidth: 2,
+    borderColor: '#FAFBFC',
   },
   greeting: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   name: {
-    fontSize: normalize(15),
+    fontSize: normalize(16),
     fontWeight: '800',
     color: Colors.textDark,
+    marginTop: verticalScale(1),
   },
   metaInfo: {
     fontSize: normalize(10),
@@ -674,25 +1039,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: verticalScale(1),
   },
-  bellBtn: {
-    width: moderateScale(38),
-    height: moderateScale(38),
+  headerBtn: {
+    width: moderateScale(36),
+    height: moderateScale(36),
     backgroundColor: Colors.white,
-    borderRadius: moderateScale(12),
+    borderRadius: moderateScale(18),
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#EFEFEF',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: isAndroid ? 0 : 2,
+    borderWidth: isAndroid ? 1 : 1,
+    borderColor: '#F0F0F0',
   },
   badge: {
     position: 'absolute',
-    top: moderateScale(8),
-    right: moderateScale(9),
+    top: moderateScale(7),
+    right: moderateScale(8),
     width: moderateScale(7),
     height: moderateScale(7),
     borderRadius: moderateScale(3.5),
@@ -701,205 +1066,140 @@ const styles = StyleSheet.create({
     borderColor: Colors.white,
   },
 
+  /* Scroll */
   scrollContent: {
     paddingBottom: verticalScale(120),
     paddingHorizontal: moderateScale(20),
-  },
-
-  bannerContent: {
-    flex: 1,
-    zIndex: 2,
-  },
-  bannerTitle: {
-    color: Colors.white,
-    fontSize: normalize(18),
-    fontWeight: '800',
-  },
-  bannerSub: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: normalize(12),
-    marginTop: verticalScale(4),
-    lineHeight: 18,
-  },
-  bannerBtn: {
-    backgroundColor: Colors.white,
-    alignSelf: 'flex-start',
-    paddingHorizontal: moderateScale(16),
-    paddingVertical: verticalScale(8),
-    borderRadius: moderateScale(50),
-    marginTop: verticalScale(14),
-  },
-  bannerBtnText: {
-    color: Colors.redPrimary,
-    fontWeight: '700',
-    fontSize: normalize(11),
-  },
-  bannerIcon: {
-    position: 'absolute',
-    right: -10,
-    bottom: -10,
-    zIndex: 1,
-    transform: [
-      {
-        rotate: '-15deg',
-      },
-    ],
   },
 
   /* Sections */
   section: {
     marginTop: verticalScale(24),
   },
-  sectionHeaderWrap: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: verticalScale(12),
-  },
   sectionTitle: {
-    fontSize: normalize(15),
+    fontSize: normalize(16),
     fontWeight: '800',
     color: Colors.textDark,
-    marginBottom: verticalScale(12),
-    fontFamily: 'Montserrat-Black',
-  },
-  seeAll: {
-    fontSize: normalize(12),
-    color: Colors.redPrimary,
-    fontWeight: '600',
-    fontFamily: 'Montserrat-Light',
+    marginBottom: verticalScale(14),
   },
 
-  /* Quick Actions ─ 2×2 Grid */
+  /* ── Quick Actions ─ Parallel Columns ── */
   actionsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: moderateScale(12),
   },
-  actionCard: {
-    width: '47.5%',
-    backgroundColor: Colors.white,
-    borderRadius: moderateScale(18),
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.07,
-    shadowRadius: 12,
-    shadowOffset: {width: 0, height: 5},
-    elevation: 4,
+  actionsCol: {
+    flex: 1,
+    gap: verticalScale(12),
   },
-  // Tinted top band
-  actionCardTop: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: verticalScale(18),
+  actionCardWrapper: {
+    borderRadius: moderateScale(20),
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: isAndroid ? 0 : 2,
+    borderWidth: isAndroid ? 1 : 0,
+    borderColor: 'rgba(0,0,0,0.04)',
+    backgroundColor: Colors.white,
+  },
+  actionCardInner: {
+    borderRadius: moderateScale(20),
+    paddingHorizontal: moderateScale(14),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(14),
   },
   actionIconBubble: {
-    width: moderateScale(58),
-    height: moderateScale(58),
-    borderRadius: moderateScale(18),
+    width: moderateScale(46),
+    height: moderateScale(46),
+    borderRadius: moderateScale(14),
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: verticalScale(12),
   },
-  // White bottom content
-  actionCardBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: moderateScale(12),
-    paddingVertical: verticalScale(10),
-    backgroundColor: Colors.white,
-  },
-  actionCardText: {flex: 1, marginRight: moderateScale(6)},
   actionLabel: {
-    fontSize: normalize(12),
-    fontWeight: '800',
-    color: Colors.textDark,
-    lineHeight: normalize(16),
-  },
-  actionSubLabel: {
-    fontSize: normalize(10),
-    color: Colors.textLight,
-    fontWeight: '500',
-    marginTop: verticalScale(1),
-  },
-  actionArrow: {
-    width: moderateScale(26),
-    height: moderateScale(26),
-    borderRadius: moderateScale(8),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  /* ── Premium History Cards ── */
-  historyCard: {
-    backgroundColor: Colors.white,
-    borderRadius: moderateScale(18),
-    marginBottom: verticalScale(14),
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.07,
-    shadowRadius: 14,
-    shadowOffset: {width: 0, height: 6},
-    elevation: 4,
-  },
-
-  // Header band
-  historyCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: moderateScale(14),
-    paddingVertical: verticalScale(12),
-  },
-  historyCardHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: moderateScale(10),
-    flex: 1,
-    marginRight: moderateScale(8),
-  },
-  historyIconWrap: {
-    width: moderateScale(44),
-    height: moderateScale(44),
-    borderRadius: moderateScale(13),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  historyTitleWrap: {flex: 1},
-  historyType: {
     fontSize: normalize(13),
     fontWeight: '800',
     color: Colors.textDark,
     lineHeight: normalize(18),
   },
-  historySubtitle: {
+  actionSubLabel: {
     fontSize: normalize(10),
-    fontWeight: '600',
-    marginTop: verticalScale(1),
-    letterSpacing: 0.2,
+    color: Colors.textLight,
+    fontWeight: '500',
+    marginTop: verticalScale(2),
   },
-  historyArrowBadge: {
-    width: moderateScale(30),
-    height: moderateScale(30),
+  actionArrowRow: {
+    alignItems: 'flex-end',
+    marginTop: verticalScale(10),
+  },
+  actionArrow: {
+    width: moderateScale(28),
+    height: moderateScale(28),
+    borderRadius: moderateScale(14),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  /* ── History Cards ── */
+  historyCard: {
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(18),
+    marginBottom: verticalScale(16),
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: isAndroid ? 0 : 2,
+    borderWidth: isAndroid ? 1 : 0,
+    borderColor: 'rgba(0,0,0,0.06)',
+    overflow: 'hidden',
+  },
+  historyCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(14),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(16),
+  },
+  historyIconWrap: {
+    width: moderateScale(42),
+    height: moderateScale(42),
+    borderRadius: moderateScale(12),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: moderateScale(14),
+  },
+  historyTitleWrap: {
+    flex: 1,
+  },
+  historyType: {
+    fontSize: normalize(13),
+    fontWeight: '800',
+    color: Colors.textDark,
+  },
+  historyBadgeText: {
+    fontSize: normalize(11),
+    fontWeight: '600',
+    marginTop: verticalScale(2),
+  },
+  historyActionBtn: {
+    width: moderateScale(34),
+    height: moderateScale(34),
     borderRadius: moderateScale(10),
     alignItems: 'center',
     justifyContent: 'center',
   },
 
-  // Dividers
-  historyDivider: {
-    height: 1,
-    backgroundColor: '#F0F0F5',
-  },
-
-  // Body
+  /* Card Body */
   historyCardBody: {
     paddingHorizontal: moderateScale(14),
-    paddingVertical: verticalScale(12),
+    paddingVertical: verticalScale(14),
+    backgroundColor: Colors.white,
   },
   historyInfoRow: {
     flexDirection: 'row',
-    gap: moderateScale(8),
+    gap: moderateScale(12),
   },
   historyInfoItem: {
     flex: 1,
@@ -907,33 +1207,35 @@ const styles = StyleSheet.create({
   historyInfoLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: moderateScale(3),
-    marginBottom: verticalScale(3),
+    gap: moderateScale(4),
+    marginBottom: verticalScale(4),
   },
   historyInfoLabel: {
-    fontSize: normalize(9),
-    fontWeight: '700',
+    fontSize: normalize(10),
+    fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   historyInfoValue: {
-    fontSize: normalize(11),
+    fontSize: normalize(12),
     fontWeight: '600',
     color: Colors.textDark,
     lineHeight: normalize(16),
   },
 
-  // Footer
-  historyFooterBtn: {
+  /* Footer */
+  historyFooter: {
+    paddingVertical: verticalScale(14),
+    paddingHorizontal: moderateScale(14),
+  },
+  historyFooterLink: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: moderateScale(5),
-    paddingVertical: verticalScale(10),
   },
-  historyFooterBtnText: {
-    fontSize: normalize(11),
-    fontWeight: '700',
+  historyFooterText: {
+    fontSize: normalize(12),
+    fontWeight: '800',
     letterSpacing: 0.2,
   },
 });

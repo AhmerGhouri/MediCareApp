@@ -57,11 +57,6 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
     enabled: !!selectedMrNo,
   });
 
-  console.log("data from upcoming appointments", data);
-  console.log("selectedMrNo from upcoming appointments", selectedMrNo);
-  console.log("consultantId from upcoming appointments", consultantId);
-
-
   // Form State
   const [appointmentDate, setAppointmentDate] = useState('');
   const [timeSlot, setTimeSlot] = useState('');
@@ -133,11 +128,6 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const selectedDateObj = datesList.find(d => d.formattedDate === appointmentDate);
   const selectedApiDate = selectedDateObj?.apiDate;
   const formattedDate = selectedDateObj?.formattedDate;
-
-  console.log("selectedDateObj", formattedDate);
-  console.log("Appointement Date", appointmentDate)
-  console.log("selectedApiDate", selectedApiDate)
-
 
   // Normalise a consultant name string for loose matching:
   // strips Dr./DR prefix, lowercase, remove punctuation

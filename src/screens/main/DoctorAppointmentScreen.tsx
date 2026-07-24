@@ -42,25 +42,87 @@ type Props = {
   >;
 };
 
-const formatDoctorName = (name: string) => {
-  let cleanName = name.trim();
-  let hasDr = false;
-  
-  if (cleanName.toUpperCase().includes('(DR)')) {
-    hasDr = true;
-    cleanName = cleanName.replace(/\(DR\)/ig, '').trim();
-  } else if (cleanName.toUpperCase().startsWith('DR.') || cleanName.toUpperCase().startsWith('DR ')) {
-    hasDr = true;
-    cleanName = cleanName.replace(/^DR\.?\s*/i, '').trim();
-  }
 
-  // Convert to Title Case
-  const titleCaseName = cleanName
+const formatDoctorName = (name: string): string => {
+  if (!name) return "";
+
+  // 1. Remove specific prefixes at the start of the string
+  let cleanName = name.replace(/^(prof\.?\s*dr\.?|dr\.?\s*prof\.?|dr\.?|prof\.?)\s+/i, "");
+
+  // 2. Remove standard suffixes in parentheses
+  cleanName = cleanName.replace(/\s*\((dr\.?|prof\.?|mbbs|frcs|fcps|ortho)\)/i, "");
+
+  // 3. Remove your specific targeted parenthesis tags: (PROF. DR.), (E), (M), (MD)
+  cleanName = cleanName.replace(/\s*\((prof\.\s*dr\.|e|m|md)\)/i, "");
+
+  // 4. Clean up any lingering double spaces and trim
+  cleanName = cleanName.replace(/\s+/g, " ").trim();
+
+  // 5. Convert to Title Case
+  return cleanName
     .toLowerCase()
-    .replace(/\b\w/g, c => c.toUpperCase());
-
-  return hasDr ? `Dr. ${titleCaseName}` : titleCaseName;
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
+
+
+
+
+// const formatDoctorName = (name: string) => {
+//   let cleanName = name.trim();
+//   let hasDr = false;
+//   console.log("Complete Name", cleanName);
+
+//   console.log("name is : ", name.toUpperCase().includes("PROF."));
+
+
+//   if (cleanName.toUpperCase().includes('(DR)')
+//     || cleanName.toUpperCase().includes('DR.')
+//     || cleanName.toUpperCase().includes('PROF.')
+//     || cleanName.toUpperCase().includes('PROF. DR.')
+//     || cleanName.toUpperCase().includes('DR. PROF.')
+//     || cleanName.toUpperCase().includes('PROF')
+//     || cleanName.toUpperCase().includes('PROF DR')
+//     || cleanName.toUpperCase().includes('DR PROF')
+//     || cleanName.toUpperCase().includes('E')
+//     || cleanName.toUpperCase().includes('MD')
+//     || cleanName.toUpperCase().includes('M')
+//     || cleanName.toUpperCase().includes('ORTHO')
+
+
+//   ) {
+//     console.log("clean name: ", cleanName);
+
+//     hasDr = true;
+//     cleanName = cleanName.replace(/\(DR\)/gi, '')
+//                 .replace(/\(DR.\)/gi, '')
+//                 .replace(/\(PROF.\)/gi, '')
+//                 .replace(/\(PROF DR\)/gi, '')
+//                 .replace(/\(DR PROF\)/gi, '')
+//                 .replace(/\(PROF. DR.\)/gi, '')
+//                 .replace(/\(PROF\)/gi, '')
+//                 .replace(/\(MBBS\)/gi, '')
+//                 .replace(/\(MBBS\)/gi, '')
+//                 .replace(/\(MD\)/gi, '')
+//                 .replace(/\(FRCS\)/gi, '')
+//                 .replace(/\(M\)/gi, '')
+//                 .replace(/\(E\)/gi, '')
+//                 .replace(/\(FCPS\)/gi, '')
+//                 .replace(/\(ORTHO\)/gi, '')
+//                 .trim();
+//   } else if (cleanName.toUpperCase().startsWith('DR.') || cleanName.toUpperCase().startsWith('DR ')) {
+//     hasDr = true;
+//     cleanName = cleanName.replace(/^DR\.?\s*/i, '').trim();
+//   }
+
+//   // Convert to Title Case
+//   const titleCaseName = cleanName
+//     .toLowerCase()
+//     .replace(/\b\w/g, c => c.toUpperCase());
+
+//   return hasDr ? `${titleCaseName}` : titleCaseName;
+// };
 
 const getSpecialityIcon = (name: string) => {
   const lower = name.toLowerCase();
@@ -92,9 +154,12 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
     queryFn: () => fetchConsultantsApi(),
   });
 
+  const doctorAsc = consultants?.sort((a, b) => a.consl_desc.localeCompare(b.consl_desc));
+
   const uniqueSpecialties = useMemo(() => {
     if (!consultants) return [];
     const specs = new Set<string>();
+
     consultants.forEach(c => {
       if (c.mdept_desc) specs.add(c.mdept_desc.trim());
     });
@@ -192,7 +257,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
           )}
 
           {filteredConsultants.length > 0 && (
-            <Text style={styles.sectionTitle}>Available Consultants</Text>
+            <Text style={styles.sectionTitleOnline}>Available Consultants For Online Appointment</Text>
           )}
         </>
       )}
@@ -220,7 +285,6 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.docInfo}>
           <Text style={styles.docName}>{formatDoctorName(doc.consl_desc)}</Text>
           <Text style={styles.docSpec}>{doc.mdept_desc?.trim()}</Text>
-          
           <Text style={styles.docDegr} numberOfLines={1}>
             {doc.consl_degr || 'MBBS, Consultant'}
           </Text>
@@ -238,7 +302,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
         </View>
-        
+
         <TouchableOpacity
           style={styles.bookBtn}
           activeOpacity={0.7}
@@ -382,7 +446,16 @@ const styles = StyleSheet.create({
     color: Colors.textDark,
     marginHorizontal: moderateScale(20),
     marginTop: verticalScale(20),
-    marginBottom: verticalScale(12),
+    marginBottom: verticalScale(12)
+  },
+
+  sectionTitleOnline: {
+    fontSize: normalize(15),
+    fontWeight: '800',
+    color: Colors.redPrimary,
+    marginHorizontal: moderateScale(20),
+    marginTop: verticalScale(20),
+    marginBottom: verticalScale(12)
   },
   specScroll: {
     paddingHorizontal: moderateScale(20),
