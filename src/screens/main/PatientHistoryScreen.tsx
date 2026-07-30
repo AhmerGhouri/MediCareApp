@@ -199,7 +199,7 @@ const PatientHistoryScreen: React.FC = () => {
       icon: 'science',
       color: Colors.redPrimary,
       bg: Colors.redPale,
-      route: 'Reports',
+      route: 'LabReports',
     },
     {
       label: 'Radiology',

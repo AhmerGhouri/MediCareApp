@@ -94,7 +94,7 @@ const QUICK_ACTIONS = [
     subtitle: 'View lab reports',
     color: '#2E7D32',
     gradient: ['#f5faf4ff', '#e8fbe8ff'],
-    route: 'Reports',
+    route: 'LabReports',
   },
   {
     icon: 'medication',

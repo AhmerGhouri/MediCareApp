@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -15,28 +15,27 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainTabParamList } from '../../navigation/AppNavigator';
-import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../navigation/AppNavigator';
+import {useQuery} from '@tanstack/react-query';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store';
 import {
   fetchReportsApi,
   LabReport,
-  LabReportsResponse,
   getLabReportDownloadUrl,
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import DownloadSuccessModal from '../../components/DownloadSuccessModal';
-import { Colors } from '../../theme/colors';
-import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
+import {Colors} from '../../theme/colors';
+import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 
-const STATUS_MAP: Record<string, { label: string; bg: string; text: string }> = {
-  '1': { label: 'Sample Received', bg: Colors.bluePale, text: Colors.blue },
-  '2': { label: 'In Process', bg: Colors.yellowPale, text: Colors.yellowDeep },
-  '3': { label: 'Not Approved', bg: Colors.redPale, text: Colors.redPrimary },
-  '4': { label: 'Approved', bg: Colors.greenPale, text: Colors.green },
+const STATUS_MAP: Record<string, {label: string; bg: string; text: string}> = {
+  '1': {label: 'Sample Received', bg: Colors.bluePale, text: Colors.blue},
+  '2': {label: 'In Process', bg: Colors.yellowPale, text: Colors.yellowDeep},
+  '3': {label: 'Not Approved', bg: Colors.redPale, text: Colors.redPrimary},
+  '4': {label: 'Approved', bg: Colors.greenPale, text: Colors.green},
 };
 
 const DEFAULT_STATUS = {
@@ -53,14 +52,14 @@ const ReportsScreen: React.FC = () => {
     testName: string;
     fileName: string;
     filePath: string;
-  }>({ visible: false, testName: '', fileName: '', filePath: '' });
+  }>({visible: false, testName: '', fileName: '', filePath: ''});
   const navigation =
-    useNavigation<NativeStackNavigationProp<MainTabParamList>>();
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const selectedMrNo = useSelector(
     (state: RootState) => state.auth.selectedMrNo,
   );
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const {data, isLoading, isError, error, refetch} = useQuery({
     queryKey: ['reports', selectedMrNo],
     queryFn: () => fetchReportsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
@@ -112,7 +111,7 @@ const ReportsScreen: React.FC = () => {
         '_',
       )}_${report.testm_id}.pdf`;
 
-      const { dirs } = ReactNativeBlobUtil.fs;
+      const {dirs} = ReactNativeBlobUtil.fs;
       const downloadDir =
         Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
       const filePath = `${downloadDir}/${fileName}`;
@@ -166,16 +165,16 @@ const ReportsScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
 
       <GradientHeader
-        title="My Reports"
+        title="Lab Reports"
         subtitle={isLoading ? 'Loading...' : `${total} reports found`}
         showBack={true}
-        onBack={() => navigation.navigate('Home')}
+        onBack={() => navigation.goBack()}
       />
 
       <ScrollView
         style={styles.body}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: verticalScale(100) }}>
+        contentContainerStyle={{paddingBottom: verticalScale(100)}}>
         {/* Search bar */}
         <View style={styles.searchBar}>
           <Icon name="search" size={normalize(20)} color={Colors.textLight} />
@@ -191,19 +190,19 @@ const ReportsScreen: React.FC = () => {
         {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={[styles.statCard]}>
-            <Text style={[styles.statNum, { color: Colors.redPrimary }]}>
+            <Text style={[styles.statNum, {color: Colors.redPrimary}]}>
               {total}
             </Text>
             <Text style={styles.statLabel}>Total</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, { color: Colors.yellowDeep }]}>
+            <Text style={[styles.statNum, {color: Colors.yellowDeep}]}>
               {pending}
             </Text>
             <Text style={styles.statLabel}>Pending</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, { color: Colors.green }]}>{final}</Text>
+            <Text style={[styles.statNum, {color: Colors.green}]}>{final}</Text>
             <Text style={styles.statLabel}>Final</Text>
           </View>
         </View>
@@ -220,7 +219,7 @@ const ReportsScreen: React.FC = () => {
         {isError && (
           <View style={styles.centerWrap}>
             <Icon
-              name={customError.status == 403 ? "search-off" : "cloud-off"}
+              name={customError.status == 403 ? 'search-off' : 'cloud-off'}
               size={normalize(40)}
               color={Colors.textLight}
             />
@@ -274,13 +273,13 @@ const ReportsScreen: React.FC = () => {
                   <View
                     style={[
                       styles.reportBorder,
-                      { backgroundColor: statusStyle.text },
+                      {backgroundColor: statusStyle.text},
                     ]}
                   />
                   <View
                     style={[
                       styles.reportIcon,
-                      { backgroundColor: statusStyle.bg },
+                      {backgroundColor: statusStyle.bg},
                     ]}>
                     <Icon
                       name="biotech"
@@ -294,10 +293,10 @@ const ReportsScreen: React.FC = () => {
                     <View
                       style={[
                         styles.statusBadge,
-                        { backgroundColor: statusStyle.bg },
+                        {backgroundColor: statusStyle.bg},
                       ]}>
                       <Text
-                        style={[styles.statusText, { color: statusStyle.text }]}>
+                        style={[styles.statusText, {color: statusStyle.text}]}>
                         {statusStyle.label}
                       </Text>
                     </View>
@@ -324,7 +323,7 @@ const ReportsScreen: React.FC = () => {
                     <View
                       style={[
                         styles.downloadBtn,
-                        { backgroundColor: '#F3F4F6' },
+                        {backgroundColor: '#F3F4F6'},
                       ]}>
                       <Icon
                         name="hourglass-empty"
@@ -347,8 +346,8 @@ const ReportsScreen: React.FC = () => {
         onPress={() => refetch()}>
         <LinearGradient
           colors={[Colors.redPrimary, Colors.yellowDeep]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
           style={styles.fabGradient}>
           <Icon name="refresh" size={normalize(26)} color={Colors.white} />
         </LinearGradient>
@@ -359,9 +358,9 @@ const ReportsScreen: React.FC = () => {
         visible={downloadModal.visible}
         testName={downloadModal.testName}
         fileName={downloadModal.fileName}
-        onDismiss={() => setDownloadModal(prev => ({ ...prev, visible: false }))}
+        onDismiss={() => setDownloadModal(prev => ({...prev, visible: false}))}
         onOpen={() => {
-          setDownloadModal(prev => ({ ...prev, visible: false }));
+          setDownloadModal(prev => ({...prev, visible: false}));
           setTimeout(() => {
             if (Platform.OS === 'android') {
               ReactNativeBlobUtil.android.actionViewIntent(
@@ -379,8 +378,8 @@ const ReportsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F9FAFB' },
-  body: { flex: 1 },
+  root: {flex: 1, backgroundColor: '#F9FAFB'},
+  body: {flex: 1},
 
   searchBar: {
     flexDirection: 'row',
@@ -418,10 +417,10 @@ const styles = StyleSheet.create({
     shadowColor: Colors.redPrimary,
     shadowOpacity: 0.05,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     elevation: 2,
   },
-  statNum: { fontSize: normalize(20), fontWeight: '800' },
+  statNum: {fontSize: normalize(20), fontWeight: '800'},
   statLabel: {
     fontSize: normalize(9),
     fontWeight: '700',
@@ -461,7 +460,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  listWrap: { paddingHorizontal: moderateScale(16) },
+  listWrap: {paddingHorizontal: moderateScale(16)},
   reportCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -474,7 +473,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.04,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     elevation: 2,
   },
   reportBorder: {
@@ -493,7 +492,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: moderateScale(8),
   },
-  reportInfo: { flex: 1 },
+  reportInfo: {flex: 1},
   reportTitle: {
     fontSize: normalize(13),
     fontWeight: '700',
@@ -511,7 +510,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(50),
     marginTop: verticalScale(5),
   },
-  statusText: { fontSize: normalize(10), fontWeight: '700' },
+  statusText: {fontSize: normalize(10), fontWeight: '700'},
   downloadBtn: {
     width: moderateScale(34),
     height: moderateScale(34),
@@ -537,7 +536,7 @@ const styles = StyleSheet.create({
     shadowColor: Colors.redPrimary,
     shadowOpacity: 0.3,
     shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: {width: 0, height: 6},
     elevation: 8,
   },
   fabGradient: {

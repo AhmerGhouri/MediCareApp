@@ -14,6 +14,7 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import SelectProfileScreen from '../screens/auth/SelectProfileScreen';
 import HomeScreen from '../screens/main/HomeScreen';
 import ReportsScreen from '../screens/main/ReportsScreen';
+import MyReportsScreen from '../screens/main/MyReportsScreen';
 import PatientHistoryScreen from '../screens/main/PatientHistoryScreen';
 import RadiologyScreen from '../screens/main/RadiologyScreen';
 
@@ -50,10 +51,11 @@ export type RootStackParamList = {
   UpcomingFollowUps: undefined;
   Notifications: undefined;
   Radiology: undefined;
+  LabReports: undefined;
 };
 
 export type MainTabParamList = {
-  Reports: undefined;
+  MyReports: undefined;
   Home: undefined;
   PatientHistory: undefined;
 };
@@ -106,7 +108,7 @@ const MainTabs: React.FC = () => {
           }
 
           const icons: Record<string, string> = {
-            Reports: 'prescription',
+            MyReports: 'prescription',
             PatientHistory: 'history',
           };
 
@@ -122,7 +124,7 @@ const MainTabs: React.FC = () => {
           );
         },
       })}>
-      <Tab.Screen name="Reports" component={ReportsScreen} />
+      <Tab.Screen name="MyReports" component={MyReportsScreen} />
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="PatientHistory" component={PatientHistoryScreen} />
     </Tab.Navigator>
@@ -159,6 +161,7 @@ const AppNavigator: React.FC = () => {
         />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Radiology" component={RadiologyScreen} />
+        <Stack.Screen name="LabReports" component={ReportsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
