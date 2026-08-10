@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,12 +10,12 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {useQuery} from '@tanstack/react-query';
-import {useSelector} from 'react-redux';
-import {MainTabParamList} from '../../navigation/AppNavigator';
-import {RootState} from '../../store';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import { MainTabParamList } from '../../navigation/AppNavigator';
+import { RootState } from '../../store';
 import {
   fetchRadiologyReportsApi,
   fetchReportsApi,
@@ -23,8 +23,8 @@ import {
   RadiologyReport,
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
-import {Colors} from '../../theme/colors';
-import {moderateScale, normalize, verticalScale} from '../../theme/responsive';
+import { Colors } from '../../theme/colors';
+import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 type Tab = 'lab' | 'radiology';
 
@@ -50,16 +50,19 @@ const MyReportsScreen: React.FC = () => {
   const labReports: LabReport[] = Array.isArray(labQuery.data?.reports)
     ? labQuery.data!.reports
     : [];
+
   const radiologyReports: RadiologyReport[] = Array.isArray(
     radiologyQuery.data?.reports,
   )
     ? radiologyQuery.data!.reports
     : [];
+
   const isLab = tab === 'lab';
   const activeQuery = isLab ? labQuery : radiologyQuery;
   const reports: Array<LabReport | RadiologyReport> = isLab
     ? labReports
     : radiologyReports;
+
   const filtered = reports.filter(report =>
     report.test_desc.toLowerCase().includes(search.toLowerCase()),
   );
@@ -74,9 +77,8 @@ const MyReportsScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
       <GradientHeader
         title="My Reports"
-        subtitle={`${
-          labReports.length + radiologyReports.length
-        } reports found`}
+        subtitle={`${labReports.length + radiologyReports.length
+          } reports found`}
       />
       <ScrollView
         contentContainerStyle={styles.content}
@@ -170,7 +172,7 @@ const MyReportsScreen: React.FC = () => {
                 const date = isLab ? lab.test_date : radiology.test_req_date;
                 return (
                   <TouchableOpacity
-                    key={`${tab}-${report.test_id}`}
+                    key={isLab ? `${tab}-${report.id}` : `${tab}-${report.test_id}`}
                     style={styles.card}
                     onPress={openDedicatedScreen}>
                     <View style={styles.cardIcon}>
@@ -202,8 +204,8 @@ const MyReportsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  content: {padding: moderateScale(16), paddingBottom: verticalScale(100)},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  content: { padding: moderateScale(16), paddingBottom: verticalScale(100) },
   tabs: {
     flexDirection: 'row',
     backgroundColor: '#F1F3F5',
@@ -220,13 +222,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: moderateScale(6),
   },
-  tabActive: {backgroundColor: Colors.redPrimary},
+  tabActive: { backgroundColor: Colors.redPrimary },
   tabText: {
     color: Colors.textLight,
     fontSize: normalize(11),
     fontWeight: '700',
   },
-  tabTextActive: {color: Colors.white},
+  tabTextActive: { color: Colors.white },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -244,7 +246,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(11),
     marginLeft: moderateScale(9),
   },
-  messageWrap: {alignItems: 'center', marginTop: verticalScale(42)},
+  messageWrap: { alignItems: 'center', marginTop: verticalScale(42) },
   message: {
     color: Colors.textLight,
     textAlign: 'center',
@@ -299,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cardInfo: {flex: 1},
+  cardInfo: { flex: 1 },
   cardTitle: {
     color: Colors.textDark,
     fontSize: normalize(13),

@@ -53,6 +53,7 @@ const ReportsScreen: React.FC = () => {
     fileName: string;
     filePath: string;
   }>({visible: false, testName: '', fileName: '', filePath: ''});
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const selectedMrNo = useSelector(
@@ -81,12 +82,11 @@ const ReportsScreen: React.FC = () => {
   ).length;
   const final = reports.filter((r: LabReport) => r.status === '4').length;
 
-  // ─── Download Report ───────────────────────────────────────────
+  // ─── Download Report ───────────────────────────────────────────────────────
   const handleDownloadReport = async (report: LabReport) => {
     try {
       setDownloadingId(report.test_id);
 
-      // Request storage permission on Android < 10
       if (Platform.OS === 'android' && Platform.Version < 29) {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -117,7 +117,6 @@ const ReportsScreen: React.FC = () => {
       const filePath = `${downloadDir}/${fileName}`;
 
       if (Platform.OS === 'android') {
-        // Use Android Download Manager for notification + Downloads folder
         const res = await ReactNativeBlobUtil.config({
           addAndroidDownloads: {
             useDownloadManager: true,
@@ -137,7 +136,6 @@ const ReportsScreen: React.FC = () => {
           filePath: res.path(),
         });
       } else {
-        // iOS: download and open with share sheet
         const res = await ReactNativeBlobUtil.config({
           fileCache: true,
           path: filePath,
@@ -160,6 +158,7 @@ const ReportsScreen: React.FC = () => {
     }
   };
 
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
@@ -175,12 +174,34 @@ const ReportsScreen: React.FC = () => {
         style={styles.body}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: verticalScale(100)}}>
+        
+        {/* Combine Lab Reports Navigation Card */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.navCardWrap}
+          onPress={() => navigation.navigate('CombineLabReport' as any)}>
+          <LinearGradient
+            colors={['#6D28D9', '#2563EB']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            style={styles.navCardInner}>
+            <View style={styles.navCardIconWrap}>
+              <Icon name="table-chart" size={normalize(26)} color={Colors.white} />
+            </View>
+            <View style={styles.navCardTextWrap}>
+              <Text style={styles.navCardTitle}>Combine Lab Reports</Text>
+              <Text style={styles.navCardSubtitle}>View historical trends over time</Text>
+            </View>
+            <Icon name="chevron-right" size={normalize(24)} color="rgba(255,255,255,0.7)" />
+          </LinearGradient>
+        </TouchableOpacity>
+
         {/* Search bar */}
         <View style={styles.searchBar}>
           <Icon name="search" size={normalize(20)} color={Colors.textLight} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search reports…"
+            placeholder="Search individual reports…"
             placeholderTextColor={Colors.textLight}
             value={search}
             onChangeText={setSearch}
@@ -189,7 +210,7 @@ const ReportsScreen: React.FC = () => {
 
         {/* Stats row */}
         <View style={styles.statsRow}>
-          <View style={[styles.statCard]}>
+          <View style={styles.statCard}>
             <Text style={[styles.statNum, {color: Colors.redPrimary}]}>
               {total}
             </Text>
@@ -227,11 +248,7 @@ const ReportsScreen: React.FC = () => {
             <Text
               style={[
                 styles.errorText,
-                {
-                  fontSize: normalize(11),
-                  color: Colors.textLight,
-                  marginTop: 4,
-                },
+                {fontSize: normalize(11), color: Colors.textLight, marginTop: 4},
               ]}>
               {error.message}
             </Text>
@@ -339,7 +356,7 @@ const ReportsScreen: React.FC = () => {
         )}
       </ScrollView>
 
-      {/* FAB */}
+      {/* FAB – refresh */}
       <TouchableOpacity
         style={styles.fab}
         activeOpacity={0.85}
@@ -378,8 +395,51 @@ const ReportsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
+  root: {flex: 1, backgroundColor: '#F4F6FA'},
   body: {flex: 1},
+
+  navCardWrap: {
+    marginHorizontal: moderateScale(16),
+    marginTop: verticalScale(14),
+    marginBottom: verticalScale(6),
+    borderRadius: moderateScale(16),
+    overflow: 'hidden',
+    shadowColor: '#4C1D95',
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: {width: 0, height: 4},
+    elevation: 4,
+  },
+  navCardInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: verticalScale(16),
+    gap: moderateScale(14),
+  },
+  navCardIconWrap: {
+    width: moderateScale(48),
+    height: moderateScale(48),
+    borderRadius: moderateScale(12),
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navCardTextWrap: {
+    flex: 1,
+  },
+  navCardTitle: {
+    fontSize: normalize(15),
+    fontWeight: '800',
+    color: Colors.white,
+    letterSpacing: 0.3,
+  },
+  navCardSubtitle: {
+    fontSize: normalize(11),
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: verticalScale(2),
+    fontWeight: '500',
+  },
 
   searchBar: {
     flexDirection: 'row',
@@ -392,7 +452,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(16),
     paddingVertical: verticalScale(10),
     marginHorizontal: moderateScale(16),
-    marginTop: verticalScale(16),
+    marginTop: verticalScale(14),
     marginBottom: verticalScale(4),
   },
   searchInput: {
@@ -459,8 +519,14 @@ const styles = StyleSheet.create({
     color: Colors.redPrimary,
     fontWeight: '700',
   },
+  emptyText: {
+    textAlign: 'center',
+    color: Colors.textLight,
+    marginTop: verticalScale(40),
+    fontSize: normalize(13),
+  },
 
-  listWrap: {paddingHorizontal: moderateScale(16)},
+  listWrap: {paddingHorizontal: moderateScale(16), paddingTop: verticalScale(6)},
   reportCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -519,12 +585,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyText: {
-    textAlign: 'center',
-    color: Colors.textLight,
-    marginTop: verticalScale(40),
-    fontSize: normalize(13),
-  },
 
   fab: {
     position: 'absolute',
@@ -532,9 +592,8 @@ const styles = StyleSheet.create({
     right: moderateScale(20),
     borderRadius: moderateScale(20),
     overflow: 'hidden',
-    backgroundColor: Colors.redPrimary,
     shadowColor: Colors.redPrimary,
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.35,
     shadowRadius: 12,
     shadowOffset: {width: 0, height: 6},
     elevation: 8,

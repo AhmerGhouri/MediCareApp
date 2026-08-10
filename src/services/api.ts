@@ -49,7 +49,7 @@ export interface RegisterResponse {
 }
 
 export interface LabReport {
-  id: number;
+  id: string;
   test_id: string;
   testm_id: number;
   testd_id: string;
@@ -88,7 +88,32 @@ export interface LabReportsResponse {
   reports: LabReport[];
 }
 
+// ─── Combine Lab Report Types ──────────────────────────────────
+
+export interface CombineLabResult {
+  test_id: string;
+  test_desc: string;
+  result: string;
+  unit: string;
+  range?: string;
+}
+
+export interface CombineLabHistory {
+  lbioresd_lbioresm_ltestm_id: number;
+  date: string;
+  results: CombineLabResult[];
+}
+
+export interface CombineLabTest {
+  ltest_master_id: string;
+  test_name: string;
+  history: CombineLabHistory[];
+}
+
+export type CombineLabReportsResponse = CombineLabTest[];
+
 export interface RadiologyReport {
+  id: string;
   test_id: number;
   test_desc: string;
   test_dept_desc: string;
@@ -313,6 +338,31 @@ export const fetchReportsApi = async (
     // Attach the status code directly to the object
     customError.status = status;
 
+    throw customError;
+  }
+};
+
+export const fetchCombineLabReportsApi = async (
+  opat_id: string,
+): Promise<CombineLabReportsResponse> => {
+  try {
+    const response = await api.get<CombineLabReportsResponse>(
+      `/patients/${opat_id}/combinelabreports`,
+    );
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    if ((response.data as any)?.data && Array.isArray((response.data as any).data)) {
+      return (response.data as any).data;
+    }
+    return [];
+  } catch (error: any) {
+    const status = error?.response?.status;
+    const message =
+      error?.response?.data?.message ||
+      'Unable to fetch combine lab reports. Please try again.';
+    const customError = new Error(message) as any;
+    customError.status = status;
     throw customError;
   }
 };

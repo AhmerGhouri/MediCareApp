@@ -14,6 +14,7 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import SelectProfileScreen from '../screens/auth/SelectProfileScreen';
 import HomeScreen from '../screens/main/HomeScreen';
 import ReportsScreen from '../screens/main/ReportsScreen';
+import CombineLabReportScreen from '../screens/main/CombineLabReportScreen';
 import MyReportsScreen from '../screens/main/MyReportsScreen';
 import PatientHistoryScreen from '../screens/main/PatientHistoryScreen';
 import RadiologyScreen from '../screens/main/RadiologyScreen';
@@ -52,6 +53,7 @@ export type RootStackParamList = {
   Notifications: undefined;
   Radiology: undefined;
   LabReports: undefined;
+  CombineLabReport: undefined;
 };
 
 export type MainTabParamList = {
@@ -124,9 +126,9 @@ const MainTabs: React.FC = () => {
           );
         },
       })}>
-      <Tab.Screen name="MyReports" component={MyReportsScreen} />
+      <Tab.Screen name="MyReports" component={MyReportsScreen} options={{ title: 'My Reports' }} />
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="PatientHistory" component={PatientHistoryScreen} />
+      <Tab.Screen name="PatientHistory" component={PatientHistoryScreen} options={{ title: 'Patient History' }} />
     </Tab.Navigator>
   );
 };
@@ -162,6 +164,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Radiology" component={RadiologyScreen} />
         <Stack.Screen name="LabReports" component={ReportsScreen} />
+        <Stack.Screen name="CombineLabReport" component={CombineLabReportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

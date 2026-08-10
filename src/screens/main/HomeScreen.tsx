@@ -90,7 +90,7 @@ const QUICK_ACTIONS = [
   },
   {
     icon: 'science',
-    label: 'Lab Tests',
+    label: 'Lab Reports',
     subtitle: 'View lab reports',
     color: '#2E7D32',
     gradient: ['#f5faf4ff', '#e8fbe8ff'],
@@ -98,7 +98,7 @@ const QUICK_ACTIONS = [
   },
   {
     icon: 'medication',
-    label: 'Radiology',
+    label: 'Radiology Reports',
     subtitle: 'Scan & imaging',
     color: '#E65100',
     gradient: ['#fdf8efff', '#fff7e1ff'],
@@ -508,7 +508,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       items.push({
         id: '1',
         date: dateStr,
-        type: 'Your OPD Consultations',
+        type: 'OPD Consultations',
         doctor: formatDoctorName(recentConsultation.consultation),
         status: 'View',
         route: 'Consultations',
@@ -518,7 +518,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       items.push({
         id: '1',
         date: 'No visit recorded',
-        type: 'Your OPD Consultations',
+        type: 'OPD Consultations',
         doctor: 'N/A',
         status: 'View',
         route: 'Consultations',

@@ -202,7 +202,7 @@ const RadiologyScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
 
       <GradientHeader
-        title="Radiology Tests"
+        title="Radiology Reports"
         subtitle={isLoading ? 'Loading...' : `${total} tests found`}
         showBack={true}
         onBack={() => navigation.goBack()}
