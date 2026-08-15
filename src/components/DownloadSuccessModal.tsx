@@ -11,6 +11,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../theme/colors';
+import { Fonts } from '../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../theme/responsive';
 
 interface DownloadSuccessModalProps {
@@ -19,6 +20,7 @@ interface DownloadSuccessModalProps {
   testName: string;
   onDismiss: () => void;
   onOpen: () => void;
+  onSave?: () => void;
 }
 
 const DownloadSuccessModal: React.FC<DownloadSuccessModalProps> = ({
@@ -27,6 +29,7 @@ const DownloadSuccessModal: React.FC<DownloadSuccessModalProps> = ({
   testName,
   onDismiss,
   onOpen,
+  onSave,
 }) => {
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const checkAnim = useRef(new Animated.Value(0)).current;
@@ -146,20 +149,25 @@ const DownloadSuccessModal: React.FC<DownloadSuccessModalProps> = ({
                   <View style={styles.checkBadge}>
                     <Icon
                       name="check-circle"
-                      size={normalize(18)}
+                      size={normalize(15)}
                       color="#10B981"
                     />
                   </View>
                 </View>
 
-                <Text style={styles.savedText}>
+                <TouchableOpacity
+                  onPress={onSave}
+                  activeOpacity={0.7}
+                  style={styles.saveActionBtn}>
                   <Icon
-                    name="folder"
-                    size={normalize(12)}
-                    color={Colors.textLight}
+                    name="file-download"
+                    size={normalize(15)}
+                    color={Colors.blue}
                   />
-                  {'  Saved to Downloads'}
-                </Text>
+                  <Text style={styles.saveActionText}>
+                    Save to Downloads
+                  </Text>
+                </TouchableOpacity>
 
                 {/* Buttons */}
                 <View style={styles.buttonRow}>
@@ -180,7 +188,7 @@ const DownloadSuccessModal: React.FC<DownloadSuccessModalProps> = ({
                       style={styles.primaryBtn}>
                       <Icon
                         name="open-in-new"
-                        size={normalize(16)}
+                        size={normalize(15)}
                         color={Colors.white}
                         style={{marginRight: 6}}
                       />
@@ -238,8 +246,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: normalize(20),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     textAlign: 'center',
     marginBottom: verticalScale(4),
@@ -247,7 +255,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: normalize(13),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
     textAlign: 'center',
     marginBottom: verticalScale(20),
   },
@@ -276,7 +284,7 @@ const styles = StyleSheet.create({
   },
   testName: {
     fontSize: normalize(13),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   fileName: {
@@ -292,11 +300,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  savedText: {
-    fontSize: normalize(11),
-    color: Colors.textLight,
-    fontWeight: '500',
+  saveActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(8),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: moderateScale(16),
+    backgroundColor: '#EFF6FF',
+    borderRadius: moderateScale(20),
     marginBottom: verticalScale(22),
+  },
+  saveActionText: {
+    fontSize: normalize(13),
+    color: Colors.blue,
+    fontFamily: Fonts.semiBold,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -312,7 +329,7 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     fontSize: normalize(14),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.white,
   },
   secondaryBtn: {
@@ -325,7 +342,7 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     fontSize: normalize(14),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textMid,
   },
 });

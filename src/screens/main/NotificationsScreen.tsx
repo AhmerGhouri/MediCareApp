@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {RootStackParamList} from '../../navigation/AppNavigator';
 import GradientHeader from '../../components/GradientHeader';
 import {Colors} from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 
 const NOTIFICATIONS = [
@@ -153,13 +154,13 @@ const styles = StyleSheet.create({
   },
   notifTitle: {
     fontSize: normalize(14),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   time: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   body: {
     fontSize: normalize(12),
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
 });
 

@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState, selectProfile} from '../../store';
 import GradientHeader from '../../components/GradientHeader';
 import {Colors} from '../../theme/colors';
+import {Fonts} from '../../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 import {MrProfile} from '../../services/api';
 
@@ -107,14 +108,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(20),
   },
   headingText: {
-    fontSize: normalize(20),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginTop: verticalScale(12),
   },
   subText: {
     fontSize: normalize(13),
     color: Colors.textLight,
+    fontFamily: Fonts.regular,
     marginTop: verticalScale(4),
     textAlign: 'center',
   },
@@ -142,19 +144,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarLetter: {
-    fontSize: normalize(22),
-    fontWeight: '800',
+    fontSize: normalize(20),
+    fontFamily: Fonts.bold,
     color: Colors.white,
   },
   profileInfo: {flex: 1},
   profileName: {
-    fontSize: normalize(16),
-    fontWeight: '700',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   profileMr: {
     fontSize: normalize(12),
     color: Colors.textLight,
+    fontFamily: Fonts.regular,
     marginTop: verticalScale(2),
   },
 });

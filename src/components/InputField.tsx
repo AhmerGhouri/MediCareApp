@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../theme/colors';
+import { Fonts } from '../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../theme/responsive';
 
 interface InputFieldProps extends TextInputProps {
@@ -33,7 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
       <View style={[styles.wrap, isFocused && styles.wrapFocused]}>
         <Icon
           name={iconName}
-          size={normalize(18)}
+          size={normalize(15)}
           color={Colors.redPrimary}
           style={styles.icon}
         />
@@ -51,7 +52,7 @@ const InputField: React.FC<InputFieldProps> = ({
             hitSlop={10}>
             <Icon
               name={showText ? 'visibility' : 'visibility-off'}
-              size={normalize(18)}
+              size={normalize(15)}
               color={Colors.textLight}
             />
           </TouchableOpacity>
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   group: {marginBottom: verticalScale(14)},
   label: {
     fontSize: normalize(10),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textMid,
     marginBottom: verticalScale(6),
     textTransform: 'uppercase',
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: normalize(14),
     color: Colors.textDark,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
     padding: 0,
     margin: 0,
     minHeight: Platform.OS === 'ios' ? verticalScale(18) : undefined,

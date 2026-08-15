@@ -11,11 +11,13 @@ import {
   Easing,
   Platform,
 } from 'react-native';
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
-import { Colors } from '../../theme/colors';
-import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Colors} from '../../theme/colors';
+import {Fonts} from '../../theme/fonts';
+import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -290,7 +292,7 @@ const AnimatedHeroBanner: React.FC = () => {
               ]}>
               <Icon
                 name="monitor-heart"
-                size={normalize(22)}
+                size={normalize(20)}
                 color="#2196F3"
               />
             </Animated.View>
@@ -367,20 +369,20 @@ const heroStyles = StyleSheet.create({
   title: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: normalize(14),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   titleBold: {
     color: Colors.white,
-    fontSize: normalize(22),
-    fontWeight: '900',
+    fontSize: normalize(20),
+    fontFamily: Fonts.black,
     marginTop: verticalScale(2),
   },
   subtitle: {
     color: 'rgba(255,255,255,0.8)',
     fontSize: normalize(11),
     marginTop: verticalScale(8),
-    lineHeight: normalize(16),
-    fontWeight: '500',
+    lineHeight: normalize(15),
+    fontFamily: Fonts.medium,
   },
   iconSide: {
     width: moderateScale(90),
@@ -647,12 +649,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAFBFC" />
 
       {/* ── Header ── */}
-      <View style={styles.header}>
+      <View style={[styles.header, {paddingTop: insets.top + verticalScale(8)}]}>
         <View style={styles.headerLeft}>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -690,7 +694,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onPress={() => navigation.navigate('SelectProfile')}>
               <Icon
                 name="swap-horiz"
-                size={normalize(20)}
+                size={normalize(15)}
                 color={Colors.textDark}
               />
             </TouchableOpacity>
@@ -701,7 +705,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onPress={() => navigation.navigate('Notifications')}>
             <Icon
               name="notifications-none"
-              size={normalize(20)}
+              size={normalize(15)}
               color={Colors.textDark}
             />
             <View style={styles.badge} />
@@ -711,7 +715,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onPress={() => setShowLogoutPopup(true)}>
             <Icon
               name="logout"
-              size={normalize(18)}
+              size={normalize(15)}
               color={Colors.redPrimary}
             />
           </TouchableOpacity>
@@ -845,7 +849,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     ]}>
                     <Icon
                       name={theme.icon}
-                      size={normalize(20)}
+                      size={normalize(15)}
                       color={theme.iconColor}
                     />
                   </View>
@@ -862,7 +866,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                   <View style={[styles.historyActionBtn, { backgroundColor: theme.iconColor }]}>
                     <Icon
                       name="arrow-forward"
-                      size={normalize(16)}
+                      size={normalize(15)}
                       color={Colors.white}
                     />
                   </View>
@@ -934,7 +938,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     </Text>
                     <Icon
                       name="chevron-right"
-                      size={normalize(16)}
+                      size={normalize(15)}
                       color={theme.iconColor}
                     />
                   </View>
@@ -974,7 +978,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: moderateScale(20),
-    paddingTop: verticalScale(50),
     paddingBottom: verticalScale(6),
   },
   headerLeft: {
@@ -1025,18 +1028,18 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   name: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginTop: verticalScale(1),
   },
   metaInfo: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginTop: verticalScale(1),
   },
   headerBtn: {
@@ -1077,8 +1080,8 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(24),
   },
   sectionTitle: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginBottom: verticalScale(14),
   },
@@ -1119,14 +1122,14 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: normalize(13),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
-    lineHeight: normalize(18),
+    lineHeight: normalize(15),
   },
   actionSubLabel: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
     marginTop: verticalScale(2),
   },
   actionArrowRow: {
@@ -1175,12 +1178,12 @@ const styles = StyleSheet.create({
   },
   historyType: {
     fontSize: normalize(13),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   historyBadgeText: {
     fontSize: normalize(11),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginTop: verticalScale(2),
   },
   historyActionBtn: {
@@ -1212,15 +1215,15 @@ const styles = StyleSheet.create({
   },
   historyInfoLabel: {
     fontSize: normalize(10),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   historyInfoValue: {
     fontSize: normalize(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textDark,
-    lineHeight: normalize(16),
+    lineHeight: normalize(15),
   },
 
   /* Footer */
@@ -1235,7 +1238,7 @@ const styles = StyleSheet.create({
   },
   historyFooterText: {
     fontSize: normalize(12),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     letterSpacing: 0.2,
   },
 });

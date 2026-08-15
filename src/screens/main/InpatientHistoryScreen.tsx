@@ -17,6 +17,7 @@ import { RootState } from '../../store';
 import { fetchInpatientHistoryApi, InpatientReport } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -166,7 +167,7 @@ const InpatientHistoryScreen: React.FC<Props> = ({ navigation }) => {
                   <View style={styles.admitBanner}>
                     <Icon
                       name="local-hospital"
-                      size={normalize(18)}
+                      size={normalize(15)}
                       color={Colors.white}
                     />
                     <Text style={styles.bannerText} numberOfLines={2}>
@@ -197,7 +198,7 @@ const InpatientHistoryScreen: React.FC<Props> = ({ navigation }) => {
                     <View style={styles.docRow}>
                       <Icon
                         name="health-and-safety"
-                        size={normalize(16)}
+                        size={normalize(15)}
                         color={Colors.redPrimary}
                       />
                       <Text style={styles.docAttr}>
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
   bannerText: {
     flex: 1,
     fontSize: normalize(14),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.white,
     marginLeft: moderateScale(8),
   },
@@ -265,12 +266,12 @@ const styles = StyleSheet.create({
   rowLabel: {
     fontSize: normalize(11),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   rowValue: {
     fontSize: normalize(14),
     color: Colors.textDark,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginTop: verticalScale(2),
   },
 
@@ -294,7 +295,7 @@ const styles = StyleSheet.create({
   timeVal: {
     fontSize: normalize(11),
     color: Colors.textDark,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginTop: verticalScale(4),
   },
   timeLineDiv: {
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(6),
     flex: 1,
   },
-  docBold: { fontWeight: '700', color: Colors.textDark },
+  docBold: { fontFamily: Fonts.bold, color: Colors.textDark },
 
   emptyWrap: {
     alignItems: 'center',
@@ -324,8 +325,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20),
   },
   emptyTitle: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginTop: verticalScale(16),
   },
@@ -346,13 +347,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });
 

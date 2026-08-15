@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {moderateScale, verticalScale} from '../theme/responsive';
 import {Colors} from '../theme/colors';
+import { Fonts } from '../theme/fonts';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const CAROUSEL_ITEM_WIDTH = SCREEN_WIDTH - moderateScale(40);

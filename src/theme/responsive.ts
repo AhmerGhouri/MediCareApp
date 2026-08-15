@@ -2,30 +2,46 @@ import {Dimensions, PixelRatio, Platform} from 'react-native';
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
-// Keep base close to modern larger phones to prevent over-scaling on smaller ones
+// Design baseline: iPhone 14 / modern Android flagship
 const BASE_WIDTH = 390;
 const BASE_HEIGHT = 844;
 
+/** Clamp a value between min and max */
+const clamp = (min: number, value: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
+/**
+ * Horizontal scale — clamped to ±15% of base to avoid extreme sizing
+ * on very small (320-wide) or very large (430-wide) screens.
+ */
 export const scale = (size: number) => {
-  return (SCREEN_WIDTH / BASE_WIDTH) * size;
+  const ratio = clamp(0.85, SCREEN_WIDTH / BASE_WIDTH, 1.15);
+  return ratio * size;
 };
 
+/**
+ * Vertical scale — clamped similarly.
+ */
 export const verticalScale = (size: number) => {
-  return (SCREEN_HEIGHT / BASE_HEIGHT) * size;
+  const ratio = clamp(0.85, SCREEN_HEIGHT / BASE_HEIGHT, 1.15);
+  return ratio * size;
 };
 
+/**
+ * Moderate scale — blends raw logical size with scaled size.
+ * Lower factor = closer to raw size (less artificial inflation/deflation).
+ */
 export const moderateScale = (size: number, factor = 0.2) => {
-  // Lower factor means less artificial scaling (closer to raw logical points)
   return size + (scale(size) - size) * factor;
 };
 
-/** Use this for sizing text fonts dynamically but preventing extreme upsizing */
+/**
+ * Font normalizer — prevents text from being illegibly small on
+ * sub-360 screens or oversized on 430+ screens.
+ */
 export const normalize = (size: number) => {
-  // On iOS, system already handles logical points well.
-  // We use a small factor to just give a gentle scale.
-  const newSize = moderateScale(size, Platform.OS === 'ios' ? 0.1 : 0.3);
-  return (
-    Math.round(PixelRatio.roundToNearestPixel(newSize)) -
-    (Platform.OS === 'ios' ? 1 : 0)
-  );
+  // Gentler factor to prevent wild swings
+  const factor = Platform.OS === 'ios' ? 0.15 : 0.25;
+  const newSize = moderateScale(size, factor);
+  return Math.round(PixelRatio.roundToNearestPixel(newSize));
 };

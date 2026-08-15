@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigation/AppNavigator';
 import {Colors} from '../../theme/colors';
+import {Fonts} from '../../theme/fonts';
 import Logo from '../../../assets/Logo.png';
 import {normalize, moderateScale} from '../../theme/responsive';
 
@@ -84,8 +85,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   title: {
-    fontSize: normalize(32),
-    fontWeight: '800',
+    fontSize: normalize(28),
+    fontFamily: Fonts.bold,
     color: Colors.white,
     letterSpacing: -0.5,
   },
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: 'rgba(255,255,255,0.85)',
     marginTop: moderateScale(8),
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   logoImage: {
     width: moderateScale(90),

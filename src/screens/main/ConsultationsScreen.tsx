@@ -20,6 +20,7 @@ import {
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -254,15 +255,15 @@ const styles = StyleSheet.create({
   dateText: {
     color: Colors.white,
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginLeft: moderateScale(4),
   },
-  statusText: { fontSize: normalize(11), fontWeight: '800' },
+  statusText: { fontSize: normalize(11), fontFamily: Fonts.bold, },
 
   cardBody: { padding: moderateScale(16) },
   docName: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginBottom: verticalScale(6),
   },
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   },
   costText: {
     fontSize: normalize(12),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
   },
   rxBtn: {
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(6),
     borderRadius: moderateScale(8),
   },
-  rxText: { fontSize: normalize(11), color: Colors.blue, fontWeight: '700' },
+  rxText: { fontSize: normalize(11), color: Colors.blue, fontFamily: Fonts.bold, },
 
   centerWrap: {
     alignItems: 'center',
@@ -298,13 +299,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 
   emptyWrap: {
@@ -326,8 +327,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20),
   },
   emptyTitle: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginTop: verticalScale(16),
   },

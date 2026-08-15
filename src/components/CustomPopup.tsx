@@ -10,6 +10,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../theme/colors';
+import { Fonts } from '../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../theme/responsive';
 
 export type PopupType = 'success' | 'error' | 'warning' | 'info';
@@ -65,7 +66,7 @@ const CustomPopup: React.FC<PopupProps> = ({
                 style={styles.iconCircle}>
                 <Icon
                   name={iconConfig.name}
-                  size={normalize(32)}
+                  size={normalize(28)}
                   color={Colors.white}
                 />
               </LinearGradient>
@@ -140,8 +141,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   title: {
-    fontSize: normalize(18),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     textAlign: 'center',
     marginBottom: verticalScale(8),
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     fontSize: normalize(14),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.white,
   },
   secondaryBtn: {
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     fontSize: normalize(14),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textMid,
   },
 });

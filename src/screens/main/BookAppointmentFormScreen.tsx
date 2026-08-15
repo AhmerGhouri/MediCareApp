@@ -24,6 +24,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import CustomPopup from '../../components/CustomPopup';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, verticalScale, normalize } from '../../theme/responsive';
 
 import MaleAvatar from '../../../assets/male_avatar.png';
@@ -420,7 +421,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {allSlotsBooked && (
               <View style={styles.allBookedBanner}>
-                <Icon name="event-busy" size={normalize(16)} color="#B91C1C" />
+                <Icon name="event-busy" size={normalize(15)} color="#B91C1C" />
                 <Text style={styles.allBookedText}>
                   All slots are booked for this date
                 </Text>
@@ -429,7 +430,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
 
             {hasExistingAppointment && (
               <View style={styles.allBookedBanner}>
-                <Icon name="warning" size={normalize(16)} color="#B91C1C" />
+                <Icon name="warning" size={normalize(15)} color="#B91C1C" />
                 <Text style={styles.allBookedText}>
                   You already have an upcoming appointment with this doctor. New booking is not allowed.
                 </Text>
@@ -597,13 +598,13 @@ const styles = StyleSheet.create({
   },
   doctorHeaderName: {
     fontSize: normalize(15),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   doctorHeaderSpec: {
     fontSize: normalize(11),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginTop: verticalScale(2),
   },
   doctorHeaderDegr: {
@@ -643,18 +644,18 @@ const styles = StyleSheet.create({
   patientInfoLabel: {
     fontSize: normalize(9.5),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     textTransform: 'uppercase',
   },
   patientInfoVal: {
     fontSize: normalize(12.5),
     color: Colors.textDark,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginTop: verticalScale(3),
   },
   fieldLabel: {
     fontSize: normalize(13.5),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginHorizontal: moderateScale(18),
     marginBottom: verticalScale(8),
@@ -707,7 +708,7 @@ const styles = StyleSheet.create({
   dateDayName: {
     fontSize: normalize(10.5),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginBottom: verticalScale(4),
     textTransform: 'uppercase',
   },
@@ -715,9 +716,9 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
   },
   dateDayNum: {
-    fontSize: normalize(16),
+    fontSize: normalize(15),
     color: Colors.textDark,
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
   },
   dateDayNumSelected: {
     color: Colors.white,
@@ -725,7 +726,7 @@ const styles = StyleSheet.create({
   dateMonth: {
     fontSize: normalize(9.5),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginTop: verticalScale(2),
   },
   dateMonthSelected: {
@@ -747,14 +748,14 @@ const styles = StyleSheet.create({
   },
   allBookedText: {
     fontSize: normalize(12),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: '#B91C1C',
     flex: 1,
   },
 
   timeSlotPeriodTitle: {
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
     marginHorizontal: moderateScale(18),
     marginTop: verticalScale(8),
@@ -810,12 +811,12 @@ const styles = StyleSheet.create({
   loadingSlotsText: {
     color: Colors.textMid,
     fontSize: normalize(12),
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   timeSlotText: {
     fontSize: normalize(10.5),
     color: Colors.textMid,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   timeSlotTextSelected: {
     color: Colors.white,
@@ -827,7 +828,7 @@ const styles = StyleSheet.create({
   noSlotsText: {
     fontSize: normalize(11),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
     marginHorizontal: moderateScale(4),
     fontStyle: 'italic',
   },

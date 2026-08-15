@@ -23,6 +23,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -163,7 +164,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   const checkEligibilityMutation = useMutation({
     mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
     onSuccess: data => {
-      if (!data.authorized) {
+      if (!data.eligible) {
         console.log("error")
         setVisible(true)
         if (email !== '') {
@@ -489,8 +490,8 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(12),
   },
   sectionTitle: {
-    fontSize: normalize(18),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginBottom: verticalScale(8),
     textAlign: 'center',
@@ -498,12 +499,13 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: normalize(12),
     color: Colors.textMid,
+    fontFamily: Fonts.regular,
     marginBottom: verticalScale(20),
     lineHeight: 19,
     textAlign: 'center',
   },
   highlight: {
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.redPrimary,
   },
   btnWrapper: {
@@ -512,12 +514,13 @@ const styles = StyleSheet.create({
   resendText: {
     fontSize: normalize(12),
     color: Colors.textMid,
+    fontFamily: Fonts.regular,
     textAlign: 'center',
     marginTop: verticalScale(16),
   },
   resendLink: {
     color: Colors.blue,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });
 

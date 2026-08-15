@@ -33,6 +33,7 @@ import {
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import {Colors} from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 import MaleAvatar from '../../../assets/male_avatar.png';
 import FemaleAvatar from '../../../assets/female_avatar.png';
@@ -322,7 +323,7 @@ const PatientHistoryScreen: React.FC = () => {
               activeOpacity={0.8}
               onPress={() => navigation.navigate(s.route as any)}>
               <View style={[styles.statIcon, {backgroundColor: s.bg}]}>
-                <Icon name={s.icon} size={normalize(18)} color={s.color} />
+                <Icon name={s.icon} size={normalize(15)} color={s.color} />
               </View>
               {isLoading ? (
                 <ActivityIndicator
@@ -600,7 +601,7 @@ const PatientHistoryScreen: React.FC = () => {
                   <View style={styles.upcomingIconWrap}>
                     <Icon
                       name="event"
-                      size={normalize(20)}
+                      size={normalize(15)}
                       color={Colors.yellowDeep}
                     />
                   </View>
@@ -683,9 +684,9 @@ const styles = StyleSheet.create({
   profileInfo: {flex: 1},
   profileName: {
     fontSize: normalize(15),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
-    lineHeight: normalize(20),
+    lineHeight: normalize(15),
   },
   profileMetaRow: {
     flexDirection: 'row',
@@ -696,7 +697,7 @@ const styles = StyleSheet.create({
   profileMeta: {
     fontSize: normalize(11),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   tagsRow: {
     flexDirection: 'row',
@@ -712,7 +713,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(3),
     borderRadius: moderateScale(50),
   },
-  tagText: {fontSize: normalize(10), fontWeight: '700'},
+  tagText: {fontSize: normalize(10), fontFamily: Fonts.bold,},
 
   // ── Stats Strip ───────────────────────────────────────────────
   statsRow: {
@@ -741,13 +742,13 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(6),
   },
   statValue: {
-    fontSize: normalize(20),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     lineHeight: normalize(24),
   },
   statLabel: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
     marginTop: verticalScale(2),
     textTransform: 'uppercase',
@@ -766,14 +767,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: normalize(12),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textMid,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
   sectionCount: {
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
   },
 
@@ -787,7 +788,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(10),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   emptyText: {
     fontSize: normalize(13),
@@ -853,7 +854,7 @@ const styles = StyleSheet.create({
   tcHeaderLeft: {flex: 1, marginRight: moderateScale(8)},
   tcType: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
     textTransform: 'uppercase',
     letterSpacing: 0.6,
@@ -861,13 +862,13 @@ const styles = StyleSheet.create({
   },
   tcDoctor: {
     fontSize: normalize(13),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   tcDeptSub: {
     fontSize: normalize(10),
     color: Colors.textMid,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginTop: verticalScale(2),
   },
   tcBadge: {
@@ -898,15 +899,15 @@ const styles = StyleSheet.create({
   },
   tcInfoLabel: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   tcInfoValue: {
     fontSize: normalize(11),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textDark,
-    lineHeight: normalize(16),
+    lineHeight: normalize(15),
   },
   tcAmountRow: {
     flexDirection: 'row',
@@ -917,7 +918,7 @@ const styles = StyleSheet.create({
   tcAmount: {
     fontSize: normalize(11),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   diagnosisBox: {
     flexDirection: 'row',
@@ -933,7 +934,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: normalize(11),
     color: Colors.textDark,
-    lineHeight: normalize(16),
+    lineHeight: normalize(15),
   },
 
   // ── Upcoming Appointments ─────────────────────────────────────
@@ -974,14 +975,14 @@ const styles = StyleSheet.create({
   upcomingInfo: {flex: 1},
   upcomingDoctor: {
     fontSize: normalize(13),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   upcomingDept: {
     fontSize: normalize(11),
     color: Colors.textMid,
     marginTop: verticalScale(1),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   upcomingMetaRow: {
     flexDirection: 'row',
@@ -992,7 +993,7 @@ const styles = StyleSheet.create({
   upcomingMeta: {
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   upcomingBadge: {
     backgroundColor: Colors.yellowPale,
@@ -1002,7 +1003,7 @@ const styles = StyleSheet.create({
   },
   upcomingBadgeText: {
     fontSize: normalize(10),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.yellowDeep,
   },
 });

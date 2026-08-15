@@ -256,7 +256,8 @@ export interface TodaysClinicResponse {
 }
 
 interface Eligibility {
-  authorized: boolean,
+  eligible: boolean;
+  // authorized: boolean,
   status?: string | undefined,
   message?: string | undefined
 }
@@ -285,7 +286,7 @@ export const checkRegistrationEligibilityApi = async (
   mobile_number: string,
 ): Promise<Eligibility> => {
   try {
-    const response = await api.post<{ authorized: boolean }>(
+    const response = await api.post<{ eligible: boolean }>(
       '/auth/check-eligibility',
       {
         mobile_number,
@@ -296,11 +297,11 @@ export const checkRegistrationEligibilityApi = async (
     if (error?.response?.status === 404) {
       return new Promise(resolve => {
         setTimeout(() => {
-          resolve({ authorized: true }); // Mock default so it doesn't block frontend testing
+          resolve({ eligible: true }); // Mock default so it doesn't block frontend testing
         }, 1000);
       });
     }
-    throw error;
+    throw error.response.data;
   }
 };
 

@@ -24,6 +24,7 @@ import {
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 type Tab = 'lab' | 'radiology';
@@ -108,7 +109,7 @@ const MyReportsScreen: React.FC = () => {
         </View>
 
         <View style={styles.searchBar}>
-          <Icon name="search" size={normalize(20)} color={Colors.textLight} />
+          <Icon name="search" size={normalize(15)} color={Colors.textLight} />
           <TextInput
             style={styles.searchInput}
             value={search}
@@ -152,7 +153,7 @@ const MyReportsScreen: React.FC = () => {
               </Text>
               <Icon
                 name="arrow-forward"
-                size={normalize(18)}
+                size={normalize(15)}
                 color={Colors.white}
               />
             </TouchableOpacity>
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
   tabText: {
     color: Colors.textLight,
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   tabTextActive: { color: Colors.white },
   searchBar: {
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
   },
   retryText: {
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     fontSize: normalize(12),
   },
   openButton: {
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   },
   openButtonText: {
     color: Colors.white,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     fontSize: normalize(12),
   },
   card: {
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: Colors.textDark,
     fontSize: normalize(13),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   cardMeta: {
     color: Colors.textLight,
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
   status: {
     color: Colors.redPrimary,
     fontSize: normalize(10),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });
 

@@ -4,13 +4,14 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Platform,
   Image,
   ImageSourcePropType,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors} from '../theme/colors';
+import {Fonts} from '../theme/fonts';
 import {normalize, verticalScale, moderateScale} from '../theme/responsive';
 
 interface GradientHeaderProps {
@@ -34,12 +35,14 @@ const GradientHeader: React.FC<GradientHeaderProps> = ({
   children,
   logo,
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <LinearGradient
       colors={[Colors.redDeep, Colors.redPrimary, Colors.yellowDeep]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
-      style={styles.header}>
+      style={[styles.header, {paddingTop: insets.top + verticalScale(10)}]}>
       {/* Decorative circles - modern softer opacity */}
       <View style={styles.circle1} />
       <View style={styles.circle2} />
@@ -61,7 +64,7 @@ const GradientHeader: React.FC<GradientHeaderProps> = ({
 
         {rightIcon && (
           <TouchableOpacity style={styles.iconBtn} onPress={onRightPress}>
-            <Icon name={rightIcon} size={normalize(18)} color={Colors.white} />
+            <Icon name={rightIcon} size={normalize(15)} color={Colors.white} />
           </TouchableOpacity>
         )}
       </View>
@@ -89,11 +92,10 @@ const GradientHeader: React.FC<GradientHeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: Platform.OS === 'ios' ? verticalScale(45) : verticalScale(15),
     paddingHorizontal: moderateScale(20),
     paddingBottom: verticalScale(20),
     overflow: 'hidden',
-    borderBottomLeftRadius: 30, // Sleek curve at the bottom
+    borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     backgroundColor: Colors.redDeep,
     shadowColor: Colors.redDeep,
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
   backText: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: normalize(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginLeft: moderateScale(4),
   },
   titleRow: {
@@ -144,8 +146,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: normalize(20),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.white,
     letterSpacing: -0.2,
   },
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(11),
     color: 'rgba(255,255,255,0.85)',
     marginTop: verticalScale(2),
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   iconBtn: {
     width: moderateScale(36),

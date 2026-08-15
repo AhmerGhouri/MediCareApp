@@ -20,6 +20,7 @@ import {
 } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -224,7 +225,7 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
                     <View style={styles.dateBlock}>
                       <Icon
                         name="event-available"
-                        size={normalize(18)}
+                        size={normalize(15)}
                         color={isPast ? Colors.textLight : Colors.green}
                       />
                       <Text style={styles.dateVal}>
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   pastRibbon: { backgroundColor: '#F3F4F6' },
   timerRibbonText: {
     fontSize: normalize(10),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
@@ -317,8 +318,8 @@ const styles = StyleSheet.create({
 
   cardInfo: { padding: moderateScale(16) },
   reasonText: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginBottom: verticalScale(14),
   },
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   dateVal: {
     fontSize: normalize(13),
     color: Colors.textDark,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginLeft: moderateScale(8),
   },
 
@@ -364,13 +365,13 @@ const styles = StyleSheet.create({
   rescheduleText: {
     color: Colors.white,
     fontSize: normalize(12),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   cancelBtn: { backgroundColor: '#F3F4F6' },
   cancelText: {
     color: Colors.textMid,
     fontSize: normalize(12),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 
   centerWrap: {
@@ -382,13 +383,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 
   emptyWrap: {
@@ -410,8 +411,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20),
   },
   emptyTitle: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginTop: verticalScale(16),
   },

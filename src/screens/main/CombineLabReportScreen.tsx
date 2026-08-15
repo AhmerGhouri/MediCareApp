@@ -31,6 +31,7 @@ import {
 import GradientHeader from '../../components/GradientHeader';
 import DownloadSuccessModal from '../../components/DownloadSuccessModal';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 // ─── Date palette — cycles for each date column (Aesthetic light tones) ──────
@@ -397,7 +398,7 @@ const CombineLabReportScreen: React.FC = () => {
                         <View style={styles.combineHeaderIconWrap}>
                           <Icon
                             name="science"
-                            size={normalize(20)}
+                            size={normalize(15)}
                             color="#E0F2FE"
                           />
                         </View>
@@ -416,8 +417,8 @@ const CombineLabReportScreen: React.FC = () => {
                           {downloadingId === test.ltest_master_id ? (
                             <ActivityIndicator size="small" color="#FFF" />
                           ) : (
-                            // <Icon name="picture-as-pdf" size={normalize(20)} color="#FFF" />
-                            <Icon name="file-download" size={normalize(20)} color="#FFF" />
+                            // <Icon name="picture-as-pdf" size={normalize(15)} color="#FFF" />
+                            <Icon name="file-download" size={normalize(15)} color="#FFF" />
                           )}
                         </TouchableOpacity>
                       </LinearGradient>
@@ -577,13 +578,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   emptyText: {
     textAlign: 'center',
@@ -640,7 +641,7 @@ const styles = StyleSheet.create({
   combineHeaderTextWrap: { flex: 1 },
   combineCardTitle: {
     fontSize: normalize(13),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.white,
     letterSpacing: 0.3,
   },
@@ -648,7 +649,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(10),
     color: 'rgba(255,255,255,0.85)',
     marginTop: verticalScale(2),
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   downloadPdfBtn: {
     width: moderateScale(40),
@@ -672,7 +673,7 @@ const styles = StyleSheet.create({
   },
   combineColHeader: {
     fontSize: normalize(9),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: '#0284C7',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
@@ -688,7 +689,7 @@ const styles = StyleSheet.create({
   },
   combineDateLabel: {
     fontSize: normalize(11),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     textAlign: 'center',
   },
   combineDateUnderline: {
@@ -725,7 +726,7 @@ const styles = StyleSheet.create({
   },
   combineTestName: {
     fontSize: normalize(11),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textDark,
     lineHeight: normalize(15),
   },
@@ -752,13 +753,13 @@ const styles = StyleSheet.create({
   },
   combineResult: {
     fontSize: normalize(12),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     textAlign: 'center',
   },
   combineResultNA: {
     fontSize: normalize(14),
     color: '#D1D5DB',
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     textAlign: 'center',
   },
 

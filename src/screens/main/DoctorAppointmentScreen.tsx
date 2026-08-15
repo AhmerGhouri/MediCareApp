@@ -13,6 +13,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/AppNavigator';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
@@ -20,6 +21,7 @@ import { RootState } from '../../store';
 import { fetchConsultantsApi, Consultant } from '../../services/api';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 
 import MaleAvatar from '../../../assets/male_avatar.png';
@@ -131,7 +133,7 @@ const getSpecialityIcon = (name: string) => {
   if (lower.includes('dent')) return 'healing';
   if (lower.includes('eye') || lower.includes('ophthal')) return 'visibility';
   if (lower.includes('pead') || lower.includes('pediatric')) return 'child-care';
-  if (lower.includes('surg')) return 'content-cut';
+  if (lower.includes('surg')) return 'mci-needle';
   if (lower.includes('ortho')) return 'accessible';
   if (lower.includes('gynae') || lower.includes('obs')) return 'pregnant-woman';
   if (lower.includes('derma') || lower.includes('skin')) return 'face';
@@ -155,6 +157,17 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
   });
 
   const doctorAsc = consultants?.sort((a, b) => a.consl_desc.localeCompare(b.consl_desc));
+
+  const UnifiedIcon = ({ name, size, color }: { name: string, size: number, color: string }) => {
+    // Check if the icon name is designated for the community library
+    if (name.startsWith('mci-')) {
+      const cleanName = name.replace('mci-', ''); // Remove the prefix
+      return <MaterialCommunityIcons name={cleanName} size={size} color={color} />;
+    }
+
+    // Fallback default library
+    return <Icon name={name} size={size} color={color} />;
+  };
 
   const uniqueSpecialties = useMemo(() => {
     if (!consultants) return [];
@@ -240,7 +253,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
                       activeOpacity={0.8}
                     >
                       <View style={[styles.specIconWrap, isSelected && styles.specIconWrapSelected]}>
-                        <Icon
+                        <UnifiedIcon
                           name={item.icon}
                           size={normalize(24)}
                           color={isSelected ? Colors.white : Colors.redPrimary}
@@ -336,7 +349,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
       {!isLoading && !isError && consultants && (
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>
-            <Icon name="search" size={normalize(20)} color={Colors.textLight} />
+            <Icon name="search" size={normalize(15)} color={Colors.textLight} />
             <TextInput
               placeholder="Search doctors by name or specialty..."
               placeholderTextColor={Colors.textLight}
@@ -347,7 +360,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.searchClearBtn}>
-                <Icon name="close" size={normalize(18)} color={Colors.textLight} />
+                <Icon name="close" size={normalize(15)} color={Colors.textLight} />
               </TouchableOpacity>
             )}
           </View>
@@ -388,13 +401,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -406,7 +419,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 
   searchContainer: {
@@ -442,7 +455,7 @@ const styles = StyleSheet.create({
 
   sectionTitle: {
     fontSize: normalize(15),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
     marginHorizontal: moderateScale(20),
     marginTop: verticalScale(20),
@@ -451,7 +464,7 @@ const styles = StyleSheet.create({
 
   sectionTitleOnline: {
     fontSize: normalize(15),
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
     color: Colors.redPrimary,
     marginHorizontal: moderateScale(20),
     marginTop: verticalScale(20),
@@ -486,12 +499,12 @@ const styles = StyleSheet.create({
   specName: {
     fontSize: normalize(11),
     color: Colors.textMid,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     marginTop: verticalScale(6),
   },
   specNameSelected: {
     color: Colors.redPrimary,
-    fontWeight: '800',
+    fontFamily: Fonts.bold,
   },
 
   docCard: {
@@ -519,11 +532,11 @@ const styles = StyleSheet.create({
     borderColor: '#EFEFEF',
   },
   docInfo: { flex: 1, marginLeft: moderateScale(14), marginRight: moderateScale(4) },
-  docName: { fontSize: normalize(14), fontWeight: '800', color: Colors.textDark },
+  docName: { fontSize: normalize(14), fontFamily: Fonts.bold, color: Colors.textDark },
   docSpec: {
     fontSize: normalize(11),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     marginTop: verticalScale(1),
   },
   docDegr: {
@@ -549,12 +562,12 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: normalize(9.5),
     color: '#FF8F00',
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   reviewsText: {
     fontSize: normalize(9),
     color: '#FFB300',
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   expBadge: {
     flexDirection: 'row',
@@ -568,7 +581,7 @@ const styles = StyleSheet.create({
   expText: {
     fontSize: normalize(9.5),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   bookBtn: {
     flexDirection: 'row',
@@ -587,7 +600,7 @@ const styles = StyleSheet.create({
   bookBtnText: {
     color: Colors.white,
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });
 

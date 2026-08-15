@@ -1,10 +1,11 @@
 import React from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // State Management Integrations
-import { Provider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { store } from './src/store';
+import {Provider} from 'react-redux';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {store} from './src/store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,18 +15,19 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: true, // Mobile app — no window focus events
       refetchOnReconnect: true, // Avoid automatic refetch on network reconnect
       retry: 3, // Only retry once on failure (default is 3, causing extra requests)
-    }
+    },
   },
 });
-// const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <AppNavigator />
-      </QueryClientProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <AppNavigator />
+        </QueryClientProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 

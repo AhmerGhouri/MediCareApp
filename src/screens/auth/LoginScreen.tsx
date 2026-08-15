@@ -19,9 +19,10 @@ import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import { Colors } from '../../theme/colors';
+import {Colors} from '../../theme/colors';
+import {Fonts} from '../../theme/fonts';
 import Logo from '../../../assets/Logo.png';
-import { normalize, verticalScale, moderateScale } from '../../theme/responsive';
+import {normalize, verticalScale, moderateScale} from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -51,6 +52,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   ) => {
     setPopup({ visible: true, type, title, message });
   };
+
 
   const loginMutation = useMutation({
     mutationFn: () => loginApi(phone, password),
@@ -198,13 +200,14 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
   },
   welcomeText: {
-    fontSize: normalize(20),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   instructionText: {
     fontSize: normalize(13),
     color: Colors.textLight,
+    fontFamily: Fonts.regular,
     marginTop: verticalScale(4),
   },
 
@@ -230,7 +233,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   forgotWrap: { alignSelf: 'flex-end', marginTop: 4, marginBottom: 8 },
-  forgotText: { fontSize: normalize(12), color: Colors.blue, fontWeight: '600' },
+  forgotText: {fontSize: normalize(12), color: Colors.blue, fontFamily: Fonts.semiBold,},
 
   divider: {
     flexDirection: 'row',
@@ -243,7 +246,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     fontSize: normalize(10),
     color: Colors.textLight,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     letterSpacing: 0.5,
   },
 
@@ -253,11 +256,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: verticalScale(24),
   },
-  footerText: { fontSize: normalize(13), color: Colors.textMid },
+  footerText: {fontSize: normalize(13), color: Colors.textMid, fontFamily: Fonts.regular},
   footerLink: {
     fontSize: normalize(13),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });
 

@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useQuery } from '@tanstack/react-query';
 import GradientHeader from '../../components/GradientHeader';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { moderateScale, normalize, verticalScale } from '../../theme/responsive';
 import { fetchTodaysClinicApi, TodaysClinicConsultation } from '../../services/api';
 
@@ -253,7 +254,7 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
           ))}
         </View>
         <View style={styles.searchBar}>
-          <Icon name="search" size={normalize(20)} color={Colors.textLight} />
+          <Icon name="search" size={normalize(15)} color={Colors.textLight} />
           <TextInput
             style={styles.searchInput}
             placeholder={
@@ -269,7 +270,7 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Icon name="close" size={normalize(18)} color={Colors.textLight} />
+              <Icon name="close" size={normalize(15)} color={Colors.textLight} />
             </TouchableOpacity>
           )}
         </View>
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   },
   searchTabText: {
     fontSize: normalize(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textMid,
   },
   searchTabTextActive: {
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: normalize(12),
     color: Colors.textMid,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   categoryTextSelected: {
     color: Colors.white,
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.green,
     marginRight: moderateScale(8),
   },
-  liveText: { fontSize: normalize(12), color: Colors.green, fontWeight: '700' },
+  liveText: { fontSize: normalize(12), color: Colors.green, fontFamily: Fonts.bold, },
 
   card: {
     backgroundColor: Colors.white,
@@ -469,7 +470,7 @@ const styles = StyleSheet.create({
   },
   deptBadgeText: {
     fontSize: normalize(11),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.white,
     marginLeft: moderateScale(4),
   },
@@ -492,8 +493,8 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(12),
   },
   docNameTitle: {
-    fontSize: normalize(16),
-    fontWeight: '800',
+    fontSize: normalize(15),
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
   },
   docSub: {
@@ -508,7 +509,7 @@ const styles = StyleSheet.create({
   },
   timingSectionTitle: {
     fontSize: normalize(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textMid,
     marginBottom: verticalScale(8),
   },
@@ -531,7 +532,7 @@ const styles = StyleSheet.create({
     fontSize: normalize(12),
     color: Colors.redPrimary,
     marginLeft: moderateScale(4),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   centerWrap: {
     alignItems: 'center',
@@ -542,13 +543,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -560,7 +561,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   emptySub: {
     fontSize: normalize(12),

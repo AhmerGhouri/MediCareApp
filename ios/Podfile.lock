@@ -939,6 +939,8 @@ PODS:
     - React-debug
   - react-native-blob-util (0.24.7):
     - React-Core
+  - react-native-date-picker (5.0.13):
+    - React-Core
   - react-native-html-to-pdf (0.12.0):
     - React-Core
   - react-native-safe-area-context (4.14.1):
@@ -1274,6 +1276,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-html-to-pdf (from `../node_modules/react-native-html-to-pdf`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
@@ -1374,6 +1377,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-date-picker:
+    :path: "../node_modules/react-native-date-picker"
   react-native-html-to-pdf:
     :path: "../node_modules/react-native-html-to-pdf"
   react-native-safe-area-context:
@@ -1466,6 +1471,7 @@ SPEC CHECKSUMS:
   React-logger: 76e7467052f51022eca5bcfe0c700004ad88954d
   React-Mapbuffer: 023e56d8228ebc662ba021b0c662e5d17ee6922b
   react-native-blob-util: 32d49c4e825abb0bee1e9c0056d58c9ed53d17c1
+  react-native-date-picker: 2eca217a8fb09c517f5bb6b23978718c6cec59ec
   react-native-html-to-pdf: 7a49e6c58ac5221bcc093027b195f4b214f27a9d
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
   React-nativeconfig: c36a079fa219a9911070cc0058b746407e1ef47d

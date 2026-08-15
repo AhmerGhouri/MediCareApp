@@ -11,6 +11,7 @@ import {
   Alert,
   Platform,
   PermissionsAndroid,
+  Share,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ReactNativeBlobUtil from 'react-native-blob-util';
@@ -28,6 +29,7 @@ import {
 import GradientHeader from '../../components/GradientHeader';
 import DownloadSuccessModal from '../../components/DownloadSuccessModal';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 const STATUS_MAP: Record<
@@ -214,7 +216,7 @@ const RadiologyScreen: React.FC = () => {
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}>
         {/* Search bar */}
         <View style={styles.searchBar}>
-          <Icon name="search" size={normalize(20)} color={Colors.textLight} />
+          <Icon name="search" size={normalize(15)} color={Colors.textLight} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search tests…"
@@ -316,7 +318,7 @@ const RadiologyScreen: React.FC = () => {
                         ]}>
                         <Icon
                           name="biotech"
-                          size={normalize(22)}
+                          size={normalize(20)}
                           color={statusStyle.text}
                         />
                       </View>
@@ -446,7 +448,7 @@ const RadiologyScreen: React.FC = () => {
                       <>
                         <Icon
                           name="file-download"
-                          size={normalize(16)}
+                          size={normalize(15)}
                           color={Colors.white}
                         />
                         <Text style={styles.downloadFooterText}>
@@ -468,6 +470,15 @@ const RadiologyScreen: React.FC = () => {
         testName={downloadModal.testName}
         fileName={downloadModal.fileName}
         onDismiss={() => setDownloadModal(prev => ({ ...prev, visible: false }))}
+        onSave={() => {
+          if (Platform.OS === 'ios') {
+            const pathUrl = downloadModal.filePath.startsWith('file://') ? downloadModal.filePath : `file://${downloadModal.filePath}`;
+            Share.share({ url: pathUrl });
+          } else {
+            // Android uses Toast or just Alert
+            Alert.alert('Saved', 'File has been saved to your Downloads folder.');
+          }
+        }}
         onOpen={() => {
           setDownloadModal(prev => ({ ...prev, visible: false }));
           setTimeout(() => {
@@ -477,7 +488,8 @@ const RadiologyScreen: React.FC = () => {
                 'application/pdf',
               );
             } else {
-              ReactNativeBlobUtil.ios.openDocument(downloadModal.filePath);
+              const cleanPath = downloadModal.filePath.replace(/^file:\/\//, '');
+              ReactNativeBlobUtil.ios.previewDocument(cleanPath);
             }
           }, 350);
         }}
@@ -527,10 +539,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 2,
   },
-  statNum: { fontSize: normalize(20), fontWeight: '800' },
+  statNum: { fontSize: normalize(15), fontFamily: Fonts.bold, },
   statLabel: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textLight,
     marginTop: verticalScale(2),
     textTransform: 'uppercase',
@@ -545,13 +557,13 @@ const styles = StyleSheet.create({
     fontSize: normalize(13),
     color: Colors.textLight,
     marginTop: verticalScale(12),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   errorText: {
     fontSize: normalize(14),
     color: Colors.redPrimary,
     marginTop: verticalScale(8),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
   retryBtn: {
     backgroundColor: Colors.redPale,
@@ -563,7 +575,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: normalize(12),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   listWrap: { paddingHorizontal: moderateScale(16) },
 
@@ -605,13 +617,13 @@ const styles = StyleSheet.create({
   cardTitleWrap: { flex: 1 },
   reportTitle: {
     fontSize: normalize(13),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textDark,
-    lineHeight: normalize(18),
+    lineHeight: normalize(15),
   },
   reportDept: {
     fontSize: normalize(10),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textMid,
     marginTop: verticalScale(2),
     letterSpacing: 0.2,
@@ -628,7 +640,7 @@ const styles = StyleSheet.create({
   },
   statusPillText: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.white,
     letterSpacing: 0.3,
   },
@@ -664,16 +676,16 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: normalize(9),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.redPrimary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   infoValue: {
     fontSize: normalize(11),
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
     color: Colors.textDark,
-    lineHeight: normalize(16),
+    lineHeight: normalize(15),
   },
 
   // Download footer button
@@ -690,7 +702,7 @@ const styles = StyleSheet.create({
   },
   downloadFooterText: {
     fontSize: normalize(12),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.white,
     letterSpacing: 0.3,
   },

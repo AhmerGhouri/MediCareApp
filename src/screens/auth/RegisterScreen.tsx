@@ -7,8 +7,10 @@ import {
   ScrollView,
   StatusBar,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import DatePicker from 'react-native-date-picker';
 import { RootStackParamList } from '../../navigation/AppNavigator';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -21,6 +23,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
 import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -28,6 +31,13 @@ type Props = {
 };
 
 const GENDERS = ['Male', 'Female'];
+
+
+const MONTHS_FORMAT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const formatDobFromCalendar = (dateString: string) => {
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${MONTHS_FORMAT[parseInt(month, 10) - 1]}/${year}`;
+};
 
 const MONTH_MAP: Record<string, string> = {
   jan: '01',
@@ -70,6 +80,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedGender, setSelectedGender] = useState('Male');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date(2000, 0, 1));
 
   // Popup state
   const [popup, setPopup] = useState<{
@@ -118,8 +130,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const checkEligibilityMutation = useMutation({
     mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
     onSuccess: data => {
-      if (!data.authorized) {
-        console.log("error")
+
+      if (!data.eligible) {
         showPopup(
           'error',
           data.status || 'Error',
@@ -233,13 +245,18 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             value={email}
             onChangeText={setEmail}
           />
-          <InputField
-            label="Date of Birth"
-            iconName="calendar-today"
-            placeholder="DD/MONTH/YYYY (e.g. 07/APR/1996)"
-            value={dob}
-            onChangeText={setDob}
-          />
+          <TouchableOpacity onPress={() => setShowDatePicker(true)} activeOpacity={0.8}>
+            <View pointerEvents="none">
+              <InputField
+                label="Date of Birth"
+                iconName="calendar-today"
+                placeholder="DD/MONTH/YYYY (e.g. 07/APR/1996)"
+                value={dob}
+                editable={false}
+                onChangeText={setDob}
+              />
+            </View>
+          </TouchableOpacity>
           <InputField
             label="Password"
             iconName="lock-outline"
@@ -316,6 +333,29 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
 
       {/* Custom Popup */}
+
+            <DatePicker
+        modal
+        open={showDatePicker}
+        date={date}
+        mode="date"
+        title="Select Date of Birth"
+        confirmText="Confirm"
+        cancelText="Cancel"
+        maximumDate={new Date()}
+        onConfirm={(selectedDate) => {
+          setShowDatePicker(false);
+          setDate(selectedDate);
+          const d = String(selectedDate.getDate()).padStart(2, '0');
+          const m = MONTHS_FORMAT[selectedDate.getMonth()];
+          const y = selectedDate.getFullYear();
+          setDob(`${d}/${m}/${y}`);
+        }}
+        onCancel={() => {
+          setShowDatePicker(false);
+        }}
+      />
+
       <CustomPopup
         visible={popup.visible}
         type={popup.type}
@@ -359,7 +399,7 @@ const styles = StyleSheet.create({
   },
   genderLabel: {
     fontSize: normalize(10),
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: Colors.textMid,
     marginBottom: verticalScale(6),
     textTransform: 'uppercase',
@@ -381,21 +421,25 @@ const styles = StyleSheet.create({
   genderText: {
     fontSize: normalize(12),
     color: Colors.textMid,
-    fontWeight: '600',
+    fontFamily: Fonts.semiBold,
   },
-  genderTextActive: { color: Colors.white, fontWeight: '700' },
+  genderTextActive: { color: Colors.white, fontFamily: Fonts.bold, },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: verticalScale(10),
   },
-  footerText: { fontSize: normalize(13), color: Colors.textMid },
+  footerText: { fontSize: normalize(13), color: Colors.textMid, fontFamily: Fonts.regular },
   footerLink: {
     fontSize: normalize(13),
     color: Colors.redPrimary,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
+  
+  
+  
+  
 });
 
 export default RegisterScreen;
