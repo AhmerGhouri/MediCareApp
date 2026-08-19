@@ -27,6 +27,7 @@ import {
 } from '../../navigation/AppNavigator';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, logout } from '../../store';
+import { useLoading } from '../../context/LoadingContext';
 import CustomPopup from '../../components/CustomPopup';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -432,6 +433,7 @@ const heroStyles = StyleSheet.create({
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { showLoader, hideLoader } = useLoading();
   const patientName =
     useSelector((state: RootState) => state.auth.selectedPatientName) ||
     'Patient';
@@ -597,8 +599,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogout = () => {
     setShowLogoutPopup(false);
+    showLoader('Signing Out...');
+    
+    // Simulate a brief loading state before actually logging out and navigating
     setTimeout(() => {
       InteractionManager.runAfterInteractions(() => {
+        hideLoader();
         const parent = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
         if (parent) {
           parent.reset({
@@ -613,7 +619,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         }
         dispatch(logout());
       });
-    }, 400);
+    }, 1200); // Wait 1.2 seconds to show the pulsing animation
   };
 
   const getCardTheme = (type: string) => {

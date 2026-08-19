@@ -1174,6 +1174,8 @@ PODS:
     - React-logger (= 0.74.6)
     - React-perflogger (= 0.74.6)
     - React-utils (= 0.74.6)
+  - RNCAsyncStorage (1.23.1):
+    - React-Core
   - RNGestureHandler (2.24.0):
     - DoubleConversion
     - glog
@@ -1302,6 +1304,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -1429,6 +1432,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
@@ -1497,6 +1502,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 58f254c234fcd21826759cc85b0c9b9d3b1679f7
   React-utils: 61a4c1ae313725ae97f72aeca2b7f73c316ee5e7
   ReactCommon: 2d6cc4daa19b1ec85b9ae72bfa7958cdd50a60ea
+  RNCAsyncStorage: aa75595c1aefa18f868452091fa0c411a516ce11
   RNGestureHandler: 4c50b5e4ca199cf497511d44e3fe45d54d62e279
   RNScreens: ef68e50aea531dd00c592ba4683bbcb89d4d2e1a
   RNVectorIcons: 1b7e9f6a06b5572f3b4e313320b5e566def26c7f

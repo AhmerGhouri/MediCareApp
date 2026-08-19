@@ -1,5 +1,6 @@
 import React from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
+import { LoadingProvider } from './src/context/LoadingContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // State Management Integrations
@@ -24,7 +25,9 @@ const App: React.FC = () => {
     <SafeAreaProvider>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <AppNavigator />
+          <LoadingProvider>
+            <AppNavigator />
+          </LoadingProvider>
         </QueryClientProvider>
       </Provider>
     </SafeAreaProvider>

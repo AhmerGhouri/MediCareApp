@@ -24,6 +24,7 @@ import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
 import { Colors } from '../../theme/colors';
 import { Fonts } from '../../theme/fonts';
+import { useLoading } from '../../context/LoadingContext';
 import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
 
 type Props = {
@@ -82,6 +83,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [selectedGender, setSelectedGender] = useState('Male');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(new Date(2000, 0, 1));
+  const { showLoader, hideLoader } = useLoading();
 
   // Popup state
   const [popup, setPopup] = useState<{
@@ -105,6 +107,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => registerApi(payload),
+    onMutate: () => showLoader('Creating Account...'),
     onSuccess: data => {
       showPopup(
         'success',
@@ -125,11 +128,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       showPopup('error', 'Registration Failed', message);
 
     },
+    onSettled: () => hideLoader(),
   });
 
   const checkEligibilityMutation = useMutation({
     mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
-    onSuccess: data => {
+    onMutate: () => showLoader('Checking Eligibility...'),
+    onSuccess: (data: any) => {
 
       if (!data.eligible) {
         showPopup(
@@ -157,6 +162,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         'Authorization check failed. Please try again.';
       showPopup('error', 'Check Failed', message);
     },
+    onSettled: () => hideLoader(),
   });
 
   const handleRegister = () => {
@@ -303,24 +309,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <PrimaryButton
-          label={
-            checkEligibilityMutation.isPending || registerMutation.isPending
-              ? 'Creating Account...'
-              : 'Create Account'
-          }
+          label="Create Account"
           onPress={handleRegister}
           disabled={
             checkEligibilityMutation.isPending || registerMutation.isPending
           }
         />
-
-        {(checkEligibilityMutation.isPending || registerMutation.isPending) && (
-          <ActivityIndicator
-            size="small"
-            color={Colors.redPrimary}
-            style={{ marginTop: verticalScale(12) }}
-          />
-        )}
 
         <View style={styles.footerRow}>
           <Text style={styles.footerText}>Already registered? </Text>

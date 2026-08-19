@@ -12,6 +12,7 @@ import SplashScreen from '../screens/auth/SplashScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import OnboardingScreen from '../screens/auth/OnboardingScreen';
 import SelectProfileScreen from '../screens/auth/SelectProfileScreen';
 import HomeScreen from '../screens/main/HomeScreen';
 import ReportsScreen from '../screens/main/ReportsScreen';
@@ -34,6 +35,7 @@ import { moderateScale, verticalScale, normalize } from '../theme/responsive';
 
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: undefined;
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
@@ -72,9 +74,14 @@ const FLOATING_ICON_SIZE = moderateScale(62);
 const MainTabs: React.FC = () => {
   const insets = useSafeAreaInsets();
   // Make the tab bar a fixed height so internal flex centering works perfectly
-  const tabBarHeight = TAB_BAR_BASE_HEIGHT;
+  // const tabBarHeight = TAB_BAR_BASE_HEIGHT;
+  const tabBarHeight = Platform.OS === 'ios' ? 73 : TAB_BAR_BASE_HEIGHT + 10;
   // Push the floating tab bar up by the safe area inset + a small margin
-  const bottomOffset = insets.bottom + verticalScale(10);
+  // On iOS with home indicator (insets.bottom > 0), use a smaller extra margin
+  // On iOS without home indicator or Android, use a larger margin
+  const bottomOffset = Platform.OS === 'ios'
+    ? Math.max(insets.bottom, 10) + 5
+    : insets.bottom + verticalScale(10);
 
   return (
     <Tab.Navigator
@@ -87,6 +94,7 @@ const MainTabs: React.FC = () => {
           color: 'white',
           fontSize: normalize(11),
           marginBottom: Platform.OS === 'ios' ? 0 : 6,
+          paddingBottom: Platform.OS === 'ios' ? 6 : 0,
           marginTop: Platform.OS === 'ios' ? 0 : -4,
         },
         tabBarStyle: [
@@ -162,6 +170,7 @@ const AppNavigator: React.FC = () => {
         initialRouteName="Splash"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen
@@ -213,8 +222,8 @@ const AppNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    left: Platform.OS === 'ios' ? 0 : moderateScale(12),
-    right: Platform.OS === 'ios' ? 0 : moderateScale(12),
+    left: moderateScale(12),
+    right: moderateScale(12),
     borderRadius: moderateScale(30),
     borderWidth: 0,
     borderTopWidth: 0,

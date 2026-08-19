@@ -19,8 +19,9 @@ import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import {Colors} from '../../theme/colors';
-import {Fonts} from '../../theme/fonts';
+import { Colors } from '../../theme/colors';
+import { Fonts } from '../../theme/fonts';
+import { useLoading } from '../../context/LoadingContext';
 import Logo from '../../../assets/Logo.png';
 import {normalize, verticalScale, moderateScale} from '../../theme/responsive';
 
@@ -36,6 +37,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const { showLoader, hideLoader } = useLoading();
 
   // Popup state
   const [popup, setPopup] = useState<{
@@ -56,7 +58,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   const loginMutation = useMutation({
     mutationFn: () => loginApi(phone, password),
-    onSuccess: data => {
+    onMutate: () => {
+      showLoader('Signing In...');
+    },
+    onSuccess: (data: any) => {
       dispatch(
         loginSuccess({ token: data.access_token, mrProfiles: data.mr_numbers }),
       );
@@ -81,6 +86,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       console.log('message', error.response.data);
 
       showPopup('error', 'Login Failed', message);
+    },
+    onSettled: () => {
+      hideLoader();
     },
   });
 
@@ -148,18 +156,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <PrimaryButton
-          label={loginMutation.isPending ? 'Signing In...' : 'Sign In'}
+          label="Sign In"
           onPress={handleLogin}
           disabled={loginMutation.isPending}
         />
-
-        {loginMutation.isPending && (
-          <ActivityIndicator
-            size="small"
-            color={Colors.redPrimary}
-            style={{ marginTop: verticalScale(12) }}
-          />
-        )}
 
         <View style={styles.divider}>
           <View style={styles.divLine} />

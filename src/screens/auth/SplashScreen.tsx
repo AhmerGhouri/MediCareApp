@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -31,9 +32,23 @@ const SplashScreen: React.FC<Props> = ({navigation}) => {
       }),
     ]).start();
 
-    // Navigate to Login after 2.5 seconds
+    const checkOnboardingAndNavigate = async () => {
+      try {
+        const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+        if (hasSeenOnboarding === 'true') {
+          navigation.replace('Login');
+        } else {
+          navigation.replace('Onboarding');
+        }
+      } catch (error) {
+        // Fallback to Onboarding if storage fails
+        navigation.replace('Onboarding');
+      }
+    };
+
+    // Navigate after 2.5 seconds
     const timer = setTimeout(() => {
-      navigation.replace('Login');
+      checkOnboardingAndNavigate();
     }, 2500);
 
     return () => clearTimeout(timer);
