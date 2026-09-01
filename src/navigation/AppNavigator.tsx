@@ -7,6 +7,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import LinearGradient from 'react-native-linear-gradient';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { navigationRef } from './NavigationService';
 
 import SplashScreen from '../screens/auth/SplashScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -52,10 +53,10 @@ export type RootStackParamList = {
     degree?: string;
     image?: string;
   };
-  UpcomingFollowUps: undefined;
+  UpcomingFollowUps: { tran_id?: string } | undefined;
   Notifications: undefined;
   Radiology: undefined;
-  LabReports: undefined;
+  LabReports: { report_id?: string } | undefined;
   CombineLabReport: undefined;
 };
 
@@ -165,7 +166,7 @@ const MainTabs: React.FC = () => {
 
 const AppNavigator: React.FC = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{ headerShown: false }}>

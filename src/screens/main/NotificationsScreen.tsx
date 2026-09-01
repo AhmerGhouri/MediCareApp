@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,62 +6,103 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {RootStackParamList} from '../../navigation/AppNavigator';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 import GradientHeader from '../../components/GradientHeader';
-import {Colors} from '../../theme/colors';
+import { Colors } from '../../theme/colors';
 import { Fonts } from '../../theme/fonts';
-import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
+import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
+import {
+  getStoredNotifications,
+  clearStoredNotifications,
+  handleNotificationNavigation,
+  StoredNotification,
+} from '../../services/PushNotificationService';
 
-const NOTIFICATIONS = [
-  {
-    id: '1',
-    title: 'Lab Report Ready',
-    body: 'Your CBC blood test results are now available for viewing.',
-    time: '10 mins ago',
-    icon: 'biotech',
-    color: Colors.blue,
-  },
-  {
-    id: '2',
-    title: 'Appointment Reminder',
-    body: 'Friendly reminder: You have a consultation with Dr. Sarah at 2:00 PM today.',
-    time: '1 hour ago',
-    icon: 'event-available',
-    color: Colors.green,
-  },
-  {
-    id: '3',
-    title: 'Medicine Refill',
-    body: 'Your Metformin prescription is due for a refill in 3 days.',
-    time: '5 hours ago',
-    icon: 'medication',
-    color: Colors.redPrimary,
-  },
-  {
-    id: '4',
-    title: 'System Update',
-    body: 'The Medicare app has been updated to version 2.4.0 with new features.',
-    time: '1 day ago',
-    icon: 'system-update',
-    color: Colors.yellowDeep,
-  },
-  {
-    id: '5',
-    title: 'Health Tip',
-    body: 'Drink at least 8 glasses of water daily for better kidney health.',
-    time: '2 days ago',
-    icon: 'lightbulb',
-    color: Colors.blue,
-  },
-];
+function formatRelativeTime(timestamp: number): string {
+  const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+  if (diffSec < 60) return 'Just now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDays = Math.floor(diffHr / 24);
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return new Date(timestamp).toLocaleDateString();
+}
+
+function getNotificationStyle(item: StoredNotification): { icon: string; color: string } {
+  const titleLower = item.title.toLowerCase();
+  const screen = item.data?.screen?.toLowerCase();
+
+  if (screen === 'reportdetails' || titleLower.includes('report') || titleLower.includes('lab') || titleLower.includes('result')) {
+    return { icon: 'biotech', color: Colors.blue };
+  }
+  if (titleLower.includes('appointment') || titleLower.includes('clinic') || titleLower.includes('doctor')) {
+    return { icon: 'event-available', color: Colors.green };
+  }
+  if (titleLower.includes('medicine') || titleLower.includes('prescription')) {
+    return { icon: 'medication', color: Colors.redPrimary };
+  }
+  if (titleLower.includes('promo') || titleLower.includes('offer') || titleLower.includes('update')) {
+    return { icon: 'campaign', color: Colors.yellowDeep };
+  }
+  return { icon: 'notifications', color: Colors.redPrimary };
+}
 
 const NotificationsScreen: React.FC = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [notifications, setNotifications] = useState<StoredNotification[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const loadNotifications = useCallback(async () => {
+    setLoading(true);
+    try {
+      const stored = await getStoredNotifications();
+      setNotifications(stored);
+    } catch (err) {
+      console.warn('[NotificationsScreen] Error loading notifications:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNotifications();
+    }, [loadNotifications])
+  );
+
+  const handleClearAll = () => {
+    if (notifications.length === 0) return;
+    Alert.alert(
+      'Clear Notifications',
+      'Are you sure you want to clear all notification history?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear All',
+          style: 'destructive',
+          onPress: async () => {
+            await clearStoredNotifications();
+            setNotifications([]);
+          },
+        },
+      ],
+    );
+  };
+
+  const handlePressNotification = (item: StoredNotification) => {
+    if (item.data?.screen) {
+      handleNotificationNavigation(item.data);
+    }
+  };
 
   return (
     <View style={styles.root}>
@@ -72,56 +113,75 @@ const NotificationsScreen: React.FC = () => {
         subtitle="Stay updated with your health alerts"
         showBack={true}
         onBack={() => navigation.goBack()}
-        rightIcon="done-all"
+        rightIcon={notifications.length > 0 ? 'delete-sweep' : undefined}
+        onRightPress={notifications.length > 0 ? handleClearAll : undefined}
       />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}>
-        {NOTIFICATIONS.length > 0 ? (
-          NOTIFICATIONS.map(notif => (
-            <TouchableOpacity
-              key={notif.id}
-              style={styles.notifCard}
-              activeOpacity={0.8}>
-              <View
-                style={[
-                  styles.iconWrap,
-                  {backgroundColor: `${notif.color}15`},
-                ]}>
+      {loading ? (
+        <View style={styles.centerWrap}>
+          <ActivityIndicator size="large" color={Colors.redPrimary} />
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}>
+          {notifications.length > 0 ? (
+            notifications.map(notif => {
+              const { icon, color } = getNotificationStyle(notif);
+              const hasNavigation = !!notif.data?.screen;
+
+              return (
+                <TouchableOpacity
+                  key={notif.id}
+                  style={styles.notifCard}
+                  activeOpacity={hasNavigation ? 0.7 : 0.95}
+                  onPress={() => handlePressNotification(notif)}>
+                  <View style={[styles.iconWrap, { backgroundColor: `${color}15` }]}>
+                    <Icon name={icon} size={normalize(24)} color={color} />
+                  </View>
+                  <View style={styles.content}>
+                    <View style={styles.row}>
+                      <Text style={styles.notifTitle} numberOfLines={1}>
+                        {notif.title}
+                      </Text>
+                      <Text style={styles.time}>{formatRelativeTime(notif.timestamp)}</Text>
+                    </View>
+                    <Text style={styles.body}>{notif.body}</Text>
+                    {hasNavigation && (
+                      <View style={styles.tapPrompt}>
+                        <Text style={[styles.tapPromptText, { color }]}>Tap to view details</Text>
+                        <Icon name="chevron-right" size={normalize(14)} color={color} />
+                      </View>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <View style={styles.emptyWrap}>
+              <View style={styles.emptyIconWrap}>
                 <Icon
-                  name={notif.icon}
-                  size={normalize(24)}
-                  color={notif.color}
+                  name="notifications-none"
+                  size={normalize(48)}
+                  color={Colors.redPrimary}
                 />
               </View>
-              <View style={styles.content}>
-                <View style={styles.row}>
-                  <Text style={styles.notifTitle}>{notif.title}</Text>
-                  <Text style={styles.time}>{notif.time}</Text>
-                </View>
-                <Text style={styles.body}>{notif.body}</Text>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <View style={styles.emptyWrap}>
-            <Icon
-              name="notifications-off"
-              size={normalize(50)}
-              color={Colors.textLight}
-            />
-            <Text style={styles.emptyText}>No notifications yet.</Text>
-          </View>
-        )}
-      </ScrollView>
+              <Text style={styles.emptyTitle}>No Notifications Yet</Text>
+              <Text style={styles.emptyText}>
+                When you receive lab reports, appointment updates, or hospital notices, they will appear here.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#F9FAFB'},
-  scrollContent: {padding: moderateScale(16), paddingBottom: verticalScale(50)},
+  root: { flex: 1, backgroundColor: '#F9FAFB' },
+  centerWrap: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  scrollContent: { padding: moderateScale(16), paddingBottom: verticalScale(50) },
 
   notifCard: {
     flexDirection: 'row',
@@ -132,7 +192,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.04,
     shadowRadius: 10,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     elevation: 2,
     gap: moderateScale(12),
   },
@@ -156,6 +216,8 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     fontFamily: Fonts.bold,
     color: Colors.textDark,
+    flex: 1,
+    marginRight: moderateScale(8),
   },
   time: {
     fontSize: normalize(10),
@@ -167,17 +229,44 @@ const styles = StyleSheet.create({
     color: Colors.textMid,
     lineHeight: 18,
   },
+  tapPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(6),
+    gap: moderateScale(2),
+  },
+  tapPromptText: {
+    fontSize: normalize(11),
+    fontFamily: Fonts.semiBold,
+  },
 
   emptyWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: verticalScale(100),
+    marginTop: verticalScale(80),
+    paddingHorizontal: moderateScale(24),
+  },
+  emptyIconWrap: {
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(40),
+    backgroundColor: `${Colors.redPrimary}10`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: verticalScale(16),
+  },
+  emptyTitle: {
+    fontSize: normalize(16),
+    fontFamily: Fonts.bold,
+    color: Colors.textDark,
+    marginBottom: verticalScale(8),
   },
   emptyText: {
-    fontSize: normalize(14),
+    fontSize: normalize(12),
     color: Colors.textLight,
-    marginTop: verticalScale(12),
-    fontFamily: Fonts.semiBold,
+    textAlign: 'center',
+    lineHeight: 18,
+    fontFamily: Fonts.regular,
   },
 });
 

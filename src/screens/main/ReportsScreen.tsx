@@ -28,6 +28,7 @@ import {
   LabReport,
   getLabReportDownloadUrl,
   fetchCombineLabReportsApi,
+  getCombineLabReportDownloadUrl,
   CombineLabTest,
   CombineLabHistory,
   CombineLabResult,
@@ -235,6 +236,85 @@ const ReportsScreen: React.FC = () => {
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
             title: 'Storage Permission',
+            message: 'App needs access to storage to download reports.',
+            buttonPositive: 'Allow',
+          },
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert(
+            'Permission Denied',
+            'Storage permission is required to download reports.',
+          );
+          return;
+        }
+      }
+
+      if (!selectedMrNo) {
+        Alert.alert('Error', 'Patient MR No is missing.');
+        return;
+      }
+
+      const url = getCombineLabReportDownloadUrl(selectedMrNo, test.ltest_master_id);
+      const safeTestName = test.test_name.replace(/[^a-zA-Z0-9]/g, '_');
+      const timestamp = Date.now();
+      const fileName = `Combine_Report_${safeTestName}_${test.ltest_master_id}_${timestamp}.pdf`;
+
+      const { dirs } = ReactNativeBlobUtil.fs;
+      const downloadDir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+      const filePath = `${downloadDir}/${fileName}`;
+
+      if (Platform.OS === 'android') {
+        const res = await ReactNativeBlobUtil.config({
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            title: `Combine Report - ${test.test_name}`,
+            description: 'Downloading combine report...',
+            mime: 'application/pdf',
+            mediaScannable: true,
+            path: filePath,
+          },
+        }).fetch('GET', url);
+
+        setDownloadModal({
+          visible: true,
+          testName: test.test_name,
+          fileName,
+          filePath: res.path(),
+        });
+      } else {
+        const res = await ReactNativeBlobUtil.config({
+          fileCache: true,
+          path: filePath,
+        }).fetch('GET', url);
+
+        setDownloadModal({
+          visible: true,
+          testName: test.test_name,
+          fileName,
+          filePath: res.path(),
+        });
+      }
+    } catch (err: any) {
+      Alert.alert(
+        'Download Failed',
+        err?.message || 'Could not download the report. Please try again.',
+      );
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  /*
+  const handleGeneratePDFOld = async (test: CombineLabTest) => {
+    try {
+      setDownloadingId(test.ltest_master_id);
+
+      if (Platform.OS === 'android' && Platform.Version < 29) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
             message: 'App needs access to storage to save PDF reports.',
             buttonPositive: 'Allow',
           },
@@ -370,6 +450,7 @@ const ReportsScreen: React.FC = () => {
       setDownloadingId(null);
     }
   };
+  */
 
   // ─── Render: Lab Reports Tab Content ──────────────────────────────────────
   const renderLabReports = () => (
@@ -611,11 +692,11 @@ const ReportsScreen: React.FC = () => {
                   <Text style={styles.combineCardTitle}>
                     {test.test_name}
                   </Text>
-                  <Text style={styles.combineCardSubtitle}>
+                  {/* <Text style={styles.combineCardSubtitle}>
                     {dates.length} date{dates.length !== 1 ? 's' : ''} ·{' '}
                     {subTests.length} parameter
                     {subTests.length !== 1 ? 's' : ''}
-                  </Text>
+                  </Text> */}
                 </View>
                 <TouchableOpacity
                   style={styles.downloadPdfBtn}

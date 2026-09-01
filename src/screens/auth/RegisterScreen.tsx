@@ -177,6 +177,17 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
+    // Phone number must be exactly 11 digits
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length < 11) {
+      showPopup(
+        'error',
+        'Invalid Phone Number',
+        'Phone number must be at least 11 digits. Please enter a valid phone number (e.g. 03001234567).',
+      );
+      return;
+    }
+
     const formattedDob = parseDob(dob);
     if (!formattedDob) {
       showPopup(

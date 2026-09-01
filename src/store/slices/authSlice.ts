@@ -4,6 +4,7 @@ import {MrProfile} from '../../services/api';
 interface AuthState {
   isAuthenticated: boolean;
   sessionToken: string | null;
+  mobileNumber: string | null; // Persisted for push notification background refresh
   mrProfiles: MrProfile[];
   selectedMrNo: string | null;
   selectedPatientName: string | null;
@@ -15,6 +16,7 @@ interface AuthState {
 const initialState: AuthState = {
   isAuthenticated: false,
   sessionToken: null,
+  mobileNumber: null,
   mrProfiles: [],
   selectedMrNo: null,
   selectedPatientName: null,
@@ -29,11 +31,14 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (
       state,
-      action: PayloadAction<{token: string; mrProfiles: MrProfile[]}>,
+      action: PayloadAction<{token: string; mrProfiles: MrProfile[]; mobileNumber?: string}>,
     ) => {
       state.isAuthenticated = true;
       state.sessionToken = action.payload.token;
       state.mrProfiles = action.payload.mrProfiles;
+      if (action.payload.mobileNumber) {
+        state.mobileNumber = action.payload.mobileNumber;
+      }
     },
     selectProfile: (
       state,
@@ -55,6 +60,7 @@ const authSlice = createSlice({
     logout: state => {
       state.isAuthenticated = false;
       state.sessionToken = null;
+      state.mobileNumber = null;
       state.mrProfiles = [];
       state.selectedMrNo = null;
       state.selectedPatientName = null;
@@ -79,4 +85,5 @@ export const {
   setResetEmail,
   clearResetEmail,
 } = authSlice.actions;
+
 export default authSlice.reducer;

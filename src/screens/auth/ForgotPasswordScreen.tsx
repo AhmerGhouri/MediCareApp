@@ -159,31 +159,18 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     },
   });
 
-  // ─── Check Registered Number ──────────────────────────────────────────────── 
-
   const checkEligibilityMutation = useMutation({
     mutationFn: (mobile: string) => checkRegistrationEligibilityApi(mobile),
     onSuccess: data => {
-      if (!data.eligible) {
-        console.log("error")
-        setVisible(true)
-        if (email !== '') {
-
-          setStep(2);
-          showPopup(
-            'success',
-            'OTP Sent',
-            `A verification code has been sent to ${maskedEmail || 'your registered email'
-            }.`,
-          );
-        }
-        return;
-      }
-      else {
+      if (data.eligible) {
+        // Number found in hospital DB — show email field so user can proceed
+        setVisible(true);
+      } else {
+        // Number NOT found in hospital database
         showPopup(
           'error',
-          data.status || 'Error',
-          data.message || 'You are not authorized to use the app. This mobile number is not registered in the hospital database.',
+          data.status || 'Not Found',
+          data.message || 'This mobile number is not registered in the hospital database. Please check and try again.',
         );
       }
     },
@@ -198,15 +185,39 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
 
   // ─── Handlers ────────────────────────────────────────────────
   const handleVerifyMobile = () => {
-    if (!phone.trim() || phone.length < 10) {
+    if (!phone.trim() || phone.length < 11) {
       showPopup(
         'warning',
         'Invalid Number',
-        'Please enter a valid registered mobile number.',
+        'Please enter a valid 11-digit mobile number.',
       );
       return;
     }
-    checkEligibilityMutation.mutate(phone);
+
+    // Phase 1: Email field not yet visible — verify phone first
+    if (!visible) {
+      checkEligibilityMutation.mutate(phone);
+      return;
+    }
+
+    // Phase 2: Email field is visible — validate email and move to OTP step
+    if (!email.trim()) {
+      showPopup(
+        'warning',
+        'Missing Email',
+        'Please enter your registered email address.',
+      );
+      return;
+    }
+
+    // Email provided — advance to step 2 (OTP) with mock flow
+    setMaskedEmail(email);
+    setStep(2);
+    showPopup(
+      'success',
+      'OTP Sent',
+      `A verification code has been sent to ${email}.\n\nDemo Code: 1234`,
+    );
   };
 
   const handleVerifyOtp = () => {

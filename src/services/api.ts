@@ -2,7 +2,11 @@ import axios from 'axios';
 import { store } from '../store';
 
 // ─── Base Configuration ────────────────────────────────────────
+// For Production
 const BASE_URL = 'http://api.medicarehospital.pk';
+
+// For Local
+// const BASE_URL = 'http://172.20.0.72:8000/';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -68,6 +72,16 @@ export const getLabReportDownloadUrl = (
 ): string => {
   const idParam = `${testm_id}-${testd_id}`;
   const url = `${REPORT_BASE_URL}?report=LAB_APPROVAL_REP.rep&cmdkey=orarep&ID=AND%20(ltestd_ltestm_id%20%7C%7C%20%27-%27%20%7C%7C%20to_char(ltestd_ltest_id))%20IN%20(%27${idParam}%27)%20&ID1=AND%20(LCULRESD_LCULRESM_LTESTM_ID%20%7C%7C%20%27-%27%20%7C%7C%20(LCULRESD_LCULRESM_LTEST_ID))%20%20IN%20(%27${idParam}%27)`;
+
+  console.log('Final Download URL:', url);
+  return url.replace(/ /g, '%20');
+};
+
+export const getCombineLabReportDownloadUrl = (
+  opat_id: string | number,
+  ltest_id: string | number,
+): string => {
+  const url = `${REPORT_BASE_URL}?report=LAB_REP_CP1.rep&cmdkey=orarep&ID&FR_OPAT_ID=${opat_id}&F_FR_LTEST_ID=${ltest_id}&F_TO_LTEST_ID=${ltest_id}&cb=${Date.now()}`;
   return url.replace(/ /g, '%20');
 };
 
@@ -669,6 +683,21 @@ export const resetPasswordApi = async (data: {
     }
     throw error;
   }
+};
+
+// ─── Device Token Registration (Push Notifications) ───────────────────────
+// Authorization is via Bearer JWT in the interceptor — DO NOT send mobile_number
+// in the body. The backend derives it from the authenticated JWT (current_user.mob).
+
+export interface RegisterDeviceTokenPayload {
+  device_token: string;
+  platform: 'android' | 'ios';
+}
+
+export const registerDeviceTokenApi = async (
+  payload: RegisterDeviceTokenPayload,
+): Promise<void> => {
+  await api.post('/auth/register-device', payload);
 };
 
 export default api;

@@ -63,7 +63,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     },
     onSuccess: (data: any) => {
       dispatch(
-        loginSuccess({ token: data.access_token, mrProfiles: data.mr_numbers }),
+        loginSuccess({ token: data.access_token, mrProfiles: data.mr_numbers, mobileNumber: phone }),
       );
 
       if (data.mr_numbers.length === 1) {
@@ -95,6 +95,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const handleLogin = () => {
     if (!phone.trim()) {
       showPopup('warning', 'Missing Field', 'Please enter your phone number.');
+      return;
+    }
+    // Phone number must be at least 11 digits
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length < 11) {
+      showPopup(
+        'error',
+        'Invalid Phone Number',
+        'Phone number must be at least 11 digits. Please enter a valid phone number (e.g. 03001234567).',
+      );
       return;
     }
     if (!password.trim()) {
