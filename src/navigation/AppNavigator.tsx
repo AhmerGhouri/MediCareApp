@@ -91,7 +91,7 @@ const MainTabs: React.FC = () => {
         headerShown: false,
         tabBarShowLabel: true,
         tabBarLabelStyle: {
-          fontFamily: Fonts.semiBold as const,
+          fontFamily: Fonts.semiBold,
           color: 'white',
           fontSize: normalize(11),
           marginBottom: Platform.OS === 'ios' ? 0 : 6,
