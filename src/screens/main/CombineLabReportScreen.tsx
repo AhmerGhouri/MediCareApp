@@ -1,3 +1,7 @@
+import {reportError} from '../../errors/errorEvents';
+import {AppError} from '../../errors/AppError';
+import {openReport} from '../../services/reportFiles';
+import QueryError from '../../components/QueryError';
 import React, { useState } from 'react';
 import {
   View,
@@ -92,9 +96,7 @@ const CombineLabReportScreen: React.FC = () => {
       });
     });
 
-    console.log("subtest", subTestMap);
-    // console.log('=======================', dates, test.history);
-    // console.log('=======================', test.history.map((h: CombineLabHistory) => h.results));
+
 
 
     return { dates, subTests: Object.values(subTestMap) };
@@ -124,10 +126,7 @@ const CombineLabReportScreen: React.FC = () => {
           },
         );
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert(
-            'Permission Denied',
-            'Storage permission is required to save reports.',
-          );
+          reportError(new AppError('permission'));
           return;
         }
       }
@@ -295,7 +294,7 @@ const CombineLabReportScreen: React.FC = () => {
         finalPath = newPath;
 
         // Scan file so it immediately shows up in Android file managers
-        ReactNativeBlobUtil.fs.scanFile([{ path: finalPath, mime: 'application/pdf' }]);
+        await ReactNativeBlobUtil.fs.scanFile([{ path: finalPath, mime: 'application/pdf' }]);
       }
 
       setDownloadModal({
@@ -305,11 +304,8 @@ const CombineLabReportScreen: React.FC = () => {
         filePath: finalPath,
       });
 
-    } catch (err: any) {
-      Alert.alert(
-        'Generation Failed',
-        err?.message || 'Could not generate the PDF report. Please try again.',
-      );
+    } catch (err: unknown) {
+      reportError(err, 'download');
     } finally {
       setDownloadingId(null);
     }
@@ -342,20 +338,7 @@ const CombineLabReportScreen: React.FC = () => {
           </View>
         )}
 
-        {combineQuery.isError && (
-          <View style={styles.centerWrap}>
-            <Icon name="cloud-off" size={normalize(40)} color={Colors.textLight} />
-            <Text style={styles.errorText}>
-              {(combineQuery.error as any)?.message ||
-                'Failed to load combine reports.'}
-            </Text>
-            <TouchableOpacity
-              style={styles.retryBtn}
-              onPress={() => combineQuery.refetch()}>
-              <Text style={styles.retryText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <QueryError error={combineQuery.error} hasData={combineQuery.data !== undefined} onRetry={() => combineQuery.refetch()} />
 
         {!selectedMrNo && (
           <View style={styles.centerWrap}>
@@ -369,7 +352,7 @@ const CombineLabReportScreen: React.FC = () => {
         )}
 
         {!combineQuery.isLoading &&
-          !combineQuery.isError &&
+          (!combineQuery.isError || combineQuery.data !== undefined) &&
           !!selectedMrNo &&
           (() => {
             const tests: CombineLabTest[] = Array.isArray(combineQuery.data)
@@ -549,16 +532,7 @@ const CombineLabReportScreen: React.FC = () => {
         onDismiss={() => setDownloadModal(prev => ({ ...prev, visible: false }))}
         onOpen={() => {
           setDownloadModal(prev => ({ ...prev, visible: false }));
-          setTimeout(() => {
-            if (Platform.OS === 'android') {
-              ReactNativeBlobUtil.android.actionViewIntent(
-                downloadModal.filePath,
-                'application/pdf',
-              );
-            } else {
-              ReactNativeBlobUtil.ios.openDocument(downloadModal.filePath);
-            }
-          }, 350);
+          setTimeout(() => { void openReport(downloadModal.filePath); }, 350);
         }}
       />
     </View>

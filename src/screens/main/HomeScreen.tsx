@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import {
   View,
   Text,
@@ -448,19 +449,19 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     (state: RootState) => state.auth.selectedMrNo,
   );
 
-  const { data: consultationData } = useQuery({
+  const {data: consultationData , error: consultationError, refetch: retryconsultation} = useQuery({
     queryKey: ['consultationHistory', selectedMrNo],
     queryFn: () => fetchConsultationHistoryApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const { data: inpatientData } = useQuery({
+  const {data: inpatientData , error: inpatientError, refetch: retryinpatient} = useQuery({
     queryKey: ['inpatientHistory', selectedMrNo],
     queryFn: () => fetchInpatientHistoryApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const { data: upcomingData } = useQuery({
+  const {data: upcomingData , error: upcomingError, refetch: retryupcoming} = useQuery({
     queryKey: ['upcomingAppointments', selectedMrNo],
     queryFn: () => fetchUpcomingAppointmentsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
@@ -521,7 +522,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     } else {
       items.push({
         id: '1',
-        date: 'No visit recorded',
+        date: consultationError ? 'Unable to load visits' : 'No visit recorded',
         type: 'OPD Consultations',
         doctor: 'N/A',
         status: 'View',
@@ -552,7 +553,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     } else {
       items.push({
         id: '2',
-        date: 'No visit recorded',
+        date: inpatientError ? 'Unable to load visits' : 'No visit recorded',
         type: 'Inpatient History',
         doctor: 'N/A',
         status: 'View',
@@ -583,7 +584,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     } else {
       items.push({
         id: '3',
-        date: 'No upcoming visits',
+        date: upcomingError ? 'Unable to load appointments' : 'No upcoming appointments',
         type: 'Upcoming Appointments',
         doctor: 'N/A',
         status: 'View',
@@ -593,7 +594,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     return items;
-  }, [recentConsultation, recentInpatient, nextUpcoming]);
+  }, [recentConsultation, recentInpatient, nextUpcoming, consultationError, inpatientError, upcomingError]);
 
   const avatarSource = gender === 'F' ? FemaleAvatar : MaleAvatar;
 
@@ -731,6 +732,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
+
+        <QueryError label="Consultations" error={consultationError} hasData={consultationData !== undefined} onRetry={() => retryconsultation()} />
+        <QueryError label="Inpatient History" error={inpatientError} hasData={inpatientData !== undefined} onRetry={() => retryinpatient()} />
+        <QueryError label="Appointments" error={upcomingError} hasData={upcomingData !== undefined} onRetry={() => retryupcoming()} />
 
         {/* ── Animated Hero Banner ── */}
         <AnimatedHeroBanner />

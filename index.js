@@ -4,6 +4,7 @@
 
 import { AppRegistry } from 'react-native';
 import App from './App';
+import {logError} from './src/errors/AppError';
 import { name as appName } from './app.json';
 import { getApp } from '@react-native-firebase/app';
 import { getMessaging, setBackgroundMessageHandler } from '@react-native-firebase/messaging';
@@ -20,18 +21,16 @@ import {
 try {
   const messagingInstance = getMessaging(getApp());
   setBackgroundMessageHandler(messagingInstance, async (remoteMessage) => {
-    console.log('[Background] FCM message received:', remoteMessage.messageId);
     await saveIncomingNotification(remoteMessage);
   });
 } catch (err) {
   // Firebase may not be initialized yet in edge-case headless launches — log quietly
-  console.log('[Background] Firebase messaging background handler init note:', err);
+  logError(err, 'notification');
 }
 
 // ─── Notifee Background Event Handler ───────────────────────────────────────
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
-    console.log('[Background] Notifee notification pressed:', detail.notification?.id);
     handleNotificationNavigation(detail.notification?.data);
   }
 });

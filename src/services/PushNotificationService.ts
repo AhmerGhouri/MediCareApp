@@ -1,3 +1,4 @@
+import {AppError, logError, normalizeError} from '../errors/AppError';
 /**
  * PushNotificationService.ts
  *
@@ -15,9 +16,9 @@
  *  - Promotions topic subscription / unsubscription
  */
 
-import { Platform, PermissionsAndroid } from 'react-native';
+import {Platform, PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getApp } from '@react-native-firebase/app';
+import {getApp} from '@react-native-firebase/app';
 import {
   getMessaging,
   requestPermission,
@@ -32,8 +33,12 @@ import {
   AuthorizationStatus,
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance, AndroidVisibility, EventType } from '@notifee/react-native';
-import { registerDeviceTokenApi } from './api';
+import notifee, {
+  AndroidImportance,
+  AndroidVisibility,
+  EventType,
+} from '@notifee/react-native';
+import {registerDeviceTokenApi} from './api';
 import NavigationService from '../navigation/NavigationService';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -75,16 +80,38 @@ export interface StoredNotification {
 export async function getStoredNotifications(): Promise<StoredNotification[]> {
   try {
     const json = await AsyncStorage.getItem(STORAGE_KEY_NOTIFICATIONS);
-    return json ? JSON.parse(json) : [];
-  } catch {
-    return [];
+    const items: unknown = json ? JSON.parse(json) : [];
+    if (
+      !Array.isArray(items) ||
+      !items.every(
+        item =>
+          item &&
+          typeof item.id === 'string' &&
+          typeof item.title === 'string' &&
+          typeof item.body === 'string' &&
+          typeof item.timestamp === 'number',
+      )
+    ) {
+      throw new AppError('storage');
+    }
+    return items;
+  } catch (error) {
+    throw normalizeError(error, 'storage');
   }
 }
 
-export async function saveIncomingNotification(message: FirebaseMessagingTypes.RemoteMessage): Promise<void> {
+export async function saveIncomingNotification(
+  message: FirebaseMessagingTypes.RemoteMessage,
+): Promise<void> {
   try {
-    const title = message.notification?.title || (message.data?.title as string) || 'Medicare Hospital';
-    const body = message.notification?.body || (message.data?.body as string) || 'You have a new health update.';
+    const title =
+      message.notification?.title ||
+      (message.data?.title as string) ||
+      'Medicare Hospital';
+    const body =
+      message.notification?.body ||
+      (message.data?.body as string) ||
+      'You have a new health update.';
 
     const existing = await getStoredNotifications();
     const newItem: StoredNotification = {
@@ -99,9 +126,12 @@ export async function saveIncomingNotification(message: FirebaseMessagingTypes.R
     // Deduplicate by id and keep top 50 latest
     const filtered = existing.filter(item => item.id !== newItem.id);
     const updated = [newItem, ...filtered].slice(0, 50);
-    await AsyncStorage.setItem(STORAGE_KEY_NOTIFICATIONS, JSON.stringify(updated));
+    await AsyncStorage.setItem(
+      STORAGE_KEY_NOTIFICATIONS,
+      JSON.stringify(updated),
+    );
   } catch (err) {
-    console.warn('[PushNotifications] Error saving notification to storage:', err);
+    logError(err, 'notification');
   }
 }
 
@@ -109,7 +139,7 @@ export async function clearStoredNotifications(): Promise<void> {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY_NOTIFICATIONS);
   } catch (err) {
-    console.warn('[PushNotifications] Error clearing notifications:', err);
+    throw normalizeError(err, 'storage');
   }
 }
 
@@ -134,7 +164,7 @@ export function handleNotificationNavigation(data?: NotificationData): void {
       break;
 
     default:
-      console.warn('[PushNotifications] Unknown screen in notification payload:', data.screen);
+      break;
   }
 }
 
@@ -149,7 +179,8 @@ async function ensureAndroidChannel(): Promise<void> {
     visibility: AndroidVisibility.PUBLIC,
     vibration: true,
     sound: 'default',
-    description: 'Notifications for lab results, appointments and health updates.',
+    description:
+      'Notifications for lab results, appointments and health updates.',
   });
 }
 
@@ -179,7 +210,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
       return granted;
     } catch (err) {
-      console.log('[PushNotifications] iOS permission note:', err);
+      logError(err, 'notification');
       return false;
     }
   }
@@ -191,7 +222,10 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
     const result = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
+    ).catch(error => {
+      logError(error, 'permission');
+      return PermissionsAndroid.RESULTS.DENIED;
+    });
 
     return result === PermissionsAndroid.RESULTS.GRANTED;
   }
@@ -204,7 +238,6 @@ export async function requestNotificationPermission(): Promise<boolean> {
 async function registerDeviceToken(retries = 3, delayMs = 1000): Promise<void> {
   const sessionToken = await AsyncStorage.getItem(STORAGE_KEY_TOKEN);
   if (!sessionToken) {
-    console.log('[PushNotifications] No session token found — skipping device registration.');
     return;
   }
 
@@ -213,7 +246,7 @@ async function registerDeviceToken(retries = 3, delayMs = 1000): Promise<void> {
   try {
     fcmToken = await getToken(messagingInstance);
   } catch (err: any) {
-    console.log('[PushNotifications] FCM token unavailable (e.g. iOS simulator / no APNs):', err?.message || err);
+    logError(err, 'notification');
     return;
   }
 
@@ -227,25 +260,21 @@ async function registerDeviceToken(retries = 3, delayMs = 1000): Promise<void> {
         device_token: fcmToken,
         platform: Platform.OS as 'android' | 'ios',
       });
-      console.log('[PushNotifications] Device token registered successfully.');
+
       return;
     } catch (err: any) {
-      const status = err?.response?.status;
-      if (status === 404) {
-        console.log('[PushNotifications] Backend /register-device endpoint is not live (404) — token registration deferred until backend endpoint is active.');
-        return;
-      }
-      if (status === 401) {
-        console.warn('[PushNotifications] 401 — JWT expired, skipping retry.');
+      const safe = normalizeError(err, 'notification');
+      if (!safe.retryable) {
+        logError(safe, 'notification');
         return;
       }
 
       if (attempt < retries) {
         const backoff = delayMs * Math.pow(2, attempt - 1);
-        console.log(`[PushNotifications] Registration attempt ${attempt}/${retries} failed. Retrying in ${backoff}ms...`);
+
         await new Promise(resolve => setTimeout(resolve, backoff));
       } else {
-        console.warn('[PushNotifications] Device token registration failed after retries:', err?.message || err);
+        logError(err, 'notification');
       }
     }
   }
@@ -256,18 +285,20 @@ async function registerDeviceToken(retries = 3, delayMs = 1000): Promise<void> {
 async function displayForegroundNotification(
   message: FirebaseMessagingTypes.RemoteMessage,
 ): Promise<void> {
-  const { notification, data } = message;
+  const {notification, data} = message;
 
   const notificationId = await notifee.displayNotification({
-    title: notification?.title ?? (data?.title as string) ?? 'Medicare Hospital',
-    body: notification?.body ?? (data?.body as string) ?? 'You have a new update.',
+    title:
+      notification?.title ?? (data?.title as string) ?? 'Medicare Hospital',
+    body:
+      notification?.body ?? (data?.body as string) ?? 'You have a new update.',
     data: data as Record<string, string>,
     android: {
       channelId: ANDROID_CHANNEL_ID,
       importance: AndroidImportance.HIGH,
       smallIcon: 'ic_notification',
       color: '#C0392B',
-      pressAction: { id: 'default' },
+      pressAction: {id: 'default'},
     },
     ios: {
       sound: 'default',
@@ -282,10 +313,14 @@ async function displayForegroundNotification(
     },
   });
 
-  notifee.onForegroundEvent(({ type, detail }) => {
+  notifee.onForegroundEvent(({type, detail}) => {
     if (type === EventType.PRESS) {
-      handleNotificationNavigation(detail.notification?.data as NotificationData);
-      notifee.cancelNotification(notificationId);
+      handleNotificationNavigation(
+        detail.notification?.data as NotificationData,
+      );
+      void notifee
+        .cancelNotification(notificationId)
+        .catch(error => logError(error, 'notification'));
     }
   });
 }
@@ -302,7 +337,6 @@ export async function initializePushNotifications(): Promise<void> {
 
   const hasPermission = await requestNotificationPermission();
   if (!hasPermission) {
-    console.log('[PushNotifications] Notification permission not granted.');
   }
 
   if (hasPermission) {
@@ -311,41 +345,48 @@ export async function initializePushNotifications(): Promise<void> {
 
   try {
     await subscribeToTopic(messagingInstance, PROMOTIONS_TOPIC);
-    console.log('[PushNotifications] Subscribed to promotions topic.');
   } catch (err: any) {
-    console.log('[PushNotifications] Promotions topic subscription deferred:', err?.message || err);
+    logError(err, 'notification');
   }
 
   if (tokenRefreshUnsubscribe) tokenRefreshUnsubscribe();
-  tokenRefreshUnsubscribe = onTokenRefresh(messagingInstance, async (_newToken) => {
-    console.log('[PushNotifications] FCM token refreshed — re-registering...');
-    await registerDeviceToken();
-  });
+  tokenRefreshUnsubscribe = onTokenRefresh(
+    messagingInstance,
+    async _newToken => {
+      await registerDeviceToken().catch(error =>
+        logError(error, 'notification'),
+      );
+    },
+  );
 
   if (foregroundMessageUnsubscribe) foregroundMessageUnsubscribe();
-  foregroundMessageUnsubscribe = onMessage(messagingInstance, async (remoteMessage) => {
-    console.log('[PushNotifications] Foreground message received:', remoteMessage.messageId);
-    await saveIncomingNotification(remoteMessage);
-    await displayForegroundNotification(remoteMessage);
-  });
+  foregroundMessageUnsubscribe = onMessage(
+    messagingInstance,
+    async remoteMessage => {
+      await saveIncomingNotification(remoteMessage);
+      await displayForegroundNotification(remoteMessage).catch(error =>
+        logError(error, 'notification'),
+      );
+    },
+  );
 
-  onNotificationOpenedApp(messagingInstance, (remoteMessage) => {
-    console.log('[PushNotifications] Notification opened app from background:', remoteMessage.messageId);
+  onNotificationOpenedApp(messagingInstance, remoteMessage => {
     saveIncomingNotification(remoteMessage);
     handleNotificationNavigation(remoteMessage.data as NotificationData);
   });
 
-  getInitialNotification(messagingInstance).then((remoteMessage) => {
-    if (remoteMessage) {
-      console.log('[PushNotifications] App opened from quit state via notification:', remoteMessage.messageId);
-      saveIncomingNotification(remoteMessage);
-      setTimeout(() => {
-        handleNotificationNavigation(remoteMessage.data as NotificationData);
-      }, 1000);
-    }
-  }).catch(err => {
-    console.log('[PushNotifications] Note on initial notification check:', err);
-  });
+  getInitialNotification(messagingInstance)
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        saveIncomingNotification(remoteMessage);
+        setTimeout(() => {
+          handleNotificationNavigation(remoteMessage.data as NotificationData);
+        }, 1000);
+      }
+    })
+    .catch(err => {
+      logError(err, 'notification');
+    });
 }
 
 export async function teardownPushNotifications(): Promise<void> {
@@ -362,32 +403,30 @@ export async function teardownPushNotifications(): Promise<void> {
 
   try {
     await unsubscribeFromTopic(messagingInstance, PROMOTIONS_TOPIC);
-    console.log('[PushNotifications] Unsubscribed from promotions topic.');
   } catch (err: any) {
-    console.log('[PushNotifications] Topic unsubscribe note:', err?.message || err);
+    logError(err, 'notification');
   }
 
   try {
     await deleteToken(messagingInstance);
-    console.log('[PushNotifications] FCM token deleted on logout.');
   } catch (err: any) {
-    console.log('[PushNotifications] FCM token delete note:', err?.message || err);
+    logError(err, 'notification');
   }
 }
 
-export async function setPromotionalNotifications(enabled: boolean): Promise<void> {
+export async function setPromotionalNotifications(
+  enabled: boolean,
+): Promise<void> {
   const messagingInstance = getFirebaseMessaging();
   try {
     if (enabled) {
       await subscribeToTopic(messagingInstance, PROMOTIONS_TOPIC);
-      console.log('[PushNotifications] Re-subscribed to promotions.');
     } else {
       await unsubscribeFromTopic(messagingInstance, PROMOTIONS_TOPIC);
-      console.log('[PushNotifications] Unsubscribed from promotions.');
     }
   } catch (err) {
-    console.log('[PushNotifications] Toggle promotions note:', err);
-    throw err;
+    logError(err, 'notification');
+    throw normalizeError(err, 'notification');
   }
 }
 

@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import React from 'react';
 import {
   View,
@@ -149,19 +150,7 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
         )}
 
         {/* Error State */}
-        {isError && (
-          <View style={styles.emptyWrap}>
-            <Icon
-              name="calendar-today"
-              size={normalize(40)}
-              color={Colors.blue}
-            />
-            <Text style={styles.emptyTitle}>No Appointments</Text>
-            <Text style={styles.emptySub}>
-              You have no upcoming appointment visits scheduled under this
-              patient profile.
-            </Text>
-          </View>)}
+        <QueryError error={error} hasData={data !== undefined} onRetry={() => refetch()} />
 
         {/* No MR Selected */}
         {!selectedMrNo && !isLoading && (
@@ -177,7 +166,7 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
 
         {/* Render Appointments */}
         {!isLoading &&
-          !isError &&
+          (!isError || data !== undefined) &&
           selectedMrNo &&
           (reports.length > 0 ? (
             reports.map((item: UpcomingAppointment) => {
@@ -263,25 +252,11 @@ const UpcomingFollowUpsScreen: React.FC<Props> = ({ navigation }) => {
           ) : (
             <View style={styles.centerWrap}>
               <Icon
-                name="cloud-off"
+                name="event-available"
                 size={normalize(40)}
                 color={Colors.textLight}
               />
-              <Text style={styles.errorText}>Something went wrong</Text>
-              <Text
-                style={[
-                  styles.errorText,
-                  {
-                    fontSize: normalize(11),
-                    color: Colors.textLight,
-                    marginTop: 4,
-                  },
-                ]}>
-                We couldn't load your appointments right now. Please check your connection and try again.
-              </Text>
-              <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-                <Text style={styles.retryText}>Retry</Text>
-              </TouchableOpacity>
+              <Text style={styles.emptySub}>No upcoming appointments</Text>
             </View>
           ))}
       </ScrollView>

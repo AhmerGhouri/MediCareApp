@@ -34,6 +34,14 @@ yarn android
 
 ### For iOS
 
+This project uses React Native 0.74 and CLI 13.6.9. A project-local compatibility
+patch adds Xcode 27 Device Hub support to `run-ios`. It is applied by `npm install`
+and before `npm run ios`, without changing Xcode, global tools, or other projects.
+After installation, `npx react-native run-ios` also uses the patched local CLI.
+If dependencies were installed with `--ignore-scripts`, run
+`node scripts/patch-ios-device-hub.js` first. Review/remove this patch and its npm
+hooks when upgrading the CLI to a version with native Device Hub support.
+
 ```bash
 # using npm
 npm run ios

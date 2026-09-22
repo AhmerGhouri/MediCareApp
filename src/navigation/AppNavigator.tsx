@@ -7,7 +7,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import LinearGradient from 'react-native-linear-gradient';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { navigationRef } from './NavigationService';
+import NavigationService, { navigationRef } from './NavigationService';
 
 import SplashScreen from '../screens/auth/SplashScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -166,7 +166,7 @@ const MainTabs: React.FC = () => {
 
 const AppNavigator: React.FC = () => {
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} onReady={NavigationService.onReady}>
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{ headerShown: false }}>

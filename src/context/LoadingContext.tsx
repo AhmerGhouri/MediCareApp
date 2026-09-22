@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { View, Modal, StyleSheet, Animated, Easing, Text } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
 import { Colors } from '../theme/colors';
 import { Fonts } from '../theme/fonts';
 import { normalize, moderateScale } from '../theme/responsive';
@@ -69,7 +69,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <LoadingContext.Provider value={{ showLoader, hideLoader }}>
       {children}
-      <Modal visible={isLoading} transparent={true} statusBarTranslucent={true} animationType="none">
+      {isLoading && <View style={StyleSheet.absoluteFill} pointerEvents="auto">
         <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
           <View style={styles.loaderContainer}>
             <Animated.Image 
@@ -80,7 +80,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
             <Text style={styles.text}>{message}</Text>
           </View>
         </Animated.View>
-      </Modal>
+      </View>}
     </LoadingContext.Provider>
   );
 };

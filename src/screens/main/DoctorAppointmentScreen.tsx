@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import React, { useMemo, useState } from 'react';
 import {
   View,
@@ -151,7 +152,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [selectedSpeciality, setSelectedSpeciality] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: consultants, isLoading, isError, refetch } = useQuery({
+  const { data: consultants, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['consultants'],
     queryFn: () => fetchConsultantsApi(),
   });
@@ -216,15 +217,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       )}
 
-      {isError && (
-        <View style={styles.centerWrap}>
-          <Icon name="error-outline" size={normalize(40)} color={Colors.redPrimary} />
-          <Text style={styles.errorText}>Failed to load doctors.</Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <QueryError error={error} hasData={consultants !== undefined} onRetry={() => refetch()} />
 
       {!selectedMrNo && !isLoading && consultants && consultants.length === 0 && (
         <View style={styles.centerWrap}>
@@ -233,7 +226,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       )}
 
-      {!isLoading && !isError && consultants && (
+      {!isLoading && (!isError || consultants !== undefined) && consultants && (
         <>
           {uniqueSpecialties.length > 0 && (
             <>
@@ -346,7 +339,7 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
       />
 
       {/* Sticky Search Bar */}
-      {!isLoading && !isError && consultants && (
+      {!isLoading && (!isError || consultants !== undefined) && consultants && (
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>
             <Icon name="search" size={normalize(15)} color={Colors.textLight} />
@@ -368,14 +361,14 @@ const DoctorAppointmentScreen: React.FC<Props> = ({ navigation }) => {
       )}
 
       <FlatList
-        data={!isLoading && !isError ? filteredConsultants : []}
+        data={!isLoading && (!isError || consultants !== undefined) ? filteredConsultants : []}
         keyExtractor={(item, index) => item.consl_id ? `${item.consl_id}-${index}` : index.toString()}
         contentContainerStyle={styles.body}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         renderItem={renderDoctor}
         ListEmptyComponent={
-          !isLoading && !isError && consultants && filteredConsultants.length === 0 ? (
+          !isLoading && (!isError || consultants !== undefined) && consultants && filteredConsultants.length === 0 ? (
             <View style={styles.centerWrap}>
               <Icon name="person-search" size={normalize(40)} color={Colors.textLight} />
               <Text style={styles.loadingText}>No consultants found.</Text>

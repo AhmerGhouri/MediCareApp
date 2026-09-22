@@ -1,4 +1,7 @@
 import React, { useState, useCallback } from 'react';
+import QueryError from '../../components/QueryError';
+import {normalizeError} from '../../errors/AppError';
+import {reportError} from '../../errors/errorEvents';
 import {
   View,
   Text,
@@ -60,14 +63,16 @@ const NotificationsScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [notifications, setNotifications] = useState<StoredNotification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<unknown>(null);
 
   const loadNotifications = useCallback(async () => {
     setLoading(true);
     try {
       const stored = await getStoredNotifications();
       setNotifications(stored);
+      setLoadError(null);
     } catch (err) {
-      console.warn('[NotificationsScreen] Error loading notifications:', err);
+      setLoadError(normalizeError(err, 'storage'));
     } finally {
       setLoading(false);
     }
@@ -90,8 +95,11 @@ const NotificationsScreen: React.FC = () => {
           text: 'Clear All',
           style: 'destructive',
           onPress: async () => {
-            await clearStoredNotifications();
-            setNotifications([]);
+            try {
+              await clearStoredNotifications();
+              setNotifications([]);
+              setLoadError(null);
+            } catch (error) { reportError(error, 'storage'); }
           },
         },
       ],
@@ -125,6 +133,7 @@ const NotificationsScreen: React.FC = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
+          <QueryError error={loadError} hasData={notifications.length > 0} onRetry={loadNotifications} />
           {notifications.length > 0 ? (
             notifications.map(notif => {
               const { icon, color } = getNotificationStyle(notif);
@@ -157,7 +166,7 @@ const NotificationsScreen: React.FC = () => {
                 </TouchableOpacity>
               );
             })
-          ) : (
+          ) : loadError ? null : (
             <View style={styles.emptyWrap}>
               <View style={styles.emptyIconWrap}>
                 <Icon

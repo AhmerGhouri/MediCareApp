@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {MrProfile} from '../../services/api';
 
 interface AuthState {
+  sessionVersion: number;
   isAuthenticated: boolean;
   sessionToken: string | null;
   mobileNumber: string | null; // Persisted for push notification background refresh
@@ -14,6 +15,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
+  sessionVersion: 0,
   isAuthenticated: false,
   sessionToken: null,
   mobileNumber: null,
@@ -33,6 +35,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{token: string; mrProfiles: MrProfile[]; mobileNumber?: string}>,
     ) => {
+      state.sessionVersion += 1;
       state.isAuthenticated = true;
       state.sessionToken = action.payload.token;
       state.mrProfiles = action.payload.mrProfiles;
@@ -58,6 +61,7 @@ const authSlice = createSlice({
       state.selectedGender = action.payload;
     },
     logout: state => {
+      state.sessionVersion += 1;
       state.isAuthenticated = false;
       state.sessionToken = null;
       state.mobileNumber = null;

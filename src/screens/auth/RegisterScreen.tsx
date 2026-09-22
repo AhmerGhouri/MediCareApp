@@ -1,3 +1,4 @@
+import {reportError} from '../../errors/errorEvents';
 import React, { useState } from 'react';
 import {
   View,
@@ -120,13 +121,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         },
       );
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Registration failed. Please try again.';
-      showPopup('error', 'Registration Failed', message);
-
+    onError: (error: unknown) => {
+      reportError(error);
     },
     onSettled: () => hideLoader(),
   });
@@ -155,12 +151,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         gender: selectedGender === 'Male' ? 'M' : 'F',
       });
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Authorization check failed. Please try again.';
-      showPopup('error', 'Check Failed', message);
+    onError: (error: unknown) => {
+      reportError(error);
     },
     onSettled: () => hideLoader(),
   });

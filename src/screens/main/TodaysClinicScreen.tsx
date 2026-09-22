@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   View,
@@ -108,7 +109,7 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [searchCategory, setSearchCategory] = useState<SearchCategory>('all');
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['todaysClinic'],
     queryFn: fetchTodaysClinicApi,
   });
@@ -197,15 +198,7 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
       );
     }
     if (isError) {
-      return (
-        <View style={styles.centerWrap}>
-          <Icon name="cloud-off" size={normalize(40)} color={Colors.textLight} />
-          <Text style={styles.errorText}>Something went wrong</Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      );
+      return <QueryError error={error} onRetry={() => refetch()} />;
     }
     return (
       <View style={styles.centerWrap}>
@@ -213,10 +206,11 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.emptySub}>No doctors found for your search.</Text>
       </View>
     );
-  }, [isLoading, isError, refetch]);
+  }, [isLoading, isError, error, refetch]);
 
   return (
     <View style={styles.root}>
+      <QueryError error={data !== undefined ? error : null} hasData onRetry={() => refetch()} />
       <StatusBar barStyle="light-content" backgroundColor={Colors.redDeep} />
 
       <GradientHeader
@@ -277,7 +271,7 @@ const TodaysClinicScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       {/* Categories Horizontal Scroll */}
-      {!isLoading && !isError && departments.length > 0 && (
+      {!isLoading && (!isError || data !== undefined) && departments.length > 0 && (
         <View style={styles.categoryContainer}>
           <ScrollView
             horizontal
@@ -573,4 +567,3 @@ const styles = StyleSheet.create({
 });
 
 export default TodaysClinicScreen;
-

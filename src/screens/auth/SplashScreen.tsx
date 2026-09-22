@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {logError} from '../../errors/AppError';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
@@ -41,6 +42,7 @@ const SplashScreen: React.FC<Props> = ({navigation}) => {
           navigation.replace('Onboarding');
         }
       } catch (error) {
+        logError(error, 'storage');
         // Fallback to Onboarding if storage fails
         navigation.replace('Onboarding');
       }

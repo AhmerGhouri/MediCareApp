@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -128,22 +129,8 @@ const MyReportsScreen: React.FC = () => {
             <Text style={styles.message}>Fetching reports...</Text>
           </View>
         )}
-        {selectedMrNo && activeQuery.isError && (
-          <View style={styles.messageWrap}>
-            <Icon
-              name="cloud-off"
-              size={normalize(38)}
-              color={Colors.textLight}
-            />
-            <Text style={styles.message}>Unable to load these reports.</Text>
-            <TouchableOpacity
-              style={styles.retry}
-              onPress={() => activeQuery.refetch()}>
-              <Text style={styles.retryText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {!activeQuery.isLoading && !activeQuery.isError && !!selectedMrNo && (
+        <QueryError error={activeQuery.error} hasData={activeQuery.data !== undefined} onRetry={() => activeQuery.refetch()} />
+        {!activeQuery.isLoading && (!activeQuery.isError || activeQuery.data !== undefined) && !!selectedMrNo && (
           <>
             <TouchableOpacity
               style={styles.openButton}

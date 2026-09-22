@@ -5,6 +5,8 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "preios": "node scripts/patch-ios-device-hub.js",
+    "postinstall": "node scripts/patch-ios-device-hub.js",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"

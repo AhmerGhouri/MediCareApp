@@ -1,3 +1,4 @@
+import QueryError from '../../components/QueryError';
 import React, {useState} from 'react';
 import {
   View,
@@ -104,31 +105,31 @@ const PatientHistoryScreen: React.FC = () => {
   const ageString = calculateAge(dob);
 
   // ─── API Queries ────────────────────────────────────────────────
-  const {data: consultData, isLoading: loadConsult} = useQuery({
+  const {data: consultData, isLoading: loadConsult, error: consultError, refetch: retryconsult} = useQuery({
     queryKey: ['consultationHistory', selectedMrNo],
     queryFn: () => fetchConsultationHistoryApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const {data: inpatientData, isLoading: loadInpatient} = useQuery({
+  const {data: inpatientData, isLoading: loadInpatient, error: inpatientError, refetch: retryinpatient} = useQuery({
     queryKey: ['inpatientHistory', selectedMrNo],
     queryFn: () => fetchInpatientHistoryApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const {data: upcomingData, isLoading: loadUpcoming} = useQuery({
+  const {data: upcomingData, isLoading: loadUpcoming, error: upcomingError, refetch: retryupcoming} = useQuery({
     queryKey: ['upcomingAppointments', selectedMrNo],
     queryFn: () => fetchUpcomingAppointmentsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const {data: labData, isLoading: loadLab} = useQuery({
+  const {data: labData, isLoading: loadLab, error: labError, refetch: retrylab} = useQuery({
     queryKey: ['reports', selectedMrNo],
     queryFn: () => fetchReportsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
   });
 
-  const {data: radioData, isLoading: loadRadio} = useQuery({
+  const {data: radioData, isLoading: loadRadio, error: radioError, refetch: retryradio} = useQuery({
     queryKey: ['radiology', selectedMrNo],
     queryFn: () => fetchRadiologyReportsApi(selectedMrNo || ''),
     enabled: !!selectedMrNo,
@@ -172,7 +173,7 @@ const PatientHistoryScreen: React.FC = () => {
   const STATS = [
     {
       label: 'Consultations',
-      value: consultList.length,
+      value: consultError && !consultData ? '—' : consultList.length,
       icon: 'medical-services',
       color: Colors.blue,
       bg: Colors.bluePale,
@@ -180,7 +181,7 @@ const PatientHistoryScreen: React.FC = () => {
     },
     {
       label: 'Inpatient',
-      value: inpatientList.length,
+      value: inpatientError && !inpatientData ? '—' : inpatientList.length,
       icon: 'local-hotel',
       color: Colors.green,
       bg: Colors.greenPale,
@@ -188,7 +189,7 @@ const PatientHistoryScreen: React.FC = () => {
     },
     {
       label: 'Upcoming',
-      value: upcomingList.length,
+      value: upcomingError && !upcomingData ? '—' : upcomingList.length,
       icon: 'event',
       color: Colors.yellowDeep,
       bg: Colors.yellowPale,
@@ -196,7 +197,7 @@ const PatientHistoryScreen: React.FC = () => {
     },
     {
       label: 'Lab Reports',
-      value: labList.length,
+      value: labError && !labData ? '—' : labList.length,
       icon: 'science',
       color: Colors.redPrimary,
       bg: Colors.redPale,
@@ -204,7 +205,7 @@ const PatientHistoryScreen: React.FC = () => {
     },
     {
       label: 'Radiology',
-      value: radioList.length,
+      value: radioError && !radioData ? '—' : radioList.length,
       icon: 'biotech',
       color: '#7B1FA2',
       bg: '#F3E5F5',
@@ -227,6 +228,12 @@ const PatientHistoryScreen: React.FC = () => {
         style={styles.body}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: verticalScale(100)}}>
+
+        <QueryError label="Consultations" error={consultError} hasData={consultData !== undefined} onRetry={() => retryconsult()} />
+        <QueryError label="Inpatient History" error={inpatientError} hasData={inpatientData !== undefined} onRetry={() => retryinpatient()} />
+        <QueryError label="Appointments" error={upcomingError} hasData={upcomingData !== undefined} onRetry={() => retryupcoming()} />
+        <QueryError label="Lab Reports" error={labError} hasData={labData !== undefined} onRetry={() => retrylab()} />
+        <QueryError label="Radiology" error={radioError} hasData={radioData !== undefined} onRetry={() => retryradio()} />
 
         {/* ── Patient Profile Card ── */}
         <View style={styles.profileCard}>
@@ -356,7 +363,7 @@ const PatientHistoryScreen: React.FC = () => {
           </View>
         )}
 
-        {!isLoading && timeline.length === 0 && (
+        {!isLoading && !consultError && !inpatientError && timeline.length === 0 && (
           <View style={styles.centerWrap}>
             <Icon name="history" size={normalize(44)} color={Colors.textLight} />
             <Text style={styles.emptyText}>No medical history found.</Text>

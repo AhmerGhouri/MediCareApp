@@ -1,3 +1,4 @@
+import {reportError} from '../../errors/errorEvents';
 import React, { useState } from 'react';
 import {
   View,
@@ -23,7 +24,7 @@ import { Colors } from '../../theme/colors';
 import { Fonts } from '../../theme/fonts';
 import { useLoading } from '../../context/LoadingContext';
 import Logo from '../../../assets/Logo.png';
-import {normalize, verticalScale, moderateScale} from '../../theme/responsive';
+import { normalize, verticalScale, moderateScale } from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -78,14 +79,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         navigation.replace('SelectProfile');
       }
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Login failed. Please try again.';
-      console.log('message', error.response.data);
-
-      showPopup('error', 'Login Failed', message);
+    onError: (error: unknown) => {
+      reportError(error);
     },
     onSettled: () => {
       hideLoader();
@@ -243,7 +238,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   forgotWrap: { alignSelf: 'flex-end', marginTop: 4, marginBottom: 8 },
-  forgotText: {fontSize: normalize(12), color: Colors.blue, fontFamily: Fonts.semiBold,},
+  forgotText: { fontSize: normalize(12), color: Colors.blue, fontFamily: Fonts.semiBold, },
 
   divider: {
     flexDirection: 'row',
@@ -266,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: verticalScale(24),
   },
-  footerText: {fontSize: normalize(13), color: Colors.textMid, fontFamily: Fonts.regular},
+  footerText: { fontSize: normalize(13), color: Colors.textMid, fontFamily: Fonts.regular },
   footerLink: {
     fontSize: normalize(13),
     color: Colors.redPrimary,

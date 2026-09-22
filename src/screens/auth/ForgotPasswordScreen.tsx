@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import {reportError} from '../../errors/errorEvents';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,35 +9,33 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigation/AppNavigator';
-import { useMutation } from '@tanstack/react-query';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../navigation/AppNavigator';
+import {useMutation} from '@tanstack/react-query';
 import {
-  verifyMobileApi,
   sendOtpApi,
-  verifyOtpApi,
-  resetPasswordApi,
+  verifyOtpAndResetApi,
   checkRegistrationEligibilityApi,
 } from '../../services/api';
 import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GradientHeader from '../../components/GradientHeader';
 import CustomPopup from '../../components/CustomPopup';
-import { Colors } from '../../theme/colors';
-import { Fonts } from '../../theme/fonts';
-import { normalize, moderateScale, verticalScale } from '../../theme/responsive';
+import {Colors} from '../../theme/colors';
+import {Fonts} from '../../theme/fonts';
+import {normalize, moderateScale, verticalScale} from '../../theme/responsive';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ForgotPassword'>;
 };
 
 const STEP_INFO = [
-  { title: 'Verify Identity', subtitle: 'Enter your registered mobile number' },
-  { title: 'OTP Verification', subtitle: 'Enter the code sent to your email' },
-  { title: 'New Password', subtitle: 'Create a fresh new password' },
+  {title: 'Verify Identity', subtitle: 'Enter your registered mobile number'},
+  {title: 'OTP Verification', subtitle: 'Enter the code sent to your email'},
+  {title: 'New Password', subtitle: 'Create a fresh new password'},
 ];
 
-const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
+const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
   // Step: 1 = Enter mobile, 2 = OTP, 3 = New password
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -44,11 +43,10 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [maskedEmail, setMaskedEmail] = useState('');
   const [email, setEmail] = useState('');
-  const [visible, setVisible] = useState<boolean>(false)
+  const [visible, setVisible] = useState<boolean>(false);
   const [otpInput, setOtpInput] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [resetToken, setResetToken] = useState('');
 
   // Popup state
   const [popup, setPopup] = useState<{
@@ -58,7 +56,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     message: string;
     primaryLabel?: string;
     onPrimary?: () => void;
-  }>({ visible: false, type: 'info', title: '', message: '' });
+  }>({visible: false, type: 'info', title: '', message: ''});
 
   const showPopup = (
     type: 'success' | 'error' | 'warning' | 'info',
@@ -67,76 +65,35 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     primaryLabel?: string,
     onPrimary?: () => void,
   ) => {
-    setPopup({ visible: true, type, title, message, primaryLabel, onPrimary });
+    setPopup({visible: true, type, title, message, primaryLabel, onPrimary});
   };
-
-  // ─── Step 1: Verify Mobile ───────────────────────────────────
-  const verifyMobileMut = useMutation({
-    mutationFn: () => verifyMobileApi(phone),
-    onSuccess: data => {
-      if (data.registered) {
-        setMaskedEmail(data.masked_email);
-        // Auto-send OTP after mobile is verified
-        sendOtpMut.mutate(phone);
-      } else {
-        showPopup(
-          'error',
-          'Not Found',
-          'This mobile number is not registered in our system. Please check and try again.',
-        );
-      }
-    },
-    onError: (error: any) => {
-      const msg =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Could not verify mobile number.';
-      showPopup('error', 'Verification Failed', msg);
-    },
-  });
 
   // ─── Step 2: Send OTP ────────────────────────────────────────
   const sendOtpMut = useMutation({
-    mutationFn: (mobile: string) => sendOtpApi(mobile),
+    mutationFn: () => sendOtpApi({mobile: phone, email: email.trim()}),
     onSuccess: () => {
+      setMaskedEmail(email.trim());
+      setOtpInput('');
       setStep(2);
       showPopup(
         'success',
         'OTP Sent',
-        `A verification code has been sent to ${maskedEmail || 'your registered email'
-        }.`,
+        'If your account is registered, a verification code has been sent. Check your email.',
       );
     },
-    onError: (error: any) => {
-      const msg =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Failed to send OTP.';
-      showPopup('error', 'Send Failed', msg);
-    },
-  });
-
-  // ─── Step 3: Verify OTP ──────────────────────────────────────
-  const verifyOtpMut = useMutation({
-    mutationFn: () => verifyOtpApi({ mobile_number: phone, otp: otpInput }),
-    onSuccess: data => {
-      setResetToken(data.reset_token);
-      setStep(3);
-    },
-    onError: (error: any) => {
-      const msg =
-        error?.response?.data?.detail || error?.message || 'Invalid OTP code.';
-      showPopup('error', 'Verification Failed', msg);
+    onError: (error: unknown) => {
+      reportError(error);
     },
   });
 
   // ─── Step 4: Reset Password ──────────────────────────────────
   const resetPasswordMut = useMutation({
     mutationFn: () =>
-      resetPasswordApi({
-        // reset_token: resetToken,
-        mobile_number: phone,
-        password: newPassword,
+      verifyOtpAndResetApi({
+        mobile: phone,
+        email: email.trim(),
+        otp_code: otpInput,
+        new_password: newPassword,
       }),
     onSuccess: () => {
       showPopup(
@@ -145,17 +102,13 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         'Your password has been reset successfully! Please login with your new password.',
         'Go to Login',
         () => {
-          setPopup(prev => ({ ...prev, visible: false }));
+          setPopup(prev => ({...prev, visible: false}));
           navigation.navigate('Login');
         },
       );
     },
-    onError: (error: any) => {
-      const msg =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Password reset failed.';
-      showPopup('error', 'Reset Failed', msg);
+    onError: (error: unknown) => {
+      reportError(error);
     },
   });
 
@@ -170,16 +123,13 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         showPopup(
           'error',
           data.status || 'Not Found',
-          data.message || 'This mobile number is not registered in the hospital database. Please check and try again.',
+          data.message ||
+            'This mobile number is not registered in the hospital database. Please check and try again.',
         );
       }
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Authorization check failed. Please try again.';
-      showPopup('error', 'Check Failed', message);
+    onError: (error: unknown) => {
+      reportError(error);
     },
   });
 
@@ -210,26 +160,20 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // Email provided — advance to step 2 (OTP) with mock flow
-    setMaskedEmail(email);
-    setStep(2);
-    showPopup(
-      'success',
-      'OTP Sent',
-      `A verification code has been sent to ${email}.\n\nDemo Code: 1234`,
-    );
+    sendOtpMut.mutate();
   };
 
   const handleVerifyOtp = () => {
-    if (!otpInput || otpInput.length < 4) {
+    if (!/^\d{6}$/.test(otpInput)) {
       showPopup(
         'warning',
         'Invalid OTP',
-        'Please enter the complete 4-digit OTP code.',
+        'Please enter the complete 6-digit OTP code.',
       );
       return;
     }
-    verifyOtpMut.mutate();
+    // The backend verifies the code together with the new password.
+    setStep(3);
   };
 
   const handleResetPassword = () => {
@@ -253,9 +197,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const isLoading =
-    verifyMobileMut.isPending ||
+    checkEligibilityMutation.isPending ||
     sendOtpMut.isPending ||
-    verifyOtpMut.isPending ||
     resetPasswordMut.isPending;
   const currentStep = STEP_INFO[step - 1];
 
@@ -291,8 +234,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
                 s < step
                   ? styles.dotDone
                   : s === step
-                    ? styles.dotActive
-                    : styles.dotInactive,
+                  ? styles.dotActive
+                  : styles.dotInactive,
               ]}
             />
           ))}
@@ -323,20 +266,21 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
                 keyboardType="phone-pad"
                 maxLength={11}
               />
-              {visible &&
+              {visible && (
                 <InputField
                   label="Email Address"
                   iconName="mail-outline"
                   placeholder="john@example.com"
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  // value={email}
+                  value={email}
                   onChangeText={setEmail}
-                />}
+                />
+              )}
               <View style={styles.btnWrapper}>
                 <PrimaryButton
                   label={
-                    verifyMobileMut.isPending || sendOtpMut.isPending
+                    checkEligibilityMutation.isPending || sendOtpMut.isPending
                       ? 'Verifying...'
                       : 'Verify & Send OTP'
                   }
@@ -361,24 +305,21 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.infoText}>
                 We sent a verification code to{' '}
                 <Text style={styles.highlight}>{maskedEmail}</Text>.{'\n'}Enter
-                the 4-digit code below.
-                {'\n'}
-                Demo Code : 1234
+                the 6-digit code below. It will be verified when you save your
+                new password.
               </Text>
               <InputField
-                label="4-Digit OTP Code"
+                label="6-Digit OTP Code"
                 iconName="lock-clock"
-                placeholder="0000"
+                placeholder="000000"
                 value={otpInput}
                 onChangeText={setOtpInput}
                 keyboardType="numeric"
-                maxLength={4}
+                maxLength={6}
               />
               <View style={styles.btnWrapper}>
                 <PrimaryButton
-                  label={
-                    verifyOtpMut.isPending ? 'Verifying...' : 'Verify Code'
-                  }
+                  label={'Continue'}
                   onPress={handleVerifyOtp}
                   disabled={isLoading}
                 />
@@ -387,7 +328,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
                 Didn't receive the code?{' '}
                 <Text
                   style={styles.resendLink}
-                  onPress={() => !isLoading && sendOtpMut.mutate(phone)}>
+                  onPress={() => !isLoading && sendOtpMut.mutate()}>
                   Resend OTP
                 </Text>
               </Text>
@@ -406,8 +347,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
               </View>
               <Text style={styles.sectionTitle}>Create New Password</Text>
               <Text style={styles.infoText}>
-                Your identity has been verified. Create a new strong password
-                for your account.
+                Create a new password. Your verification code will be checked
+                when you save it.
               </Text>
               <InputField
                 label="New Password"
@@ -444,7 +385,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
           <ActivityIndicator
             size="small"
             color={Colors.redPrimary}
-            style={{ marginTop: verticalScale(16) }}
+            style={{marginTop: verticalScale(16)}}
           />
         )}
       </ScrollView>
@@ -458,17 +399,17 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         primaryLabel={popup.primaryLabel}
         onPrimary={
           popup.onPrimary ||
-          (() => setPopup(prev => ({ ...prev, visible: false })))
+          (() => setPopup(prev => ({...prev, visible: false})))
         }
-        onDismiss={() => setPopup(prev => ({ ...prev, visible: false }))}
+        onDismiss={() => setPopup(prev => ({...prev, visible: false}))}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F9FAFB' },
-  body: { flex: 1 },
+  root: {flex: 1, backgroundColor: '#F9FAFB'},
+  body: {flex: 1},
   bodyContent: {
     paddingBottom: verticalScale(40),
     paddingTop: verticalScale(10),
@@ -480,10 +421,10 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: verticalScale(18),
   },
-  dot: { height: moderateScale(6), borderRadius: moderateScale(3) },
-  dotActive: { width: moderateScale(20), backgroundColor: Colors.redPrimary },
-  dotDone: { width: moderateScale(20), backgroundColor: '#10B981' },
-  dotInactive: { width: moderateScale(6), backgroundColor: '#E5E7EB' },
+  dot: {height: moderateScale(6), borderRadius: moderateScale(3)},
+  dotActive: {width: moderateScale(20), backgroundColor: Colors.redPrimary},
+  dotDone: {width: moderateScale(20), backgroundColor: '#10B981'},
+  dotInactive: {width: moderateScale(6), backgroundColor: '#E5E7EB'},
 
   card: {
     backgroundColor: Colors.white,
@@ -493,7 +434,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 15,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: {width: 0, height: 8},
     elevation: 4,
   },
   iconRow: {

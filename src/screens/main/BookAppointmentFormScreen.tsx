@@ -1,3 +1,6 @@
+import {reportError} from '../../errors/errorEvents';
+import {AppError} from '../../errors/AppError';
+import QueryError from '../../components/QueryError';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   View,
@@ -194,7 +197,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
   }, [existingAppointment?.trans_id]);
 
   // Fetch slots
-  const { data: slotsData, isLoading: loadSlots } = useQuery({
+  const { data: slotsData, isLoading: loadSlots, error: slotsError, refetch: retrySlots } = useQuery({
     queryKey: ['appointmentSlots', selectedMrNo, consultantId, selectedApiDate],
     queryFn: () =>
       fetchAppointmentSlotsApi(
@@ -219,7 +222,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
   });
   const noSlotsAvailable = !loadSlots && slotsData !== undefined && allSlots.length === 0;
   const hasExistingAppointment = !!existingAppointment;
-  const confirmDisabled = loadSlots || !timeSlot || allSlotsBooked || noSlotsAvailable || hasExistingAppointment;
+  const confirmDisabled = isLoading || isError || !!slotsError || loadSlots || !timeSlot || allSlotsBooked || noSlotsAvailable || hasExistingAppointment;
 
   // Show popup when date changes and all slots are booked
   useEffect(() => {
@@ -263,7 +266,7 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
     mutationFn: async () => {
       // Find the selected slot full details to get `time_fr` and `time_to`
       const selectedSlotObj = allSlots.find(s => s.time_slot === timeSlot);
-      if (!selectedSlotObj || !selectedApiDate) throw new Error("Invalid selection");
+      if (!selectedSlotObj || !selectedApiDate || confirmDisabled) throw new AppError('validation');
 
       return createAppointmentApi(selectedMrNo || '', consultantId || '', {
         tran_id: 0,
@@ -301,8 +304,8 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
         }
       );
     },
-    onError: (error: any) => {
-      showPopup('error', 'Booking Failed', error.message || 'Unable to book appointment.');
+    onError: (error: unknown) => {
+      reportError(error);
     }
   });
 
@@ -349,6 +352,8 @@ const BookAppointmentFormScreen: React.FC<Props> = ({ navigation, route }) => {
           keyboardShouldPersistTaps="handled">
 
           {/* Doctor Profile Header */}
+          <QueryError label="Existing Appointments" error={error} hasData={data !== undefined} onRetry={() => refetch()} />
+          <QueryError label="Appointment Times" error={slotsError} hasData={slotsData !== undefined} onRetry={() => retrySlots()} />
           <View style={styles.doctorHeaderCard}>
             <Image
               source={

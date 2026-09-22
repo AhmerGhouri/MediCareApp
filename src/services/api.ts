@@ -1,5 +1,17 @@
 import axios from 'axios';
-import { store } from '../store';
+import {store} from '../store';
+import {AppError, ErrorContext, normalizeError} from '../errors/AppError';
+import {notifySessionExpiry} from '../errors/errorEvents';
+import {logAppointmentsFailure} from '../errors/apiDiagnostics';
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    errorContext?: ErrorContext;
+    sessionVersion?: number;
+    authenticatedRequest?: boolean;
+    profileBelongsToSession?: boolean;
+  }
+}
 
 // ─── Base Configuration ────────────────────────────────────────
 // For Production
@@ -11,17 +23,82 @@ const BASE_URL = 'http://api.medicarehospital.pk';
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 15000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {'Content-Type': 'application/json'},
 });
 
 // Automatically attach JWT token to every request
 api.interceptors.request.use(config => {
-  const token = store.getState().auth.sessionToken;
-  if (token) {
+  const {sessionToken: token, sessionVersion} = store.getState().auth;
+  const isPublicAuth =
+    config.url?.startsWith('/auth/') && config.url !== '/auth/register-device';
+  config.sessionVersion = sessionVersion;
+  config.authenticatedRequest = !!token && !isPublicAuth;
+  if (config.errorContext === 'upcomingAppointments') {
+    config.profileBelongsToSession = store
+      .getState()
+      .auth.mrProfiles.some(
+        profile =>
+          config.url === `/patients/${profile.mr_no}/upcomingappointments`,
+      );
+  }
+  if (config.authenticatedRequest) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+api.interceptors.response.use(
+  response => {
+    if (
+      response.config.authenticatedRequest &&
+      response.config.sessionVersion !== store.getState().auth.sessionVersion
+    ) {
+      throw new AppError('cancelled');
+    }
+    return response;
+  },
+  (error: unknown) => {
+    const config = axios.isAxiosError(error) ? error.config : undefined;
+    if (
+      config?.authenticatedRequest &&
+      config.sessionVersion !== store.getState().auth.sessionVersion
+    ) {
+      return Promise.reject(new AppError('cancelled'));
+    }
+    // Legacy backend uses 403 for this specific empty-result condition.
+    // Scope the exception to this operation and exact detail, never all 403s.
+    if (
+      config?.errorContext === 'upcomingAppointments' &&
+      axios.isAxiosError(error) &&
+      error.response?.status === 403 &&
+      (error.response.data?.detail ?? error.response.data?.message) ===
+        'No Upcoming Appointments found for this MR Number'
+    ) {
+      return Promise.resolve({...error.response, data: {appointments: []}});
+    }
+    const safe = normalizeError(error, config?.errorContext ?? 'api');
+    if (config?.errorContext === 'upcomingAppointments') {
+      logAppointmentsFailure(
+        axios.isAxiosError(error) ? error.response?.data : undefined,
+        safe.status,
+        !!config.headers?.Authorization,
+        config.profileBelongsToSession === true,
+      );
+    }
+    if (
+      safe.kind === 'session' &&
+      config?.authenticatedRequest &&
+      config.sessionVersion !== undefined
+    ) {
+      notifySessionExpiry(config.sessionVersion);
+    }
+    // A public auth request must not log out an existing session.
+    if (safe.kind === 'session' && !config?.authenticatedRequest) {
+      return Promise.reject(new AppError('validation', safe.status));
+    }
+    return Promise.reject(safe);
+  },
+);
 
 // ─── Type Definitions ──────────────────────────────────────────
 
@@ -73,7 +150,6 @@ export const getLabReportDownloadUrl = (
   const idParam = `${testm_id}-${testd_id}`;
   const url = `${REPORT_BASE_URL}?report=LAB_APPROVAL_REP.rep&cmdkey=orarep&ID=AND%20(ltestd_ltestm_id%20%7C%7C%20%27-%27%20%7C%7C%20to_char(ltestd_ltest_id))%20IN%20(%27${idParam}%27)%20&ID1=AND%20(LCULRESD_LCULRESM_LTESTM_ID%20%7C%7C%20%27-%27%20%7C%7C%20(LCULRESD_LCULRESM_LTEST_ID))%20%20IN%20(%27${idParam}%27)`;
 
-  console.log('Final Download URL:', url);
   return url.replace(/ /g, '%20');
 };
 
@@ -192,7 +268,7 @@ export interface TimeSlot {
   time_to: string;
   time_slot: string;
   mr_no?: string;
-  "mr #"?: string;
+  'mr #'?: string;
 }
 
 export interface AppointmentSlotData {
@@ -215,7 +291,7 @@ export interface CreateAppointmentRequest {
   appoint_date: string; // "YYYY-MM-DD" or depending on backend (user example is "string")
   mobile_number: string;
   from_time: string; // e.g., "10:00"
-  to_time: string;   // e.g., "14:00"
+  to_time: string; // e.g., "14:00"
   appointment_day: string;
   appoint_time: string; // e.g., "10:00"
   opat_id: string;
@@ -272,432 +348,268 @@ export interface TodaysClinicResponse {
 interface Eligibility {
   eligible: boolean;
   // authorized: boolean,
-  status?: string | undefined,
-  message?: string | undefined
+  status?: string | undefined;
+  message?: string | undefined;
 }
-// ─── Auth Endpoints ────────────────────────────────────────────
+// ─── Response validation ───────────────────────────────────────
+// Keep supported array/envelope forms, but never disguise an invalid response
+// or an unavailable endpoint as an empty list or a successful operation.
+function objectBody(value: unknown): Record<string, any> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new AppError('invalidResponse');
+  }
+  const body = value as Record<string, any>;
+  if (body.success === false) {
+    throw new AppError('validation');
+  }
+  return body;
+}
+function collection<T>(value: unknown, key: string): T {
+  if (value === null) {
+    return {[key]: []} as T;
+  }
+  if (Array.isArray(value)) {
+    if (
+      !value.every(
+        item => item && typeof item === 'object' && !Array.isArray(item),
+      )
+    ) {
+      throw new AppError('invalidResponse');
+    }
+    return {[key]: value} as T;
+  }
+  const body = objectBody(value);
+  if (body[key] === null) {
+    return {...body, [key]: []} as T;
+  }
+  if (Array.isArray(body[key])) {
+    collection(body[key], key);
+    return body as T;
+  }
+  if (body.data !== undefined) {
+    return collection<T>(body.data, key);
+  }
+  throw new AppError('invalidResponse');
+}
+function arrayBody<T>(value: unknown): T[] {
+  if (value === null) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    collection(value, 'items');
+    return value as T[];
+  }
+  const body = objectBody(value);
+  if (body.data !== undefined) {
+    return arrayBody<T>(body.data);
+  }
+  throw new AppError('invalidResponse');
+}
 
+// ─── Auth Endpoints ────────────────────────────────────────────
 export const loginApi = async (
   mobile_number: string,
   password: string,
 ): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>('/auth/login', {
-    mobile_number,
-    password,
-  });
-  return response.data;
+  const response = await api.post(
+    '/auth/login',
+    {mobile_number, password},
+    {errorContext: 'login'},
+  );
+  const body = objectBody(response.data);
+  if (
+    typeof body.access_token !== 'string' ||
+    !body.access_token ||
+    !Array.isArray(body.mr_numbers) ||
+    !body.mr_numbers.length ||
+    !body.mr_numbers.every(
+      (profile: any) =>
+        profile &&
+        typeof profile.mr_no === 'string' &&
+        typeof profile.patient_name === 'string',
+    )
+  ) {
+    throw new AppError('invalidResponse');
+  }
+  return body as LoginResponse;
 };
-
 export const registerApi = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
-  const response = await api.post<RegisterResponse>('/auth/register', payload);
-  return response.data;
+  const response = await api.post('/auth/register', payload);
+  const body = objectBody(response.data);
+  if (typeof body.message !== 'string' || !body.message.trim()) {
+    throw new AppError('invalidResponse');
+  }
+  return {
+    ...body,
+    message: 'Your account has been created',
+  } as RegisterResponse;
 };
-
-/** Check if mobile number is allowed to register (exists in hospital DB) */
 export const checkRegistrationEligibilityApi = async (
   mobile_number: string,
 ): Promise<Eligibility> => {
-  try {
-    const response = await api.post<{ eligible: boolean }>(
-      '/auth/check-eligibility',
-      {
-        mobile_number,
-      },
-    );
-    return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 404) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({ eligible: true }); // Mock default so it doesn't block frontend testing
-        }, 1000);
-      });
-    }
-    throw error.response.data;
+  const response = await api.post('/auth/check-eligibility', {mobile_number});
+  const body = objectBody(response.data);
+  if (typeof body.eligible !== 'boolean') {
+    throw new AppError('invalidResponse');
   }
+  return {eligible: body.eligible};
 };
 
 // ─── Patient Data Endpoints ────────────────────────────────────
-
 export const fetchReportsApi = async (
   mr_no: string,
-): Promise<LabReportsResponse> => {
-  try {
-    const response = await api.get<LabReportsResponse>(
-      `/patients/${mr_no}/reports`,
-    );
-    if (response.data && Array.isArray(response.data.reports)) {
-      return response.data;
-    }
-    if (Array.isArray(response.data)) {
-      return { reports: response.data } as any;
-    }
-    if (
-      (response.data as any)?.data &&
-      Array.isArray((response.data as any).data.reports)
-    ) {
-      return (response.data as any).data;
-    }
-
-    // No valid data — return empty reports instead of throwing
-    return { opat_id: 0, patient_name: '', mobile: '', reports: [] };
-  } catch (error: any) {
-    const status = error?.response?.status;
-    const message = error?.response?.data?.message || 'Unable to fetch radiology reports. Please try again.';
-
-    // Create a standard error object
-    const customError = new Error(message) as any;
-
-    // Attach the status code directly to the object
-    customError.status = status;
-
-    throw customError;
-  }
-};
+): Promise<LabReportsResponse> =>
+  collection((await api.get(`/patients/${mr_no}/reports`)).data, 'reports');
 
 export const fetchCombineLabReportsApi = async (
   opat_id: string,
 ): Promise<CombineLabReportsResponse> => {
-  try {
-    const response = await api.get<CombineLabReportsResponse>(
-      `/patients/${opat_id}/combinelabreports`,
-    );
-    if (Array.isArray(response.data)) {
-      return response.data;
-    }
-    if ((response.data as any)?.data && Array.isArray((response.data as any).data)) {
-      return (response.data as any).data;
-    }
-    return [];
-  } catch (error: any) {
-    const status = error?.response?.status;
-    const message =
-      error?.response?.data?.message ||
-      'Unable to fetch combine lab reports. Please try again.';
-    const customError = new Error(message) as any;
-    customError.status = status;
-    throw customError;
+  const reports = arrayBody<CombineLabTest>(
+    (await api.get(`/patients/${opat_id}/combinelabreports`)).data,
+  );
+  if (
+    !reports.every(
+      report =>
+        Array.isArray(report.history) &&
+        report.history.every(
+          item =>
+            item &&
+            Array.isArray(item.results) &&
+            item.results.every(
+              result =>
+                result && typeof result === 'object' && !Array.isArray(result),
+            ),
+        ),
+    )
+  ) {
+    throw new AppError('invalidResponse');
   }
+  return reports;
 };
-
 export const fetchRadiologyReportsApi = async (
   mr_no: string,
-): Promise<RadiologyReportsResponse> => {
-  try {
-    const response = await api.get<RadiologyReportsResponse>(
-      `/patients/${mr_no}/radiology`,
-    );
-
-    if (response.data && Array.isArray(response.data.reports)) {
-      return response.data;
-    }
-    if (Array.isArray(response.data)) {
-      return { reports: response.data } as any;
-    }
-    if (
-      (response.data as any)?.data &&
-      Array.isArray((response.data as any).data.reports)
-    ) {
-      return (response.data as any).data;
-    }
-
-    return { opat_id: 0, patient_name: '', mobile: '', reports: [] };
-  } catch (error: any) {
-    const status = error?.response?.status;
-    const message = error?.response?.data?.message || 'Unable to fetch radiology reports. Please try again.';
-
-    // Create a standard error object
-    const customError = new Error(message) as any;
-
-    // Attach the status code directly to the object
-    customError.status = status;
-
-    throw customError;
-  }
-};
+): Promise<RadiologyReportsResponse> =>
+  collection((await api.get(`/patients/${mr_no}/radiology`)).data, 'reports');
 
 export const fetchInpatientHistoryApi = async (
   mr_no: string,
-): Promise<InpatientHistoryResponse> => {
-  try {
-    const response = await api.get<InpatientHistoryResponse>(
-      `/patients/${mr_no}/inpatienthistory`,
-    );
-
-    if (response.data && Array.isArray(response.data.inpatienthistory)) {
-      return response.data;
-    }
-    if (Array.isArray(response.data)) {
-      return { inpatienthistory: response.data } as any;
-    }
-    if (
-      (response.data as any)?.data &&
-      Array.isArray((response.data as any).data.inpatienthistory)
-    ) {
-      return (response.data as any).data;
-    }
-
-    return { opat_id: 0, patient_name: '', mobile: '', inpatienthistory: [] };
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch inpatient history. Please try again.',
-    );
-  }
-};
+): Promise<InpatientHistoryResponse> =>
+  collection(
+    (await api.get(`/patients/${mr_no}/inpatienthistory`)).data,
+    'inpatienthistory',
+  );
 
 export const fetchConsultationHistoryApi = async (
   mr_no: string,
-): Promise<ConsultationHistoryResponse> => {
-  try {
-    const response = await api.get<ConsultationHistoryResponse>(
-      `/patients/${mr_no}/consultationhistory`,
-    );
+): Promise<ConsultationHistoryResponse> =>
+  collection(
+    (await api.get(`/patients/${mr_no}/consultationhistory`)).data,
+    'consultationshistory',
+  );
 
-    if (response.data && Array.isArray(response.data.consultationshistory)) {
-      return response.data;
-    }
-    if (Array.isArray(response.data)) {
-      return { reports: response.data } as any;
-    }
-    if (
-      (response.data as any)?.data &&
-      Array.isArray((response.data as any).data.consultationshistory)
-    ) {
-      return (response.data as any).data;
-    }
-
-    return { opat_id: 0, patient_name: '', mobile: null, consultationshistory: [] };
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch consultation history. Please try again.',
-    );
-  }
-};
-
-export const fetchConsultantsApi = async (): Promise<Consultant[]> => {
-  try {
-    const response = await api.get<Consultant[]>(`patients/consultants`);
-
-    if (Array.isArray(response.data)) {
-      return response.data;
-
-    }
-    if ((response.data as any)?.data && Array.isArray((response.data as any).data)) {
-      return (response.data as any).data;
-    }
-
-    throw new Error('No valid consultants array found in response');
-  } catch (error) {
-    console.error('Error fetching consultants data:', error);
-    throw error;
-  }
-};
+export const fetchConsultantsApi = async (): Promise<Consultant[]> =>
+  arrayBody((await api.get('/patients/consultants')).data);
 
 export const fetchAppointmentSlotsApi = async (
   opat_id: string,
   consl_id: string,
   date: string,
 ): Promise<AppointmentSlotsResponse> => {
-  try {
-    const response = await api.get<AppointmentSlotsResponse>(
-      `/patients/${opat_id}/${consl_id}/${date}/appointments`
-    );
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch appointment slots. Please try again.'
-    );
+  const result = collection<AppointmentSlotsResponse>(
+    (await api.get(`/patients/${opat_id}/${consl_id}/${date}/appointments`))
+      .data,
+    'appointments',
+  );
+  if (
+    !result.appointments.every(
+      day =>
+        Array.isArray(day.time_slot) &&
+        day.time_slot.every(
+          slot =>
+            slot &&
+            typeof slot.time_slot === 'string' &&
+            typeof slot.time_fr === 'string' &&
+            typeof slot.time_to === 'string',
+        ),
+    )
+  ) {
+    throw new AppError('invalidResponse');
   }
+  return result;
 };
-
 export const createAppointmentApi = async (
   opat_id: string,
   consl_id: string,
-  data: CreateAppointmentRequest
+  data: CreateAppointmentRequest,
 ): Promise<any> => {
-  try {
-    const response = await api.post(
-      `/patients/${opat_id}/${consl_id}/createappointment`,
-      data
-    );
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to book appointment. Please try again.'
-    );
+  const body = objectBody(
+    (
+      await api.post(
+        `/patients/${opat_id}/${consl_id}/createappointment`,
+        data,
+        {errorContext: 'booking'},
+      )
+    ).data,
+  );
+  if (!Object.keys(body).length) {
+    throw new AppError('invalidResponse');
   }
+  return body;
 };
-
 export const fetchUpcomingAppointmentsApi = async (
   mr_no: string,
 ): Promise<UpcomingAppointmentsResponse> => {
-  try {
-    const response = await api.get<UpcomingAppointmentsResponse>(
-      `/patients/${mr_no}/upcomingappointments`,
-    );
+  const {data} = await api.get(`/patients/${mr_no}/upcomingappointments`, {
+    errorContext: 'upcomingAppointments',
+  });
+  // A successful null payload or null collection also represents no records.
+  const body =
+    data === null
+      ? {appointments: []}
+      : data && data.success !== false && data.appointments === null
+      ? {...data, appointments: []}
+      : data;
+  return collection(body, 'appointments');
+};
 
-    if (response.data && Array.isArray(response.data.appointments)) {
-      return response.data;
-    }
-    if (Array.isArray(response.data)) {
-      return { appointments: response.data } as any;
-    }
-    if (
-      (response.data as any)?.data &&
-      Array.isArray((response.data as any).data.appointments)
-    ) {
-      return (response.data as any).data;
-    }
+export const fetchTodaysClinicApi = async (): Promise<TodaysClinicResponse> =>
+  collection((await api.get('/patients/todaysclinic')).data, 'consultations');
 
-    return { opat_id: 0, patient_name: '', mobile: null, appointments: [] };
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || 'Unable to fetch upcoming appointments. Please try again.',
-    );
+// ─── Password recovery: success must come from the real service ───────────────
+export const sendOtpApi = async (data: {
+  mobile: string;
+  email: string;
+}): Promise<void> => {
+  const body = objectBody((await api.post('/auth/request-otp', data)).data);
+  if (body.success !== true && body.status !== 'success') {
+    throw new AppError('invalidResponse');
   }
 };
 
-export const fetchTodaysClinicApi = async (): Promise<TodaysClinicResponse> => {
-  try {
-    const response = await api.get<TodaysClinicResponse>('/patients/todaysclinic');
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.detail || "Unable to fetch today's clinic data. Please try again.",
-    );
+export const verifyOtpAndResetApi = async (data: {
+  mobile: string;
+  email: string;
+  otp_code: string;
+  new_password: string;
+}): Promise<void> => {
+  const body = objectBody(
+    (await api.post('/auth/verify-otp-and-reset', data, {errorContext: 'otp'}))
+      .data,
+  );
+  if (body.success !== true && body.status !== 'success') {
+    throw new AppError('invalidResponse');
   }
 };
-
-// ─── Forgot Password Endpoints ─────────────────────────────────
-// These endpoints need to be created on your backend.
-// Currently using mock implementations — swap with real API calls when ready.
-
-/** Step 1: Verify if mobile number is registered */
-export const verifyMobileApi = async (
-  mobile_number: string,
-): Promise<{ registered: boolean; masked_email: string }> => {
-  try {
-    const response = await api.post<{
-      registered: boolean;
-      masked_email: string;
-    }>('/auth/check-eligibility', {
-      mobile_number,
-    });
-    return response.data;
-  } catch (error: any) {
-    // If backend endpoint doesn't exist yet, fallback to mock
-    if (error?.response?.status === 404) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({ registered: true, masked_email: 'u***@example.com' });
-        }, 1200);
-      });
-    }
-    throw error;
-  }
-};
-
-/** Step 2: Send OTP to the email associated with the mobile number */
-export const sendOtpApi = async (
-  mobile_number: string,
-): Promise<{ success: boolean; message: string }> => {
-  try {
-    const response = await api.post<{ success: boolean; message: string }>(
-      '/auth/send-otp',
-      {
-        mobile_number,
-      },
-    );
-    return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 404) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({ success: true, message: 'OTP sent to registered email.' });
-        }, 1500);
-      });
-    }
-    throw error;
-  }
-};
-
-/** Step 3: Verify OTP code */
-export const verifyOtpApi = async (data: {
-  mobile_number: string;
-  otp: string;
-}): Promise<{ success: boolean; reset_token: string }> => {
-  try {
-    const response = await api.post<{ success: boolean; reset_token: string }>(
-      '/auth/verify-otp',
-      {
-        mobile_number: data.mobile_number,
-        otp: data.otp,
-      },
-    );
-    return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 404) {
-      // Mock: accept '1234' as valid OTP for testing
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.otp === '1234') {
-            resolve({ success: true, reset_token: 'mock-reset-token-777' });
-          } else {
-            reject(new Error('Invalid OTP code.'));
-          }
-        }, 1500);
-      });
-    }
-    throw error;
-  }
-};
-
-/** Step 4: Reset password with the verified token */
-export const resetPasswordApi = async (data: {
-  // reset_token: string;
-  mobile_number: string;
-  password: string;
-}): Promise<{ success: boolean }> => {
-  try {
-    const response = await api.post<{ success: boolean }>(
-      '/auth/reset-password',
-      {
-        // reset_token: data.reset_token,
-        mobile_number: data.mobile_number,
-        password: data.password,
-      },
-    );
-    return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 404) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.password.length < 6) {
-            return reject(new Error('Password must be at least 6 characters.'));
-          }
-          resolve({ success: true });
-        }, 1500);
-      });
-    }
-    throw error;
-  }
-};
-
-// ─── Device Token Registration (Push Notifications) ───────────────────────
-// Authorization is via Bearer JWT in the interceptor — DO NOT send mobile_number
-// in the body. The backend derives it from the authenticated JWT (current_user.mob).
 
 export interface RegisterDeviceTokenPayload {
   device_token: string;
   platform: 'android' | 'ios';
 }
-
 export const registerDeviceTokenApi = async (
   payload: RegisterDeviceTokenPayload,
 ): Promise<void> => {
   await api.post('/auth/register-device', payload);
 };
-
 export default api;

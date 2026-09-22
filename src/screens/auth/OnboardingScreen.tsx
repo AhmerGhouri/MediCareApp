@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import {reportError} from '../../errors/errorEvents';
 import { View, Text, StyleSheet, FlatList, Dimensions, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -59,7 +60,9 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const finishOnboarding = async () => {
-    await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+    try {
+      await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+    } catch (error) { reportError(error, 'storage'); }
     navigation.replace('Login');
   };
 

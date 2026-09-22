@@ -10,11 +10,22 @@
  */
 
 import { createNavigationContainerRef } from '@react-navigation/native';
-import { RootStackParamList } from './AppNavigator';
+import type { RootStackParamList } from './AppNavigator';
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
+let pendingLoginReset = false;
 
 const NavigationService = {
+  resetToLogin() {
+    pendingLoginReset = true;
+    NavigationService.onReady();
+  },
+  onReady() {
+    if (pendingLoginReset && navigationRef.isReady()) {
+      pendingLoginReset = false;
+      navigationRef.resetRoot({index: 0, routes: [{name: 'Login'}]});
+    }
+  },
   /**
    * Navigate to a named route with optional params.
    * Queues the navigation if the navigator is not yet ready.

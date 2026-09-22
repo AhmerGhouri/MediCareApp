@@ -1,3 +1,7 @@
+import {reportError} from '../../errors/errorEvents';
+import {AppError} from '../../errors/AppError';
+import {openReport, shareReport, validateDownloadedReport} from '../../services/reportFiles';
+import QueryError from '../../components/QueryError';
 import React, { useState } from 'react';
 import {
   View,
@@ -11,7 +15,7 @@ import {
   Alert,
   Platform,
   PermissionsAndroid,
-  Share,
+
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -87,7 +91,6 @@ const ReportsScreen: React.FC = () => {
     enabled: !!selectedMrNo,
   });
 
-  const customError = error as any;
   const rawReports = data?.reports;
   const reports = Array.isArray(rawReports) ? rawReports : [];
 
@@ -165,10 +168,7 @@ const ReportsScreen: React.FC = () => {
           },
         );
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert(
-            'Permission Denied',
-            'Storage permission is required to download reports.',
-          );
+          reportError(new AppError('permission'));
           return;
         }
       }
@@ -196,6 +196,7 @@ const ReportsScreen: React.FC = () => {
             path: filePath,
           },
         }).fetch('GET', url);
+        await validateDownloadedReport(res);
 
         setDownloadModal({
           visible: true,
@@ -208,6 +209,7 @@ const ReportsScreen: React.FC = () => {
           fileCache: true,
           path: filePath,
         }).fetch('GET', url);
+        await validateDownloadedReport(res);
 
         setDownloadModal({
           visible: true,
@@ -216,11 +218,8 @@ const ReportsScreen: React.FC = () => {
           filePath: res.path(),
         });
       }
-    } catch (err: any) {
-      Alert.alert(
-        'Download Failed',
-        err?.message || 'Could not download the report. Please try again.',
-      );
+    } catch (err: unknown) {
+      reportError(err, 'download');
     } finally {
       setDownloadingId(null);
     }
@@ -241,10 +240,7 @@ const ReportsScreen: React.FC = () => {
           },
         );
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert(
-            'Permission Denied',
-            'Storage permission is required to download reports.',
-          );
+          reportError(new AppError('permission'));
           return;
         }
       }
@@ -275,6 +271,7 @@ const ReportsScreen: React.FC = () => {
             path: filePath,
           },
         }).fetch('GET', url);
+        await validateDownloadedReport(res);
 
         setDownloadModal({
           visible: true,
@@ -287,6 +284,7 @@ const ReportsScreen: React.FC = () => {
           fileCache: true,
           path: filePath,
         }).fetch('GET', url);
+        await validateDownloadedReport(res);
 
         setDownloadModal({
           visible: true,
@@ -295,11 +293,8 @@ const ReportsScreen: React.FC = () => {
           filePath: res.path(),
         });
       }
-    } catch (err: any) {
-      Alert.alert(
-        'Download Failed',
-        err?.message || 'Could not download the report. Please try again.',
-      );
+    } catch (err: unknown) {
+      reportError(err, 'download');
     } finally {
       setDownloadingId(null);
     }
@@ -320,10 +315,7 @@ const ReportsScreen: React.FC = () => {
           },
         );
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert(
-            'Permission Denied',
-            'Storage permission is required to save reports.',
-          );
+          reportError(new AppError('permission'));
           return;
         }
       }
@@ -430,7 +422,7 @@ const ReportsScreen: React.FC = () => {
         }
         await ReactNativeBlobUtil.fs.cp(file.filePath, newPath);
         finalPath = newPath;
-        ReactNativeBlobUtil.fs.scanFile([
+        await ReactNativeBlobUtil.fs.scanFile([
           { path: finalPath, mime: 'application/pdf' },
         ]);
       }
@@ -441,11 +433,8 @@ const ReportsScreen: React.FC = () => {
         fileName: fileName + '.pdf',
         filePath: finalPath,
       });
-    } catch (err: any) {
-      Alert.alert(
-        'Generation Failed',
-        err?.message || 'Could not generate the PDF report. Please try again.',
-      );
+    } catch (err: unknown) {
+      reportError(err, 'download');
     } finally {
       setDownloadingId(null);
     }
@@ -496,26 +485,7 @@ const ReportsScreen: React.FC = () => {
       )}
 
       {/* Error State */}
-      {isError && (
-        <View style={styles.centerWrap}>
-          <Icon
-            name={customError.status == 403 ? 'search-off' : 'cloud-off'}
-            size={normalize(40)}
-            color={Colors.textLight}
-          />
-          <Text style={styles.errorText}>{error.name}</Text>
-          <Text
-            style={[
-              styles.errorText,
-              { fontSize: normalize(11), color: Colors.textLight, marginTop: 4 },
-            ]}>
-            {error.message}
-          </Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <QueryError error={error} hasData={data !== undefined} onRetry={() => refetch()} />
 
       {/* No MR Selected */}
       {!selectedMrNo && !isLoading && (
@@ -530,7 +500,7 @@ const ReportsScreen: React.FC = () => {
       )}
 
       {/* Report list */}
-      {!isLoading && !isError && (
+      {!isLoading && (!isError || data !== undefined) && (
         <View style={styles.listWrap}>
           {filtered.length === 0 && (
             <Text style={styles.emptyText}>No reports found.</Text>
@@ -629,25 +599,8 @@ const ReportsScreen: React.FC = () => {
       );
     }
 
-    if (combineQuery.isError) {
-      return (
-        <View style={styles.centerWrap}>
-          <Icon
-            name="cloud-off"
-            size={normalize(40)}
-            color={Colors.textLight}
-          />
-          <Text style={styles.errorText}>
-            {(combineQuery.error as any)?.message ||
-              'Failed to load combine reports.'}
-          </Text>
-          <TouchableOpacity
-            style={styles.retryBtn}
-            onPress={() => combineQuery.refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      );
+    if (combineQuery.isError && combineQuery.data === undefined) {
+      return <QueryError error={combineQuery.error} onRetry={() => combineQuery.refetch()} />;
     }
 
     if (!selectedMrNo) {
@@ -898,6 +851,9 @@ const ReportsScreen: React.FC = () => {
         style={styles.body}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}>
+        {activeTab !== 'lab' && combineQuery.data !== undefined && (
+          <QueryError error={combineQuery.error} hasData onRetry={() => combineQuery.refetch()} />
+        )}
         {activeTab === 'lab' ? renderLabReports() : renderCombineReports()}
       </ScrollView>
 
@@ -929,8 +885,8 @@ const ReportsScreen: React.FC = () => {
         onDismiss={() => setDownloadModal(prev => ({ ...prev, visible: false }))}
         onSave={() => {
           if (Platform.OS === 'ios') {
-            const pathUrl = downloadModal.filePath.startsWith('file://') ? downloadModal.filePath : `file://${downloadModal.filePath}`;
-            Share.share({ url: pathUrl });
+            setDownloadModal(prev => ({...prev, visible: false}));
+            setTimeout(() => { void shareReport(downloadModal.filePath); }, 350);
           } else {
             // Android uses Toast or just Alert
             Alert.alert('Saved', 'File has been saved to your Downloads folder.');
@@ -938,17 +894,7 @@ const ReportsScreen: React.FC = () => {
         }}
         onOpen={() => {
           setDownloadModal(prev => ({ ...prev, visible: false }));
-          setTimeout(() => {
-            if (Platform.OS === 'android') {
-              ReactNativeBlobUtil.android.actionViewIntent(
-                downloadModal.filePath,
-                'application/pdf',
-              );
-            } else {
-              const cleanPath = downloadModal.filePath.replace(/^file:\/\//, '');
-              ReactNativeBlobUtil.ios.previewDocument(cleanPath);
-            }
-          }, 350);
+          setTimeout(() => { void openReport(downloadModal.filePath); }, 350);
         }}
       />
     </View>
